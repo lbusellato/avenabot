@@ -34,3 +34,5 @@ C:\Users\loren\source\repos\avenabot\avenabot\bin\Debug\netcoreapp3.1\runtimes\w
 C:\Users\loren\source\repos\avenabot\avenabot\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\loren\source\repos\avenabot\avenabot\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 C:\Users\loren\source\repos\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.csproj.CoreCompileInputs.cache
+C:\Users\loren\source\repos\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.InitialCreate.resources
+C:\Users\loren\source\repos\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.csproj.GenerateResource.cache

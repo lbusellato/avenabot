@@ -1,4 +1,6 @@
-﻿using System;
+﻿using avenabot.DAL;
+using avenabot.Models.Partecipanti;
+using System;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 
@@ -8,6 +10,7 @@ namespace Awesome
     {
         static ITelegramBotClient botClient;
 
+        public static PartecipantiDbContext db = new PartecipantiDbContext();
         static void Main()
         {
             botClient = new TelegramBotClient("1444146870:AAG22lLxZqCxi7s21rXC5Co4Na6hNL6DDkA");
@@ -32,10 +35,28 @@ namespace Awesome
             {
                 Console.WriteLine($"Received a text message in chat {e.Message.Chat.Id}.");
 
-                await botClient.SendTextMessageAsync(
-                  chatId: e.Message.Chat,
-                  text: "You said:\n" + e.Message.Text
-                );
+                if(e.Message.Text == "\\partecipanti")
+                {
+                    string txt = "Elenco partecipanti:\n";
+                    foreach(Partecipante p in db.Partecipanti)
+                    {
+                        txt += p.LichessID + "\t" + "@" + p.TGID + "\n";
+                    }
+                    await botClient.SendTextMessageAsync(
+                      chatId: e.Message.Chat,
+                      text: txt
+                    );
+                }
+                else
+                {
+                    Partecipante p = new Partecipante();
+
+                    p.LichessID = e.Message.Text;
+                    p.TGID = e.Message.From.Username;
+
+                    db.Partecipanti.Add(p);
+                    db.SaveChanges();
+                }
             }
         }
     }
