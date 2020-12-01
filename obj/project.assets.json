@@ -5700,11 +5700,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\loren\\source\\repos\\avenabot\\avenabot\\avenabot.csproj",
+      "projectUniqueName": "C:\\Users\\loren\\Documents\\GitHub\\avenabot\\avenabot\\avenabot.csproj",
       "projectName": "avenabot",
-      "projectPath": "C:\\Users\\loren\\source\\repos\\avenabot\\avenabot\\avenabot.csproj",
+      "projectPath": "C:\\Users\\loren\\Documents\\GitHub\\avenabot\\avenabot\\avenabot.csproj",
       "packagesPath": "C:\\Users\\loren\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\loren\\source\\repos\\avenabot\\avenabot\\obj\\",
+      "outputPath": "C:\\Users\\loren\\Documents\\GitHub\\avenabot\\avenabot\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\loren\\AppData\\Roaming\\NuGet\\NuGet.Config",

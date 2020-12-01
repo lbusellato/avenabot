@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "WyHY5ILLc5U+m47KPUdhmugZSxCbf2sJBVrdDzuIKLbmBigpxH7oPDltoTyEeLmz8irtlrwXfnL6GVkS15KLPg==",
+  "dgSpecHash": "Up72LjnIkov0BAGl3Rvx7VI7NkSWkK0W/5X4faZnfNoytqORY/fGvUg+5NBCuzLOTzJhiFdUEpWFXOOaVziYag==",
   "success": true,
-  "projectFilePath": "C:\\Users\\loren\\source\\repos\\avenabot\\avenabot\\avenabot.csproj",
+  "projectFilePath": "C:\\Users\\loren\\Documents\\GitHub\\avenabot\\avenabot\\avenabot.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\loren\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\loren\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
