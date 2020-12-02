@@ -1,5 +1,8 @@
 ﻿namespace avenabot.Interpreter
 {
+    /// <summary>
+    /// This class holds all strings used by the bot
+    /// </summary>
     public static class Strings
     {
         public static string startCommand = "/start";
@@ -65,5 +68,8 @@
         public static string inserisciInvalidResult = "Il risultato immesso non è corretto, i risultati accettati sono 1 (vittoria giocatore 1), 2 (vittoria giocatore 2) e x (pareggio).";
         public static string checkResults = " Usa /risultati per vedere il tabellone dei risultati.";
         public static string insertedResult = "Risultato inserito correttamente.";
+        public static string risultatiHeader = "<pre>Risultati girone A:\n&#32&#32 ";
+        public static string classificaHeader1 = "Classifica Girone A:\nID";
+        public static string classificaHeader2 = "G: 1 2 3 4 5 6 7 P\n";
     }
 }

@@ -83,49 +83,55 @@ namespace avenabot.Interpreter
             string message = e.Message.Text;
             string sender = e.Message.From.Username;
             DateTime closingDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to close registering
-            int MaxPlayers = 24;
+            int MaxPlayers = 24; //Only multiples of 3 allowed
             string res = (Find(message)) switch
             {
                 // /start
-                0 => startCommand(),
+                0 => StartCommand(),
                 // /help
-                1 => helpCommand(sender),
+                1 => HelpCommand(sender),
                 // /partecipanti
-                2 => partecipantiCommand(),
+                2 => PartecipantiCommand(),
                 // /iscrivimi
-                3 => iscrivimiCommand(closingDate, MaxPlayers, message, sender),
+                3 => IscrivimiCommand(closingDate, MaxPlayers, message, sender),
                 // /rimuovi
-                4 => rimuoviCommand(message, sender),
+                4 => RimuoviCommand(message, sender),
                 // /disiscrivimi
-                5 => disiscrivimiCommand(sender),
-                //aggiungi
-                6 => aggiungiCommand(message, sender),
+                5 => DisiscrivimiCommand(sender),
+                // /aggiungi
+                6 => AggiungiCommand(message, sender),
                 // /seed
-                7 => seedCommand(MaxPlayers),
+                7 => SeedCommand(MaxPlayers),
                 // /risultati
-                8 => risultatiCommand(message, MaxPlayers),
+                8 => RisultatiCommand(message, MaxPlayers),
                 // /classifica
-                9 => classificaCommand(),
+                9 => ClassificaCommand(),
                 // /inserisci
-                10 => inserisciCommand(message),
+                10 => InserisciCommand(message),
                 // /torneo
-                11 => torneoCommand(),
-                _ => noCommand(),
+                11 => TorneoCommand(),
+                _ => NoCommand(),
             };
             gironeADb.Dispose();
             partecipantiDb.Dispose();
             return res;
         }
 
-        private string startCommand()
+        private string StartCommand()
         {
             string res = "";
             res += Strings.welcomeMsg;
             return res;
         }
 
-        private string helpCommand(string sender)
+        /// <summary>
+        /// Shows the list of commands available to the user
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <returns></returns>
+        private string HelpCommand(string sender)
         {
+            //FINAL
             string res = "";
             for (int i = 1; i < commandList.Length; ++i)
             {
@@ -133,28 +139,34 @@ namespace avenabot.Interpreter
                 {
                     if (IsAdmin(sender))
                     {
-                        res += commandList[i] + "\n\n" + commandDescr[i] + "\n\n";
+                        res += commandList[i] + "\n" + commandDescr[i] + "\n";
                         for (int j = 0; j < 54; ++j)
                         {
                             res += '-';
                         }
+                        res += '\n';
                     }
                 }
                 else
                 {
-                    res += commandList[i] + "\n\n" + commandDescr[i] + "\n\n";
+                    res += commandList[i] + "\n" + commandDescr[i] + "\n";
                     for (int j = 0; j < 54; ++j)
                     {
                         res += '-';
                     }
+                    res += '\n';
                 }
-                res += '\n';
             }
             return res;
         }
 
-        private string partecipantiCommand()
+        /// <summary>
+        /// Fetches the list of registered players from the DB and shows it
+        /// </summary>
+        /// <returns></returns>
+        private string PartecipantiCommand()
         {
+            //FINAL
             string res = "";
             res += Strings.partecipantiHeader;
             foreach (Partecipante p in partecipantiDb.Partecipanti)
@@ -164,8 +176,18 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string iscrivimiCommand(DateTime closingDate, int MaxPlayers, string message, string sender)
+        /// <summary>
+        /// Registers the player with the Lichess ID provided in message, checking if registration closing time or max player 
+        /// number have been reached
+        /// </summary>
+        /// <param name="closingDate"></param>
+        /// <param name="MaxPlayers"></param>
+        /// <param name="message"></param>
+        /// <param name="sender"></param>
+        /// <returns></returns>
+        private string IscrivimiCommand(DateTime closingDate, int MaxPlayers, string message, string sender)
         {
+            //FINAL
             string res = "";
             string lichessID = "";
             int playerCount = GetPlayerCount();
@@ -173,14 +195,17 @@ namespace avenabot.Interpreter
 
             if (DateTime.Now <= closingDate && playerCount < MaxPlayers)
             {
+                //Get the Lichess ID
                 lichessID = message.Replace(commandList[Find("/iscrivimi")], string.Empty).Trim();
+                //Fetch the player's ELO from Lichess
                 elo = GetELO(lichessID);
-                if (lichessID == "")
+                if (lichessID == "") //If no ID was provided
                 {
                     res = Strings.iscrivimiUsage;
                 }
                 else if (elo != -1)
                 {
+                    //Search the DB for the player, create him if he's not found
                     if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID == sender) == null)
                     {
                         Partecipante p = new Partecipante
@@ -210,21 +235,31 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string rimuoviCommand(string message, string sender)
+        /// <summary>
+        /// Removes the player with the corresponding Lichess ID, if he exists in the DB (admin only)
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="sender"></param>
+        /// <returns></returns>
+        private string RimuoviCommand(string message, string sender)
         {
+            //FINAL
             string res = "";
             string lichessID = "";
             int elo = -1;
             if (IsAdmin(sender))
             {
+                //Get the Lichess ID
                 lichessID = message.Replace(commandList[Find("/rimuovi")], string.Empty).Trim();
+                //Fetch the player's ELO from Lichess
                 elo = GetELO(lichessID);
-                if (lichessID == "")
+                if (lichessID == "") //If no ID was provided
                 {
                     res = Strings.rimuoviUsage;
                 }
                 else if (elo != -1)
                 {
+                    //Remove the player from the DB, if he exists
                     if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == lichessID.ToLower()) != null)
                     {
                         Partecipante p = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == lichessID.ToLower());
@@ -246,9 +281,16 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string disiscrivimiCommand(string sender)
+        /// <summary>
+        /// Removes the player from the DB
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <returns></returns>
+        private string DisiscrivimiCommand(string sender)
         {
+            //FINAL
             string res = "";
+            //Remove the player if he is in the DB
             if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID == sender) != null)
             {
                 Partecipante p = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID == sender);
@@ -264,8 +306,15 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string aggiungiCommand(string message, string sender)
+        /// <summary>
+        /// Add the player with the specified Lichess ID and Telegram Handle (admin only)
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="sender"></param>
+        /// <returns></returns>
+        private string AggiungiCommand(string message, string sender)
         {
+            //FINAL
             string res = "";
             string lichessID = "";
             string tgID = "";
@@ -280,7 +329,7 @@ namespace avenabot.Interpreter
                 else
                 {
                     subs = message.Split(' ');
-                    if (subs.Length != 3)
+                    if (subs.Length != 3) //If the number of arguments is not the correct one
                     {
                         res = Strings.aggiungiUsage;
                     }
@@ -291,6 +340,7 @@ namespace avenabot.Interpreter
                         elo = GetELO(lichessID);
                         if (elo != -1)
                         {
+                            //If the player is not in the DB, create him
                             if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID == tgID) == null)
                             {
                                 Partecipante p = new Partecipante
@@ -318,26 +368,34 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string seedCommand(int MaxPlayers)
+        /// <summary>
+        /// Populates the groups using ELO as a parameter
+        /// </summary>
+        /// <param name="MaxPlayers"></param>
+        /// <param name="GroupNumber"></param>
+        /// <returns></returns>
+        private string SeedCommand(int MaxPlayers)
         {
+            //TODO: generalize seeding method for GroupNumber groups
             string res = "";
-            //TODO generalise seeding?
-            //TODO seed group B and C
+            //Check if the DB is not empty
             Girone check = gironeADb.GironeA.SingleOrDefault(g => g.ID == 1);
             if (check == null)
             {
-                //Pull the list of 12 lowest elo players and populate the group db
+                //Pull the list players and sort it by ELO
                 List<Partecipante> players = new List<Partecipante>();
                 foreach (Partecipante p in partecipantiDb.Partecipanti)
                 {
                     players.Add(p);
                 }
                 players = players.OrderBy(p1 => p1.ELO).ToList();
+
                 //Cull the players after the no 8
                 while (players.Count > MaxPlayers / 3)
                 {
                     players.RemoveAt(players.Count - 1);
                 }
+
                 //Push the list to the db
                 foreach (Partecipante p in players)
                 {
@@ -358,8 +416,15 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string risultatiCommand(string message, int MaxPlayers)
+        /// <summary>
+        /// Shows the games results of a player, group or all groups
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="MaxPlayers"></param>
+        /// <returns></returns>
+        private string RisultatiCommand(string message, int MaxPlayers)
         {
+            //TODO: search the player in all dbs to find out wich one to use
             string res = "";
             string results = "";
             string[] subresults;
@@ -369,52 +434,9 @@ namespace avenabot.Interpreter
             subs = message.Split(' ');
             if (subs.Length == 1) //All groups
             {
-                Girone gir = gironeADb.GironeA.SingleOrDefault(g => g.ID == 1); //Used to check if the group has players
-                if (gir != null)
-                {
-                    res += "<pre>Risultati girone A:\n&#32&#32 ";
-                    for (int i = 0; i < MaxPlayers / 3; ++i)
-                    {
-                        res += gironeADb.GironeA.SingleOrDefault(g => g.ID == i + 1).PlayerID;
-                        if (gironeADb.GironeA.SingleOrDefault(g => g.ID == i + 1).PlayerID < 10)
-                        {
-                            res += "&#32 ";
-                        }
-                        else
-                        {
-                            res += " ";
-                        }
-                    }
-                    res += "\n";
-                    foreach (Girone g in gironeADb.GironeA)
-                    {
-                        results = g.Results;
-                        subresults = results.Split(',');
-                        res += g.PlayerID;
-                        if (g.PlayerID < 10)
-                        {
-                            res += "&#32";
-                        }
-                        for (int i = 0; i < subresults.Length; ++i)
-                        {
-                            if (subresults[i] == "x")
-                            {
-                                res += " &#189 ";
-                            }
-                            else if (subresults[i] == "-1")
-                            {
-                                res += " - ";
-                            }
-                            else
-                            {
-                                res += " " + subresults[i] + " ";
-                            }
-                        }
-                        res += "\n";
-                    }
-                    res += "</pre>";
-                }
-                //TODO girone B, girone C
+                res += FetchGroupResults(0, MaxPlayers);
+                res += FetchGroupResults(1, MaxPlayers);
+                res += FetchGroupResults(2, MaxPlayers);
             }
             else if (subs.Length == 2)
             {
@@ -422,64 +444,19 @@ namespace avenabot.Interpreter
                 {
                     if (subs[1] == "A")
                     {
-                        Girone gir = gironeADb.GironeA.SingleOrDefault(g => g.ID == 1); //Used to check if the group has players
-                        if (gir != null)
-                        {
-                            res += "<pre>&#32&#32 ";
-                            for (int i = 0; i < MaxPlayers / 3; ++i)
-                            {
-                                res += gironeADb.GironeA.SingleOrDefault(g => g.ID == i + 1).PlayerID;
-                                if (gironeADb.GironeA.SingleOrDefault(g => g.ID == i + 1).PlayerID < 10)
-                                {
-                                    res += "&#32 ";
-                                }
-                                else
-                                {
-                                    res += " ";
-                                }
-                            }
-                            res += "\n";
-                            foreach (Girone g in gironeADb.GironeA)
-                            {
-                                results = g.Results;
-                                subresults = results.Split(',');
-                                res += g.PlayerID;
-                                if (g.PlayerID < 10)
-                                {
-                                    res += "&#32";
-                                }
-                                for (int i = 0; i < subresults.Length; ++i)
-                                {
-                                    if (subresults[i] == "x")
-                                    {
-                                        res += " &#189 ";
-                                    }
-                                    else if (subresults[i] == "-1")
-                                    {
-                                        res += " - ";
-                                    }
-                                    else
-                                    {
-                                        res += " " + subresults[i] + " ";
-                                    }
-                                }
-                                res += "\n";
-                            }
-                            res += "</pre>";
-                        }
+                        res += FetchGroupResults(0, MaxPlayers);
                     }
                     else if (subs[1] == "B")
                     {
-                        //TODO
+                        res += FetchGroupResults(1, MaxPlayers);
                     }
                     else
                     {
-                        //TODO
+                        res += FetchGroupResults(2, MaxPlayers);
                     }
                 }
                 else //One player
                 {
-                    //TODO search the player in both dbs to find out wich one to use
                     string submittedID = subs[1];
                     int? playerID = null;
                     if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == submittedID) != null)
@@ -548,11 +525,69 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string classificaCommand()
+        private string FetchGroupResults(int Group, int MaxPlayers)
         {
+            //TODO: other groups results
+            string results;
+            string[] subresults;
+            string res = "";
+            Girone gir = gironeADb.GironeA.SingleOrDefault(g => g.ID == 1);
+            if (gir != null)
+            {
+                res += Strings.risultatiHeader;
+                for (int i = 0; i < MaxPlayers / 3; ++i)
+                {
+                    res += gironeADb.GironeA.SingleOrDefault(g => g.ID == i + 1).PlayerID;
+                    if (gironeADb.GironeA.SingleOrDefault(g => g.ID == i + 1).PlayerID < 10)
+                    {
+                        res += "&#32 ";
+                    }
+                    else
+                    {
+                        res += " ";
+                    }
+                }
+                res += "\n";
+                foreach (Girone g in gironeADb.GironeA)
+                {
+                    results = g.Results;
+                    subresults = results.Split(',');
+                    res += g.PlayerID;
+                    if (g.PlayerID < 10)
+                    {
+                        res += "&#32";
+                    }
+                    for (int i = 0; i < subresults.Length; ++i)
+                    {
+                        if (subresults[i] == "x")
+                        {
+                            res += " &#189 ";
+                        }
+                        else if (subresults[i] == "-1")
+                        {
+                            res += " - ";
+                        }
+                        else
+                        {
+                            res += " " + subresults[i] + " ";
+                        }
+                    }
+                    res += "\n";
+                }
+                res += "</pre>\n";
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Shows the current groups standings
+        /// </summary>
+        /// <returns></returns>
+        private string ClassificaCommand()
+        {
+            //TODO: standings group B and C
             string res = "";
             string[] subresults;
-            //TODO standings group B and C
 
             //Find out the longest opponents name to nicely format the results
             int maxLen = 0;
@@ -568,8 +603,10 @@ namespace avenabot.Interpreter
             List<Standing> standings = new List<Standing>();
             foreach (Girone g in gironeADb.GironeA)
             {
-                Standing stg = new Standing();
-                stg.ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == g.PlayerID).LichessID;
+                Standing stg = new Standing
+                {
+                    ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == g.PlayerID).LichessID
+                };
                 subresults = g.Results.Split(",");
                 stg.Games = new string[subresults.Length];
                 stg.Tot = 0;
@@ -596,12 +633,12 @@ namespace avenabot.Interpreter
                 standings.Add(stg);
             }
             standings.OrderBy(s => s.Tot);
-            res += "<pre>Classifica Girone A:\nID";
+            res += "<pre>" + Strings.classificaHeader1;
             for (int i = 0; i < maxLen - 4; ++i)
             {
                 res += " ";
             }
-            res += "G: 1 2 3 4 5 6 7 P\n";
+            res += Strings.classificaHeader2;
             foreach (Standing s in standings)
             {
                 int gamesPlayed = 0;
@@ -636,8 +673,14 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string inserisciCommand(string message)
+        /// <summary>
+        /// Adds the specified player to the DB, if it doesn't already exist (Admin only)
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private string InserisciCommand(string message)
         {
+            //TODO: Simplify
             string res = "";
             string helper = "";
             string player1LichessID;
@@ -753,15 +796,25 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string torneoCommand()
+        /// <summary>
+        /// Shows torunament info
+        /// </summary>
+        /// <returns></returns>
+        private string TorneoCommand()
         {
+            //FINAL
             string res = "";
             res += Strings.torneoInfo;
             return res;
         }
 
-        private string noCommand()
+        /// <summary>
+        /// Responds to anything other than a known command
+        /// </summary>
+        /// <returns></returns>
+        private string NoCommand()
         {
+            //FINAL
             string res = "";
             res += Strings.saywhat;
             return res;
@@ -808,9 +861,8 @@ namespace avenabot.Interpreter
             {
                 string downloadString = client.DownloadString("https://lichess.org/@/" + player.ToLower() + "/perf/rapid");
                 int i = downloadString.IndexOf("Rating: <strong>");
-                int elo;
 
-                if (int.TryParse(downloadString.Substring(i + 16, 4), out elo))
+                if (int.TryParse(downloadString.Substring(i + 16, 4), out int elo))
                 {
                     return elo;
                 }
