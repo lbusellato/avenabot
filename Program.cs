@@ -4,6 +4,7 @@ using avenabot.Models.Partecipanti;
 using System;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Telegram.Bot.Types.Enums;
 
 namespace Awesome
 {
@@ -16,7 +17,6 @@ namespace Awesome
         static void Main()
         {
             botClient = new TelegramBotClient("1444146870:AAG22lLxZqCxi7s21rXC5Co4Na6hNL6DDkA");
-
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine(
               $"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
@@ -41,7 +41,8 @@ namespace Awesome
                 {
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
-                        text: res
+                        text: res,
+                        parseMode: ParseMode.Html
                     );
                 }
             }

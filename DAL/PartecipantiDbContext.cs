@@ -11,7 +11,7 @@ namespace avenabot.DAL
 
         public PartecipantiDbContext() : base(connString)
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<PartecipantiDbContext, avenabot.Migrations.PartecipantiMigrations.Configuration>());
+            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<PartecipantiDbContext, avenabot.Migrations.PartecipantiMigrations.Configuration>());
         }
 
         public DbSet<Partecipante> Partecipanti { get; set; }

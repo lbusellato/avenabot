@@ -4,6 +4,8 @@ using Telegram.Bot.Args;
 using System.Linq;
 using System.Net;
 using System;
+using avenabot.Models.Gironi;
+using System.Collections.Generic;
 
 namespace avenabot.Interpreter
 {
@@ -33,30 +35,30 @@ namespace avenabot.Interpreter
 
         public string[] commandList = new string[]
         {
-            "/start",
-            "/help", //Show the list off commands
-            "/partecipanti", //Show the list of users registered
-            "/iscrivimi", //Register the user in the Partecipanti db 
-            "/rimuovi", //Remove the specified player, admin only
-            "/disiscrivimi", //Remove the specified player, only if the tg id is the same as the sender
-            "/aggiungi", //Register a player, admin only
-            "/seed", //Seed the group
-            "/risultati", //Show group games results
-            "/classifica", //Show group standings
+            Strings.startCommand,
+            Strings.helpCommand, //Show the list off commands
+            Strings.partecipantiCommand, //Show the list of users registered
+            Strings.iscrivimiCommand, //Register the user in the Partecipanti db
+            Strings.rimuoviCommand, //Remove the specified player, admin only
+            Strings.disiscrivimiCommand, //Remove the specified player, only if the tg id is the same as the sender
+            Strings.aggiungiCommand, //Register a player, admin only
+            Strings.seedCommand, //Seed the group
+            Strings.risultatiCommand, //Show group games results
+            Strings.classificaCommand, //Show group standings
         };
 
         public string[] commandDescr = new string[]
         {
-            "",
-            "Mostra la lista di comandi disponibili",
-            "Mostra la lista di partecipanti attualmente iscritti",
-            "Iscrive l'ID Lichess specificato al torneo\nUtilizzo: /iscrivimi IDLichess",
-            "Rimuove il giocatore specificato\nUtilizzo: /rimuovi IDLichess",
-            "Disicrive dal torneo",
-            "Aggiunge il giocatore specificato\nUtilizzo: /aggiungi IDLichess IDTelegram",
-            "Popola il girone\nUtilizzo: /seed IDGirone(A o B) n°partecipanti",
-            "Mostra i risultati delle partite.\nUtilizzo:\n/risultati\nMostra i risultati di entrambi i gironi.\n/risultati IDGirone (A o B)\nMostra i risultati del girone specificato.\n/risultati IDLichess\nMostra i risultati del giocatore specificato.",
-            "Mostra le classifiche.\nUtilizzo:\n/classifica\nMostra le classifiche di entrambi i gironi.\n/classifica IDGirone (A o B)\nMostra la classifica del girone specificato.",
+            Strings.startDescr,
+            Strings.helpDescr,
+            Strings.partecipantiDescr,
+            Strings.iscrivimiDescr,
+            Strings.rimuoviDescr,
+            Strings.disiscrivimiDescr,
+            Strings.aggiungiDescr,
+            Strings.seedDescr,
+            Strings.risultatiDescr,
+            Strings.classificaDescr,
         };
 
         public Interpreter() { }
@@ -71,14 +73,14 @@ namespace avenabot.Interpreter
             string lichessID = "";
             string tgID = "";
             string[] subs;
+            int maxLen = 0;
             int elo = -1;
             int playerCount = GetPlayerCount();
             int MaxPlayers = 24; // Change this to edit how many players you want
             switch (Find(message))
             {
                 case 0: // /start
-                    res = "Ciao! Sono il Bot che gestisce il Torneo Avenoni Scacchisti.\n" +
-                          "Usa /help per visualizzare i comandi disponibili";
+                    res = Strings.welcomeMsg;
                     break;
                 case 1: // /help
                     for(int i = 1; i < commandList.Length; ++i)
@@ -102,7 +104,7 @@ namespace avenabot.Interpreter
                     }
                     break;
                 case 2: // /partecipanti
-                    res += "Elenco partecipanti:\nID Torneo - ID Lichess - ID Telegram - ELO\n";
+                    res += Strings.partecipantiHeader;
                     foreach (Partecipante p in partecipantiDb.Partecipanti)
                     {
                         res += p.ID + "-" + p.LichessID + " - @" + p.TGID + " - " + p.ELO + "\n";
@@ -115,7 +117,7 @@ namespace avenabot.Interpreter
                         elo = GetELO(lichessID);
                         if (lichessID == "")
                         {
-                            res = "Utilizzo: /iscrivimi IDLichess";
+                            res = Strings.iscrivimiUsage;
                         }
                         else if (elo != -1)
                         {
@@ -129,21 +131,21 @@ namespace avenabot.Interpreter
                                 };
                                 partecipantiDb.Partecipanti.Add(p);
                                 partecipantiDb.SaveChanges();
-                                res = "Ti ho iscritto! Usa /partecipanti per vedere la lista degli iscritti.";
+                                res = Strings.registered + Strings.checkPartecipanti;
                             }
                             else
                             {
-                                res = "Risulti già iscritto! Usa /partecipanti per vedere la lista degli iscritti.\nSe credi sia un errore contatta @lbusellato";
+                                res = Strings.registeredError + Strings.checkPartecipanti + Strings.errorContact;
                             }
                         }
                         else
                         {
-                            res = "L'ID Lichess che hai inserito non sembra esistere, controlla di averlo scritto giusto. Se credi sia un errore contatta @lbusellato";
+                            res = Strings.lichess404 + Strings.errorContact; 
                         }
                     }
                     else
                     {
-                        res = "Spiacente, le iscrizioni sono chiuse!";
+                        res = Strings.closedRegistrations;
                     }
                     break;
                 case 4: // /rimuovi
@@ -153,7 +155,7 @@ namespace avenabot.Interpreter
                         elo = GetELO(lichessID);
                         if (lichessID == "")
                         {
-                            res = "Utilizzo: /rimuovi IDLichess";
+                            res = Strings.rimuoviUsage;
                         }
                         else if (elo != -1)
                         {
@@ -163,16 +165,16 @@ namespace avenabot.Interpreter
                                 partecipantiDb.Partecipanti.Attach(p);
                                 partecipantiDb.Partecipanti.Remove(p);
                                 partecipantiDb.SaveChanges();
-                                res = "Giocatore rimosso! Usa /partecipanti per vedere la lista degli iscritti.";
+                                res = Strings.removedAdmin + Strings.checkPartecipanti;
                             }
                             else
                             {
-                                res = "Il giocatore indicato non sembra essere iscritto! Usa /partecipanti per vedere la lista degli iscritti.\nSe credi sia un errore contatta @lbusellato";
+                                res = Strings.player404 + Strings.checkPartecipanti + Strings.errorContact;
                             }
                         }
                         else
                         {
-                            res = "L'ID Lichess che hai inserito non sembra esistere, controlla di averlo scritto giusto. Se credi sia un errore contatta @lbusellato";
+                            res = Strings.lichess404 + Strings.errorContact;
                         }
                     }
                     break;
@@ -183,11 +185,11 @@ namespace avenabot.Interpreter
                         partecipantiDb.Partecipanti.Attach(p);
                         partecipantiDb.Partecipanti.Remove(p);
                         partecipantiDb.SaveChanges();
-                        res = "Ti ho rimosso! Usa /iscrivimi per riiscriverti.";
+                        res = Strings.removed + Strings.iscrivimiUsage2;
                     }
                     else
                     {
-                        res = "Non mi sembra che tu sia iscritto! Usa /iscrivimi per iscriverti.\nSe credi sia un errore contatta @lbusellato";
+                        res = Strings.notRegistered + Strings.iscrivimiUsage + Strings.errorContact;
                     }
                     break;
                 case 6: //aggiungi
@@ -195,14 +197,14 @@ namespace avenabot.Interpreter
                     {
                         if (message.Length == commandList[6].Length)
                         {
-                            res = "Utilizzo: /aggiungi IDLichess IDTelegram";
+                            res = Strings.aggiungiUsage;
                         }
                         else
                         {
                             subs = message.Split(' ');
                             if(subs.Length != 3)
                             {
-                                res = "Utilizzo: /aggiungi IDLichess IDTelegram";
+                                res = Strings.aggiungiUsage;
                             }
                             else
                             {
@@ -221,16 +223,16 @@ namespace avenabot.Interpreter
                                         };
                                         partecipantiDb.Partecipanti.Add(p);
                                         partecipantiDb.SaveChanges();
-                                        res = "Giocatore iscritto! Usa /partecipanti per vedere la lista degli iscritti.";
+                                        res = Strings.registeredAdmin + Strings.checkPartecipanti;
                                     }
                                     else
                                     {
-                                        res = "Il giocatore risulta già iscritto! Usa /partecipanti per vedere la lista degli iscritti.\nSe credi sia un errore contatta @lbusellato";
+                                        res = Strings.registeredAdminError + Strings.checkPartecipanti + Strings.errorContact;
                                     }
                                 }
                                 else
                                 {
-                                    res = "L'ID Lichess che hai inserito non sembra esistere, controlla di averlo scritto giusto. Se credi sia un errore contatta @lbusellato";
+                                    res = Strings.lichess404 + Strings.errorContact;
                                 }
                                 break;
                             }
@@ -238,6 +240,38 @@ namespace avenabot.Interpreter
                     }
                     break;
                 case 7: // /seed
+                    Girone check = gironeADb.GironeA.SingleOrDefault(g => g.ID == 1);
+                    if (check == null)
+                    {
+                        //Pull the list of 12 lowest elo players and populate the group db
+                        List<Partecipante> players = new List<Partecipante>();
+                        foreach (Partecipante p in partecipantiDb.Partecipanti)
+                        {
+                            players.Add(p);
+                        }
+                        players = players.OrderBy(p1 => p1.ELO).ToList();
+                        //Cull the players after the no 12
+                        while (players.Count > 12)
+                        {
+                            players.RemoveAt(players.Count - 1);
+                        }
+                        //Push the list to the db
+                        foreach (Partecipante p in players)
+                        {
+                            Girone g = new Girone
+                            {
+                                PlayerID = p.ID,
+                                Results = "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,"
+                            };
+                            gironeADb.GironeA.Add(g);
+                            gironeADb.SaveChanges();
+                        }
+                        res += Strings.groupSeeded;
+                    }
+                    else
+                    {
+                        res += Strings.groupAlreadySeeded;
+                    }
                     break;
                 case 8: // /risultati
                     subs = message.Split(' ');
@@ -253,21 +287,65 @@ namespace avenabot.Interpreter
                         }
                         else //One player
                         {
+                            //TODO differentiate between groups
                             string submittedID = subs[1];
-                            int playerID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == submittedID).ID;
-                            if(playerID != null)
+                            int? playerID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == submittedID).ID;
+                            Girone gir = gironeADb.GironeA.SingleOrDefault(g => g.ID == 1); //Used to check if the group has players
+                            string opponent;
+                            if(playerID != null && gir != null)
                             {
+                                //Retrieve the lichess id with proper capitalization
+                                submittedID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == playerID).LichessID; 
+                                //Retrieve the player results, split them in an array
                                 string results = gironeADb.GironeA.SingleOrDefault(p => p.PlayerID == playerID).Results;
                                 string[] subresults = results.Split(',');
-                                for(int i = 0; i < subresults.Length; ++i)
+
+                                res += "<pre>";
+                                res += submittedID + "\n";
+
+                                //Find out the longest opponents name to nicely format the results
+                                maxLen = 0;
+
+                                foreach(Girone g in gironeADb.GironeA)
                                 {
-                                    //TODO Fetch lichess ID from player ID
-                                    res += (i + 1) + "\t - \t" + subresults[i] + '\n';
+                                    if(partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == g.PlayerID).LichessID.Length > maxLen)
+                                    {
+                                        maxLen = partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == g.PlayerID).LichessID.Length;
+                                    }
                                 }
+
+                                //Format opponents names and results
+                                for (int i = 0; i < subresults.Length; ++i)
+                                {
+                                    int opponentID = gironeADb.GironeA.SingleOrDefault(g1 => g1.ID == i + 1).PlayerID;
+                                    opponent = partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == opponentID).LichessID;
+                                    if (opponent != submittedID)
+                                    {
+                                        res += "vs " + opponent;
+
+                                        for (int j = 0; j < maxLen - opponent.Length + 1; ++j)
+                                        {
+                                            res += "&#32";
+                                        }
+                                        if (subresults[i] == "0.5")
+                                        {
+                                            res += " &#189 \n";
+                                        }
+                                        else if (subresults[i] == "-1")
+                                        {
+                                            res += " -\n";
+                                        }
+                                        else
+                                        {
+                                            res += " " + subresults[i] + "\n";
+                                        }
+                                    }
+                                }
+                                res += "</pre>";
                             }
                             else
                             {
-                                res = "Non ho trovato il giocatore su Lichess, controlla di aver scritto correttamente l'ID.";
+                                res = Strings.player404 + Strings.checkPartecipanti + Strings.errorContact;
                             }
                         }
                     }
@@ -276,7 +354,7 @@ namespace avenabot.Interpreter
                     break;
                 case -1:
                 default:
-                    res = "Non ho capito, usa /help per vedere la lista dei comandi disponibili.";
+                    res = Strings.saywhat;
                     break;
             }
             return res;
@@ -323,7 +401,16 @@ namespace avenabot.Interpreter
             {
                 string downloadString = client.DownloadString("https://lichess.org/@/" + player.ToLower() + "/perf/rapid");
                 int i = downloadString.IndexOf("Rating: <strong>");
-                return Int32.Parse(downloadString.Substring(i + 16, 4));
+                int elo;
+
+                if (int.TryParse(downloadString.Substring(i + 16, 4), out elo))
+                {
+                    return elo;
+                }
+                else
+                {
+                    return 0;
+                }
             }
             catch (System.Net.WebException e)
             {
