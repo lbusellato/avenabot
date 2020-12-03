@@ -19,7 +19,7 @@
         public static string torneoCommand = "/torneo";
 
         public static string startDescr = "";
-        public static string helpDescr = "Mostra la lista di comandi disponibili";
+        public static string helpDescr = "Mostra questa lista";
         public static string partecipantiDescr = "Mostra la lista di partecipanti attualmente iscritti";
         public static string iscrivimiDescr = "Iscrive l'ID Lichess specificato al torneo\nUtilizzo: /iscrivimi IDLichess";
         public static string rimuoviDescr = "Rimuove il giocatore specificato\nUtilizzo: /rimuovi IDLichess";
@@ -74,8 +74,9 @@
         public static string classificaHeader1A = "Classifica Girone A:\nID";
         public static string classificaHeader1B = "Classifica Girone B:\nID";
         public static string classificaHeader1C = "Classifica Girone C:\nID";
-        public static string classificaHeader2 = "G: 1 2 3 4 5 6 7 P\n";
+        public static string classificaHeader2 = "G:";
         public static string errorNotSeeded = "Errore: i gironi non risultano popolati.";
         public static string internalError = "ERRORE INTERNO, CONTATTA @lbusellato, CODICE ERRORE:";
+        public static string inserisciInvalidGroup = "I giocatori che hai immesso non sembrano essere nello stesso girone, prova a ricontrollare.";
     }
 }

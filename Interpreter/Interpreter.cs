@@ -110,7 +110,7 @@ namespace avenabot.Interpreter
                 // /risultati
                 8 => RisultatiCommand(message, MaxPlayers),
                 // /classifica
-                9 => ClassificaCommand(),
+                9 => ClassificaCommand(MaxPlayers),
                 // /inserisci
                 10 => InserisciCommand(message),
                 // /torneo
@@ -818,9 +818,9 @@ namespace avenabot.Interpreter
         /// Shows the current groups standings
         /// </summary>
         /// <returns></returns>
-        private string ClassificaCommand()
+        private string ClassificaCommand(int MaxPlayers)
         {
-            //TODO: standings group B and C
+            //TODO: Dinamically generate standings header
             string res = "";
             string[] subresults;
 
@@ -980,7 +980,6 @@ namespace avenabot.Interpreter
                         }
                     }
                     standings = standings.OrderByDescending(s => s.Tot).ToList();
-
                     if (j == 0)
                     {
                         res += "<pre>" + Strings.classificaHeader1A;
@@ -998,6 +997,11 @@ namespace avenabot.Interpreter
                         res += " ";
                     }
                     res += Strings.classificaHeader2;
+                    for (int i = 0; i < MaxPlayers / 3; ++i)
+                    {
+                        res += " " + i;
+                    }
+                    res += " P\n"; 
                     foreach (Standing s in standings)
                     {
                         int gamesPlayed = 0;
@@ -1016,7 +1020,7 @@ namespace avenabot.Interpreter
                                 gamesPlayed++;
                             }
                         }
-                        for (int i = 0; i < 2 * (7 - gamesPlayed) - 1; ++i)
+                        for (int i = 0; i < 2 * ((MaxPlayers / 3) - gamesPlayed) - 1; ++i)
                         {
                             res += " ";
                         }
@@ -1024,7 +1028,7 @@ namespace avenabot.Interpreter
                         {
                             if ((int)s.Tot == 0)
                             {
-                                res += "&#189 \n";
+                                res += " &#189 \n";
                             }
                             else
                             {
@@ -1058,7 +1062,7 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string InserisciCommand(string message)
         {
-            //TODO: Simplify
+            //TODO: Simplify the method
             string res = "";
             string helper = "";
             string player1LichessID;
@@ -1083,91 +1087,173 @@ namespace avenabot.Interpreter
                 }
                 else
                 {
-                    //TODO find which group the players are in
-
                     string sub1 = subs[1];
                     string sub2 = subs[2];
                     //Check if LichessIDs are valid
                     if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == sub1.ToLower()) != null &&
                         partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == sub2.ToLower()) != null)
                     {
-                        //Valid result?
-                        if (subs[3] == "1" || subs[3] == "2" || subs[3] == "x")
+                        Partecipante p1 = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == sub1.ToLower());
+                        Partecipante p2 = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == sub2.ToLower());
+                        Girone check1A = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == p1.ID);
+                        Girone check1B = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == p1.ID);
+                        Girone check1C = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == p1.ID);
+                        Girone check2A = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == p2.ID);
+                        Girone check2B = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == p2.ID);
+                        Girone check2C = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == p2.ID);
+                        int groupIDp1 = (check1A != null) ? 0 : (check1B != null) ? 1 : (check1C != null) ? 2 : -1;
+                        int groupIDp2 = (check2A != null) ? 0 : (check2B != null) ? 1 : (check2C != null) ? 2 : -1;
+                        if (groupIDp1 != -1 && groupIDp2 != -1 && groupIDp2 == groupIDp1)
                         {
-                            if (subs[3] == "1")
+                            int groupID = groupIDp1;
+                            //Valid result?
+                            if (subs[3] == "1" || subs[3] == "2" || subs[3] == "x")
                             {
-                                helper = "1";
-                            }
-                            else if (subs[3] == "2")
-                            {
-                                helper = "0";
+                                if (subs[3] == "1")
+                                {
+                                    helper = "1";
+                                }
+                                else if (subs[3] == "2")
+                                {
+                                    helper = "0";
+                                }
+                                else
+                                {
+                                    helper = "x";
+                                }
+
+                                player1LichessID = subs[1];
+                                player1LichessID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == player1LichessID.ToLower()).LichessID;
+                                player1ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == player1LichessID.ToLower()).ID;
+                                if(groupID == 0)
+                                {
+                                    player1GroupID = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).ID;
+                                }
+                                else if(groupID == 1)
+                                {
+                                    player1GroupID = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).ID;
+                                }
+                                else
+                                {
+                                    player1GroupID = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).ID;
+                                }
+
+                                player2LichessID = subs[2];
+                                player2LichessID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == player2LichessID.ToLower()).LichessID;
+                                player2ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == player2LichessID.ToLower()).ID;
+                                if (groupID == 0)
+                                {
+                                    player2GroupID = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).ID;
+                                }
+                                else if (groupID == 1)
+                                {
+                                    player2GroupID = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).ID;
+                                }
+                                else
+                                {
+                                    player2GroupID = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).ID;
+                                }
+
+
+                                if (groupID == 0)
+                                {
+                                    prevResults = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).Results;
+                                }
+                                else if (groupID == 1)
+                                {
+                                    prevResults = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).Results;
+                                }
+                                else
+                                {
+                                    prevResults = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).Results;
+                                }
+                                subresults = prevResults.Split(",");
+                                subresults[player2GroupID - 1] = helper;
+                                results = "";
+                                for (int i = 0; i < subresults.Length; ++i)
+                                {
+                                    results += subresults[i];
+                                    if (i != subresults.Length - 1)
+                                    {
+                                        results += ",";
+                                    }
+                                }
+
+                                SQLCommand = "UPDATE Girone SET Results='" + results + "' WHERE PlayerID=" + player1ID;
+                                if (groupID == 0)
+                                {
+                                    gironeADb.Database.ExecuteSqlCommand(SQLCommand);
+                                }
+                                else if (groupID == 1)
+                                {
+                                    gironeBDb.Database.ExecuteSqlCommand(SQLCommand);
+                                }
+                                else
+                                {
+                                    gironeCDb.Database.ExecuteSqlCommand(SQLCommand);
+                                }
+
+                                if (helper == "1")
+                                {
+                                    helper = "0";
+                                }
+                                else if (helper == "0")
+                                {
+                                    helper = "1";
+                                }
+                                else
+                                {
+                                    helper = "x";
+                                }
+
+                                if (groupID == 0)
+                                {
+                                    prevResults = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
+                                }
+                                else if (groupID == 1)
+                                {
+                                    prevResults = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
+                                }
+                                else
+                                {
+                                    prevResults = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
+                                }
+                                subresults = prevResults.Split(",");
+                                subresults[player1GroupID - 1] = helper;
+                                results = "";
+                                for (int i = 0; i < subresults.Length; ++i)
+                                {
+                                    results += subresults[i];
+                                    if (i != subresults.Length - 1)
+                                    {
+                                        results += ",";
+                                    }
+                                }
+
+                                SQLCommand = "UPDATE Girone SET Results='" + results + "' WHERE PlayerID=" + player2ID;
+                                if (groupID == 0)
+                                {
+                                    gironeADb.Database.ExecuteSqlCommand(SQLCommand);
+                                }
+                                else if (groupID == 1)
+                                {
+                                    gironeBDb.Database.ExecuteSqlCommand(SQLCommand);
+                                }
+                                else
+                                {
+                                    gironeCDb.Database.ExecuteSqlCommand(SQLCommand);
+                                }
+
+                                res += Strings.insertedResult + Strings.checkResults;
                             }
                             else
                             {
-                                helper = "x";
+                                res += Strings.inserisciInvalidResult;
                             }
-
-                            player1LichessID = subs[1];
-                            player1LichessID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == player1LichessID.ToLower()).LichessID;
-                            player1ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == player1LichessID.ToLower()).ID;
-                            player1GroupID = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).ID;
-
-                            player2LichessID = subs[2];
-                            player2LichessID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == player2LichessID.ToLower()).LichessID;
-                            player2ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == player2LichessID.ToLower()).ID;
-                            player2GroupID = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).ID;
-
-
-                            prevResults = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).Results;
-                            subresults = prevResults.Split(",");
-                            subresults[player2GroupID - 1] = helper;
-                            results = "";
-                            for (int i = 0; i < subresults.Length; ++i)
-                            {
-                                results += subresults[i];
-                                if (i != subresults.Length - 1)
-                                {
-                                    results += ",";
-                                }
-                            }
-
-                            SQLCommand = "UPDATE Girone SET Results='" + results + "' WHERE PlayerID=" + player1ID;
-                            gironeADb.Database.ExecuteSqlCommand(SQLCommand);
-
-                            if (helper == "1")
-                            {
-                                helper = "0";
-                            }
-                            else if (helper == "0")
-                            {
-                                helper = "1";
-                            }
-                            else
-                            {
-                                helper = "x";
-                            }
-
-                            prevResults = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
-                            subresults = prevResults.Split(",");
-                            subresults[player1GroupID - 1] = helper;
-                            results = "";
-                            for (int i = 0; i < subresults.Length; ++i)
-                            {
-                                results += subresults[i];
-                                if (i != subresults.Length - 1)
-                                {
-                                    results += ",";
-                                }
-                            }
-
-                            SQLCommand = "UPDATE Girone SET Results='" + results + "' WHERE PlayerID=" + player2ID;
-                            gironeADb.Database.ExecuteSqlCommand(SQLCommand);
-
-                            res += Strings.insertedResult + Strings.checkResults;
                         }
                         else
                         {
-                            res += Strings.inserisciInvalidResult;
+                            res += Strings.inserisciInvalidGroup;
                         }
                     }
                     else
