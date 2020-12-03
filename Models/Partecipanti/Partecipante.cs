@@ -10,5 +10,6 @@ namespace avenabot.Models.Partecipanti
         public string LichessID { get; set; }
         public string TGID { get; set; }
         public int ELO { get; set; }
+        public string Girone { get; set; }
     }
 }

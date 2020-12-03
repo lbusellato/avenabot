@@ -4,9 +4,9 @@ using System.Data.Entity.SqlServer;
 
 namespace avenabot
 {
-    public class GironeADbConfiguration : DbConfiguration
+    public class GironeDbConfiguration : DbConfiguration
     {
-        public GironeADbConfiguration()
+        public GironeDbConfiguration()
         {
             SetExecutionStrategy("System.Data.SqlClient", () => new SqlAzureExecutionStrategy());
             SetDefaultConnectionFactory(new LocalDbConnectionFactory("mssqllocaldb"));

@@ -40,7 +40,7 @@
 
         public static string welcomeMsg = "Ciao! Sono AvenaChessBot e gestirò i Tornei Avenoni Scacchisti.\nUsa /help per visualizzare i comandi disponibili, oppure usa /torneo per visualizzare informazioni sul torneo";
         public static string saywhat = "Non ho capito, usa /help per vedere la lista dei comandi disponibili.";
-        public static string partecipantiHeader = "Elenco partecipanti:\nID Torneo - ID Lichess - ID Telegram - ELO\n";
+        public static string partecipantiHeader = "Elenco partecipanti:\nID Torneo - Lichess - Telegram - ELO - Girone\n";
         public static string lichess404 = "L'ID Lichess che hai inserito non sembra esistere, controlla di averlo scritto giusto.";
         public static string errorContact = " Se credi sia un errore contatta @lbusellato";
         public static string registered = "Ti ho iscritto!";
@@ -53,8 +53,8 @@
         public static string notRegistered = "Non mi sembra che tu sia iscritto!";
         public static string removedAdmin = "Giocatore rimosso!";
         public static string removed = "Ti ho rimosso!";
-        public static string groupSeeded = "Girone popolato.";
-        public static string groupAlreadySeeded = "Il girone risulta già popolato!";
+        public static string groupsSeeded = "Gironi popolati.";
+        public static string groupsAlreadySeeded = "I gironi risultano già popolati!";
         public static string torneoInfo = "Il Torneo Avenoni Scacchisti 2: Episodio 2 inizierà il dd/mm/yy." + 
             "Le iscrizioni, tramite il comando /iscrivimi, saranno aperte fino al dd/mm/yy. I partecipanti" +
             " saranno divisi in base all'ELO Rapid in tre gironi preliminari all'italiana da 8 giocatori, nei quali" +
@@ -68,8 +68,14 @@
         public static string inserisciInvalidResult = "Il risultato immesso non è corretto, i risultati accettati sono 1 (vittoria giocatore 1), 2 (vittoria giocatore 2) e x (pareggio).";
         public static string checkResults = " Usa /risultati per vedere il tabellone dei risultati.";
         public static string insertedResult = "Risultato inserito correttamente.";
-        public static string risultatiHeader = "<pre>Risultati girone A:\n&#32&#32 ";
-        public static string classificaHeader1 = "Classifica Girone A:\nID";
+        public static string risultatiHeaderA = "<pre>Risultati girone A:\n&#32&#32 ";
+        public static string risultatiHeaderB = "<pre>Risultati girone B:\n&#32&#32 ";
+        public static string risultatiHeaderC = "<pre>Risultati girone C:\n&#32&#32 ";
+        public static string classificaHeader1A = "Classifica Girone A:\nID";
+        public static string classificaHeader1B = "Classifica Girone B:\nID";
+        public static string classificaHeader1C = "Classifica Girone C:\nID";
         public static string classificaHeader2 = "G: 1 2 3 4 5 6 7 P\n";
+        public static string errorNotSeeded = "Errore: i gironi non risultano popolati.";
+        public static string internalError = "ERRORE INTERNO, CONTATTA @lbusellato, CODICE ERRORE:";
     }
 }
