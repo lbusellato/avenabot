@@ -78,5 +78,6 @@
         public static string errorNotSeeded = "Errore: i gironi non risultano popolati.";
         public static string internalError = "ERRORE INTERNO, CONTATTA @lbusellato, CODICE ERRORE:";
         public static string inserisciInvalidGroup = "I giocatori che hai immesso non sembrano essere nello stesso girone, prova a ricontrollare.";
+        public static string alreadyInserted = "Ho già un risultato registrato per questa partita.";
     }
 }

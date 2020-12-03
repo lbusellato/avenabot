@@ -647,6 +647,12 @@ namespace avenabot.Interpreter
             return res;
         }
 
+        /// <summary>
+        /// Blanket method to fetch the specified group results
+        /// </summary>
+        /// <param name="Group"></param>
+        /// <param name="MaxPlayers"></param>
+        /// <returns></returns>
         private string FetchGroupResults(int Group, int MaxPlayers)
         {
             string results;
@@ -820,7 +826,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string ClassificaCommand(int MaxPlayers)
         {
-            //TODO: Dinamically generate standings header
             string res = "";
             string[] subresults;
 
@@ -1154,7 +1159,6 @@ namespace avenabot.Interpreter
                                     player2GroupID = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).ID;
                                 }
 
-
                                 if (groupID == 0)
                                 {
                                     prevResults = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).Results;
@@ -1168,83 +1172,100 @@ namespace avenabot.Interpreter
                                     prevResults = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == player1ID).Results;
                                 }
                                 subresults = prevResults.Split(",");
-                                subresults[player2GroupID - 1] = helper;
-                                results = "";
-                                for (int i = 0; i < subresults.Length; ++i)
+
+                                if (subresults[player2GroupID - 1] == "-1")
                                 {
-                                    results += subresults[i];
-                                    if (i != subresults.Length - 1)
+                                    subresults[player2GroupID - 1] = helper;
+                                    results = "";
+                                    for (int i = 0; i < subresults.Length; ++i)
                                     {
-                                        results += ",";
+                                        results += subresults[i];
+                                        if (i != subresults.Length - 1)
+                                        {
+                                            results += ",";
+                                        }
                                     }
-                                }
 
-                                SQLCommand = "UPDATE Girone SET Results='" + results + "' WHERE PlayerID=" + player1ID;
-                                if (groupID == 0)
-                                {
-                                    gironeADb.Database.ExecuteSqlCommand(SQLCommand);
-                                }
-                                else if (groupID == 1)
-                                {
-                                    gironeBDb.Database.ExecuteSqlCommand(SQLCommand);
-                                }
-                                else
-                                {
-                                    gironeCDb.Database.ExecuteSqlCommand(SQLCommand);
-                                }
-
-                                if (helper == "1")
-                                {
-                                    helper = "0";
-                                }
-                                else if (helper == "0")
-                                {
-                                    helper = "1";
-                                }
-                                else
-                                {
-                                    helper = "x";
-                                }
-
-                                if (groupID == 0)
-                                {
-                                    prevResults = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
-                                }
-                                else if (groupID == 1)
-                                {
-                                    prevResults = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
-                                }
-                                else
-                                {
-                                    prevResults = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
-                                }
-                                subresults = prevResults.Split(",");
-                                subresults[player1GroupID - 1] = helper;
-                                results = "";
-                                for (int i = 0; i < subresults.Length; ++i)
-                                {
-                                    results += subresults[i];
-                                    if (i != subresults.Length - 1)
+                                    SQLCommand = "UPDATE Girone SET Results='" + results + "' WHERE PlayerID=" + player1ID;
+                                    if (groupID == 0)
                                     {
-                                        results += ",";
+                                        gironeADb.Database.ExecuteSqlCommand(SQLCommand);
                                     }
-                                }
+                                    else if (groupID == 1)
+                                    {
+                                        gironeBDb.Database.ExecuteSqlCommand(SQLCommand);
+                                    }
+                                    else
+                                    {
+                                        gironeCDb.Database.ExecuteSqlCommand(SQLCommand);
+                                    }
 
-                                SQLCommand = "UPDATE Girone SET Results='" + results + "' WHERE PlayerID=" + player2ID;
-                                if (groupID == 0)
-                                {
-                                    gironeADb.Database.ExecuteSqlCommand(SQLCommand);
-                                }
-                                else if (groupID == 1)
-                                {
-                                    gironeBDb.Database.ExecuteSqlCommand(SQLCommand);
+                                    if (helper == "1")
+                                    {
+                                        helper = "0";
+                                    }
+                                    else if (helper == "0")
+                                    {
+                                        helper = "1";
+                                    }
+                                    else
+                                    {
+                                        helper = "x";
+                                    }
+
+                                    if (groupID == 0)
+                                    {
+                                        prevResults = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
+                                    }
+                                    else if (groupID == 1)
+                                    {
+                                        prevResults = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
+                                    }
+                                    else
+                                    {
+                                        prevResults = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == player2ID).Results;
+                                    }
+                                    subresults = prevResults.Split(",");
                                 }
                                 else
                                 {
-                                    gironeCDb.Database.ExecuteSqlCommand(SQLCommand);
+                                    res += Strings.alreadyInserted + Strings.errorContact;
+                                    return res;
                                 }
+                                if (subresults[player1GroupID - 1] == "-1")
+                                {
+                                    subresults[player1GroupID - 1] = helper;
+                                    results = "";
+                                    for (int i = 0; i < subresults.Length; ++i)
+                                    {
+                                        results += subresults[i];
+                                        if (i != subresults.Length - 1)
+                                        {
+                                            results += ",";
+                                        }
+                                    }
 
-                                res += Strings.insertedResult + Strings.checkResults;
+                                    SQLCommand = "UPDATE Girone SET Results='" + results + "' WHERE PlayerID=" + player2ID;
+                                    if (groupID == 0)
+                                    {
+                                        gironeADb.Database.ExecuteSqlCommand(SQLCommand);
+                                    }
+                                    else if (groupID == 1)
+                                    {
+                                        gironeBDb.Database.ExecuteSqlCommand(SQLCommand);
+                                    }
+                                    else
+                                    {
+                                        gironeCDb.Database.ExecuteSqlCommand(SQLCommand);
+                                    }
+
+                                    res += Strings.insertedResult + Strings.checkResults;
+                                }
+                                else
+                                {
+                                    res += Strings.alreadyInserted + Strings.errorContact;
+                                    return res;
+                                }
                             }
                             else
                             {
@@ -1351,6 +1372,11 @@ namespace avenabot.Interpreter
             }   
         }
 
+        /// <summary>
+        /// Check if the message sender is an admin
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         private bool IsAdmin(string username)
         {
             bool res = false;
