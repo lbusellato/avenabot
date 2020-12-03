@@ -38,7 +38,7 @@
         public static string risultatiUsage = "Il giocatore o il girone specificati non sono validi! Controlla di aver scritto giusto.\nUtilizzo:\n/risultati\nMostra i risultati di entrambi i gironi.\n/risultati IDGirone (A o B)\nMostra i risultati del girone specificato.\n/risultati IDLichess\nMostra i risultati del giocatore specificato.";
         public static string inserisciUsage = "Utilizzo:\n/inserisci Giocatore1 Giocatore2 Risultato\nRisultato può essere 1 per vittoria del giocatore 1, 2 per vittoria del giocatore 2 o x per un pareggio.";
 
-        public static string welcomeMsg = "Ciao! Sono il Bot che gestisce il Torneo Avenoni Scacchisti.\nUsa /help per visualizzare i comandi disponibili, oppure usa /torneo per visualizzare informazioni sul torneo";
+        public static string welcomeMsg = "Ciao! Sono AvenaChessBot e gestirò i Tornei Avenoni Scacchisti.\nUsa /help per visualizzare i comandi disponibili, oppure usa /torneo per visualizzare informazioni sul torneo";
         public static string saywhat = "Non ho capito, usa /help per vedere la lista dei comandi disponibili.";
         public static string partecipantiHeader = "Elenco partecipanti:\nID Torneo - ID Lichess - ID Telegram - ELO\n";
         public static string lichess404 = "L'ID Lichess che hai inserito non sembra esistere, controlla di averlo scritto giusto.";

@@ -11,6 +11,7 @@ namespace avenabot.Interpreter
 {
     public class Interpreter
     {
+        //TODO: Migrate from using identity column as players/group IDs to implement dynamic player management in groups
         private static PartecipantiDbContext partecipantiDb = new PartecipantiDbContext();
         private static GironeADbContext gironeADb = new GironeADbContext();
 
@@ -614,7 +615,7 @@ namespace avenabot.Interpreter
                 {
                     if (subresults[i] == "x")
                     {
-                        stg.Games[i] = "&#189 ";
+                        stg.Games[i] = "&#189;";
                         stg.Tot += 0.5;
                     }
                     else
@@ -632,7 +633,7 @@ namespace avenabot.Interpreter
                 }
                 standings.Add(stg);
             }
-            standings.OrderBy(s => s.Tot);
+            standings = standings.OrderByDescending(s => s.Tot).ToList();
             res += "<pre>" + Strings.classificaHeader1;
             for (int i = 0; i < maxLen - 4; ++i)
             {
@@ -648,21 +649,29 @@ namespace avenabot.Interpreter
                     res += " ";
                 }
                 res += " ";
+                string[] test = s.Games;
                 for (int i = 0; i < s.Games.Length; ++i)
                 {
                     if (s.Games[i] != null)
                     {
-                        res += s.Games[i];
+                        res += s.Games[i] + " ";
                         gamesPlayed++;
                     }
                 }
-                for (int i = 0; i < 13 - gamesPlayed; ++i)
+                for (int i = 0; i < 2 * (7- gamesPlayed) - 1; ++i)
                 {
                     res += " ";
                 }
-                if (s.Tot == 0.5) //TODO Check decimal in general
+                if (s.Tot % 1 != 0)
                 {
-                    res += "&#189 \n";
+                    if((int)s.Tot == 0)
+                    {
+                        res += "&#189 \n";
+                    }
+                    else
+                    {
+                        res += " " + (int)s.Tot + "&#189 \n";
+                    }
                 }
                 else
                 {
@@ -762,7 +771,7 @@ namespace avenabot.Interpreter
                         }
                         else
                         {
-                            helper = "&#189 ";
+                            helper = "x";
                         }
 
                         prevResults = gironeADb.GironeA.SingleOrDefault(g => g.PlayerID == player2ID).Results;
