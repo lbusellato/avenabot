@@ -38,6 +38,7 @@
 
         public static string iscrivimiUsage = "Utilizzo: /iscrivimi IDLichess";
         public static string iscrivimiUsage2 = "Usa /iscrivimi IDLichess per riiscriverti";
+        public static string iscrivimiUsage3 = "Usa /iscrivimi IDLichess per iscriverti";
         public static string rimuoviUsage = "Utilizzo: /rimuovi IDLichess";
         public static string aggiungiUsage = "Utilizzo: /aggiungi IDLichess IDTelegram";
         public static string risultatiUsage = "Il giocatore o il girone specificati non sono validi! Controlla di aver scritto giusto.\nUtilizzo:\n/risultati\nMostra i risultati di entrambi i gironi.\n/risultati IDGirone (A o B)\nMostra i risultati del girone specificato.\n/risultati IDLichess\nMostra i risultati del giocatore specificato.";
@@ -91,5 +92,9 @@
         public static string partiteHeaderB = "Partite Girone B:\n";
         public static string partiteHeaderC = "Partite Girone C:\n";
         public static string noGames = "Il giocatore specificato deve ancora giocare una partita.";
+        public static string notYetSeededGroups = "I gironi non sono ancora stati generati perché non ci sono partecipanti iscritti. ";
+        public static string notYetSeededGames = "Le partite non sono ancora state generate perché non ci sono partecipanti iscritti. ";
+        public static string notYetSeededStandings = "Le classifiche non sono ancora state generate perché non ci sono partecipanti iscritti. ";
+        public static string resultsDisclaimer = "NB: per migliorare la visualizzazione i giocatori sono riportati con il loro ID torneo, che puoi visualizzare con il comando /partecipanti.";
     }
 }

@@ -12,7 +12,8 @@ namespace avenabot.Interpreter
     public class Interpreter
     {
         //TODO: Migrate from using identity column as players/group IDs to implement dynamic player management in groups
-        //TODO: Generate and show pairings
+        //HOW? Make a new groupID field in group db, replace all usage of identity column with new field and make so that
+        //if a player is removed the field for the following players is decreased by one
         private static PartecipantiDbContext partecipantiDb = new PartecipantiDbContext();
         private static GironeADbContext gironeADb = new GironeADbContext();
         private static GironeBDbContext gironeBDb = new GironeBDbContext();
@@ -20,7 +21,7 @@ namespace avenabot.Interpreter
 
         public string[] admin = new string[]
         {
-            "lbusellato"
+            "albusellato"
         };
 
         public bool[] adminCommands = new bool[]
@@ -33,6 +34,7 @@ namespace avenabot.Interpreter
             false,
             true,
             true,
+            false,
             false,
             false,
             false,
@@ -498,6 +500,11 @@ namespace avenabot.Interpreter
             string[] subresults;
             string[] subs;
             int maxLen = 0;
+            if (gironeADb.Girone.SingleOrDefault(g => g.ID == 1) == null)
+            {
+                res += Strings.notYetSeededGroups + Strings.iscrivimiUsage3;
+                return res;
+            }
 
             subs = message.Split(' ');
             if (subs.Length == 1) //All groups
@@ -519,7 +526,7 @@ namespace avenabot.Interpreter
                 {
                     res += "-";
                 }
-                res += "\n";
+                res += "\n" + Strings.resultsDisclaimer + "\n";
             }
             else if (subs.Length == 2)
             {
@@ -528,14 +535,17 @@ namespace avenabot.Interpreter
                     if (subs[1] == "A")
                     {
                         res += FetchGroupResults(0, MaxPlayers);
+                        res += "\n" + Strings.resultsDisclaimer + "\n";
                     }
                     else if (subs[1] == "B")
                     {
                         res += FetchGroupResults(1, MaxPlayers);
+                        res += "\n" + Strings.resultsDisclaimer + "\n";
                     }
                     else
                     {
                         res += FetchGroupResults(2, MaxPlayers);
+                        res += "\n" + Strings.resultsDisclaimer + "\n";
                     }
                 }
                 else //One player
@@ -841,6 +851,13 @@ namespace avenabot.Interpreter
 
             //Find out the longest opponents name to nicely format the results
             int maxLen = 0;
+
+
+            if (gironeADb.Girone.SingleOrDefault(g => g.ID == 1) == null)
+            {
+                res += Strings.notYetSeededStandings + Strings.iscrivimiUsage3;
+                return res;
+            }
 
             for (int j = 0; j < 3; ++j)
             {
@@ -1499,6 +1516,11 @@ namespace avenabot.Interpreter
             string p1Lichess;
             string p2Lichess;
             string link;
+            if(gironeADb.Girone.SingleOrDefault(g => g.ID == 1) == null)
+            {
+                res += Strings.notYetSeededGames + Strings.iscrivimiUsage3;
+                return res;
+            }
             if(subs.Length == 1) // /partite
             {
                 for (int i = 0; i < 3; ++i)
