@@ -18,6 +18,7 @@
         public static string inserisciCommand = "/inserisci";
         public static string torneoCommand = "/torneo";
         public static string partiteCommand = "/partite";
+        public static string miePartiteCommand = "/miepartite";
 
         public static string startDescr = "";
         public static string helpDescr = "Mostra questa lista";
@@ -32,6 +33,8 @@
         public static string inserisciDescr = "Inserisci il risultato di una partita.\nUtilizzo:\n/inserisci 'Avversario'\n Al posto di 'avversario' scrivi l'id Lichess del tuo avversario, mi occuperò io di recuperare il risultato.";
         public static string torneoDescr = "Visualizza informazioni sul torneo";
         public static string partiteDescr = "Mostra la lista, con i link a Lichess, delle partite giocate finora.\nUtilizzo:\n/partite\nMostra tutte le partite di tutti i gironi.\n/partite (A B o C)\nMostra le partite del girone specificato.\n/partite IDLichess\nMostra le partite del giocatore specificato.";
+        public static string miePartiteDescr = "Mostra la lista di partite che devi ancora giocare con il colore che dovrai usare.";
+
 
         public static string iscrivimiUsage = "Utilizzo: /iscrivimi IDLichess";
         public static string iscrivimiUsage2 = "Usa /iscrivimi IDLichess per riiscriverti";

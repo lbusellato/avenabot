@@ -12,6 +12,7 @@ namespace avenabot.Interpreter
     public class Interpreter
     {
         //TODO: Migrate from using identity column as players/group IDs to implement dynamic player management in groups
+        //TODO: Generate and show pairings
         private static PartecipantiDbContext partecipantiDb = new PartecipantiDbContext();
         private static GironeADbContext gironeADb = new GironeADbContext();
         private static GironeBDbContext gironeBDb = new GironeBDbContext();
@@ -54,6 +55,7 @@ namespace avenabot.Interpreter
             Strings.inserisciCommand, //Insert a game result
             Strings.torneoCommand, //Show tournament info
             Strings.partiteCommand, //Show games list
+            Strings.miePartiteCommand, //Show games to play
         };
 
         public string[] commandDescr = new string[]
@@ -71,6 +73,7 @@ namespace avenabot.Interpreter
             Strings.inserisciDescr,
             Strings.torneoDescr,
             Strings.partiteDescr,
+            Strings.miePartiteDescr,
         };
 
         public Interpreter() { }
@@ -120,6 +123,8 @@ namespace avenabot.Interpreter
                 11 => TorneoCommand(),
                 // /partite
                 12 => PartiteCommand(message),
+                // /miepartite
+                13 => MiePartiteCommand(message, sender),
                 _ => NoCommand(),
             };
             gironeADb.Dispose();
@@ -1128,7 +1133,7 @@ namespace avenabot.Interpreter
                         if (groupIDp1 != -1 && groupIDp2 != -1 && groupIDp2 == groupIDp1)
                         {
                             groupID = groupIDp1;
-                            string[] elab = PullLatestResult(p2.LichessID);
+                            string[] elab = PullLatestResult(p1.LichessID);
                             helper = elab[0];
                             //Push the game link to the games db
                             //Push the result to the group db
@@ -1657,6 +1662,125 @@ namespace avenabot.Interpreter
             else
             {
                 res += Strings.partiteUsage;
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Shows the list of games the sender has yet to play
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <returns></returns>
+        private string MiePartiteCommand(string message, string sender)
+        {
+            if (IsAdmin(sender))
+            {
+                string[] submessage = message.Split(" ");
+                if (submessage.Length == 2)
+                {
+                    sender = submessage[1];
+                }
+            }
+            string res = "";
+            Partecipante p = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID.ToLower() == sender.ToLower());
+            if(p != null)
+            {
+                string lichessID = p.LichessID;
+                Girone checkA = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == p.ID);
+                Girone checkB = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == p.ID);
+                Girone checkC = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == p.ID);
+                int groupID = (checkA != null) ? 0 : (checkB != null) ? 1 : (checkC != null) ? 2 : -1;
+                int pGroupID;
+                if (groupID != -1)
+                {
+                    List<string> opponents = new List<string>();
+                    string results;
+                    string[] subresults;
+                    if(groupID == 0)
+                    {
+                        pGroupID = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == p.ID).ID;
+                        foreach (Girone g in gironeADb.Girone)
+                        {
+                            if(g.PlayerID != p.ID)
+                            {
+                                results = g.Results;
+                                subresults = results.Split(",");
+                                if(subresults[pGroupID - 1] == "-1")
+                                {
+                                    opponents.Add(partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == g.PlayerID).LichessID);
+                                }
+                            }
+                        }
+                    }
+                    else if(groupID == 1)
+                    {
+                        pGroupID = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == p.ID).ID;
+                        foreach (Girone g in gironeBDb.Girone)
+                        {
+                            if (g.PlayerID != p.ID)
+                            {
+                                results = g.Results;
+                                subresults = results.Split(",");
+                                if (subresults[pGroupID - 1] == "-1")
+                                {
+                                    opponents.Add(partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == g.PlayerID).LichessID);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        pGroupID = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == p.ID).ID;
+                        foreach (Girone g in gironeCDb.Girone)
+                        {
+                            if (g.PlayerID != p.ID)
+                            {
+                                results = g.Results;
+                                subresults = results.Split(",");
+                                if (subresults[pGroupID - 1] == "-1")
+                                {
+                                    opponents.Add(partecipantiDb.Partecipanti.SingleOrDefault(p => p.ID == g.PlayerID).LichessID);
+                                }
+                            }
+                        }
+                    }
+                    res += "Devi ancora giocare contro:\n";
+                    for(int i = 0; i < opponents.Count; ++i)
+                    {
+                        res += opponents.ElementAt(i);
+                        res += ", giochi con il ";
+                        if(pGroupID % 2 == 0)
+                        {
+                            if(i % 2 == 0)
+                            {
+                                res += "bianco\n";
+                            }
+                            else
+                            {
+                                res += "nero\n";
+                            }
+                        }
+                        else
+                        {
+                            if (i % 2 == 0)
+                            {
+                                res += "nero\n";
+                            }
+                            else
+                            {
+                                res += "bianco\n";
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    res += Strings.notRegistered + Strings.errorContact;
+                }
+            }
+            else
+            {
+                res += Strings.notRegistered + Strings.errorContact;
             }
             return res;
         }
