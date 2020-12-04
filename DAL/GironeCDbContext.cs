@@ -15,6 +15,7 @@ namespace avenabot.DAL
         }
 
         public DbSet<Girone> Girone { get; set; }
+        public DbSet<Game> Partite { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

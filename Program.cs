@@ -42,7 +42,8 @@ namespace Awesome
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
                         text: res,
-                        parseMode: ParseMode.Html
+                        parseMode: ParseMode.Html,
+                        true
                     );
                 }
             }
