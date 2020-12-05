@@ -7,5 +7,7 @@ namespace avenabot.Models.Gironi
         public int PlayerID { get; set; }
         public string Results { get; set; }
 
+        public int GID { get; set; }
+
     }
 }

@@ -5,11 +5,11 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 namespace avenabot.DAL
 {
     [DbConfigurationType(typeof(GironeDbConfiguration))]
-    public class GironeADbContext : DbContext
+    public class GironeFDbContext : DbContext
     {
-        public static string connString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\loren\\Documents\\GironeA.mdf;Integrated Security = True; Connect Timeout = 30";
+        public static string connString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\loren\\Documents\\GironeF.mdf;Integrated Security = True; Connect Timeout = 30";
 
-        public GironeADbContext() : base(connString)
+        public GironeFDbContext() : base(connString)
         {
             //Database.SetInitializer(new MigrateDatabaseToLatestVersion<GironeADbContext, avenabot.Migrations.GironeAMigrations.Configuration>());
         }

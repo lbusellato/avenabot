@@ -1,0 +1,1 @@
+﻿DBCC CHECKIDENT('Girone', RESEED, 0);

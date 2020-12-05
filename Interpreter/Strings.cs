@@ -29,7 +29,7 @@
         public static string aggiungiDescr = "Aggiunge il giocatore specificato\nUtilizzo: /aggiungi IDLichess IDTelegram";
         public static string seedDescr = "Popola il girone\nUtilizzo: /seed";
         public static string risultatiDescr = "Mostra i risultati delle partite.\nUtilizzo:\n/risultati\nMostra i risultati di entrambi i gironi.\n/risultati (A B o C)\nMostra i risultati del girone specificato.\n/risultati IDLichess\nMostra i risultati del giocatore specificato.";
-        public static string classificaDescr = "Mostra le classifiche.\nUtilizzo:\n/classifica\nMostra le classifiche di entrambi i gironi.\n/classifica (A B o C)\nMostra la classifica del girone specificato.";
+        public static string classificaDescr = "Mostra le classifiche.";
         public static string inserisciDescr = "Inserisci il risultato di una partita.\nUtilizzo:\n/inserisci 'Avversario'\n Al posto di 'avversario' scrivi l'id Lichess del tuo avversario, mi occuperò io di recuperare il risultato.";
         public static string torneoDescr = "Visualizza informazioni sul torneo";
         public static string partiteDescr = "Mostra la lista, con i link a Lichess, delle partite giocate finora.\nUtilizzo:\n/partite\nMostra tutte le partite di tutti i gironi.\n/partite (A B o C)\nMostra le partite del girone specificato.\n/partite IDLichess\nMostra le partite del giocatore specificato.";
@@ -61,7 +61,9 @@
         public static string removedAdmin = "Giocatore rimosso!";
         public static string removed = "Ti ho rimosso!";
         public static string groupsSeeded = "Gironi popolati.";
+        public static string finalGroupSeeded = "Girone finale popolato.";
         public static string groupsAlreadySeeded = "I gironi risultano già popolati!";
+        public static string finalGroupAlreadySeeded = "Il girone finale risulta già popolato!";
         public static string torneoInfo = "Il Torneo Avenoni Scacchisti 2: Episodio 2 inizierà il dd/mm/yy." + 
             "Le iscrizioni, tramite il comando /iscrivimi, saranno aperte fino al dd/mm/yy. I partecipanti" +
             " saranno divisi in base all'ELO Rapid in tre gironi preliminari all'italiana da 8 giocatori, nei quali" +
@@ -79,9 +81,11 @@
         public static string risultatiHeaderA = "<pre>Risultati girone A:\n&#32&#32 ";
         public static string risultatiHeaderB = "<pre>Risultati girone B:\n&#32&#32 ";
         public static string risultatiHeaderC = "<pre>Risultati girone C:\n&#32&#32 ";
+        public static string risultatiHeaderF = "<pre>Risultati girone finale:\n&#32&#32 ";
         public static string classificaHeader1A = "Classifica Girone A:\nID";
         public static string classificaHeader1B = "Classifica Girone B:\nID";
         public static string classificaHeader1C = "Classifica Girone C:\nID";
+        public static string classificaHeader1F = "Classifica Girone Finale:\nID";
         public static string classificaHeader2 = "G:";
         public static string errorNotSeeded = "Errore: i gironi non risultano popolati.";
         public static string internalError = "ERRORE INTERNO, CONTATTA @lbusellato, CODICE ERRORE:";
@@ -92,9 +96,11 @@
         public static string partiteHeaderB = "Partite Girone B:\n";
         public static string partiteHeaderC = "Partite Girone C:\n";
         public static string noGames = "Il giocatore specificato deve ancora giocare una partita.";
-        public static string notYetSeededGroups = "I gironi non sono ancora stati generati perché non ci sono partecipanti iscritti. ";
-        public static string notYetSeededGames = "Le partite non sono ancora state generate perché non ci sono partecipanti iscritti. ";
-        public static string notYetSeededStandings = "Le classifiche non sono ancora state generate perché non ci sono partecipanti iscritti. ";
+        public static string notYetSeededGroups = "I gironi non sono ancora stati generati. ";
+        public static string notYetSeededGames = "Le partite non sono ancora state generate. ";
+        public static string notYetSeededStandings = "Le classifiche non sono ancora state generate. ";
         public static string resultsDisclaimer = "NB: per migliorare la visualizzazione i giocatori sono riportati con il loro ID torneo, che puoi visualizzare con il comando /partecipanti.";
+        public static string notEnoughPlayers = "Non posso popolare i gironi perché non ci sono abbastanza giocatori iscritti!";
+        public static string notYetPlayedGames = "Non è stata ancora giocata nessuna partita.";
     }
 }
