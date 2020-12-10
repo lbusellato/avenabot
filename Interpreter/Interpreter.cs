@@ -1252,7 +1252,12 @@ namespace avenabot.Interpreter
                     "F" => 3,
                     _ => 2,
                 };
-                string[] elab = PullLatestResult(p1.LichessID);
+                string[] elab = PullLatestResult(p1.LichessID, p2.LichessID);
+                if(elab[0] == "-1")
+                {
+                    res += Strings.gameNotFound;
+                    return res;
+                }
                 helper = elab[0];
                 //Push the game link to the games db
                 //Push the result to the group db
@@ -1855,20 +1860,30 @@ namespace avenabot.Interpreter
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        private string[] PullLatestResult(string player)
+        private string[] PullLatestResult(string player, string opponent)
         {
             //FINAL
             string[] res = new string[2];
+            res[0] = "-1";
+            res[1] = "";
             string downloadString;
+            int i = 0;
+            int j = 0;
             WebClient client = new WebClient();
 
-            downloadString = client.DownloadString("https://lichess.org/@/" + player + "/search?perf=6");
-            int i = downloadString.IndexOf("<article");
-            int j = downloadString.IndexOf("article>");
+            downloadString = client.DownloadString("https://lichess.org/@/mattiatrucco/search?perf=6&players.a=" + player + "&players.b=" + opponent + "&sort.field=d&sort.order=desc");
+
+            i = downloadString.IndexOf("<article");
+            j = downloadString.IndexOf("article>");
+            if(i == -1)
+            {
+                return res;
+            }
             string substring = downloadString[i..j];
             string link = substring.Substring(substring.IndexOf("href") + 7, substring.IndexOf("></a>") - substring.IndexOf("href") - 8);
-            res[1] = "https://lichess.org/" + link;
             int result = substring.IndexOf("<span class=\"loss\">") == -1 ? substring.IndexOf("<span class=\"win\">") == -1 ? -1 : 1 : 0;
+
+            res[1] = "lichess.org/" + link;
             if (result == -1)
             {
                 res[0] = "x";

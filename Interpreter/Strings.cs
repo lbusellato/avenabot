@@ -102,5 +102,6 @@
         public static string resultsDisclaimer = "NB: per migliorare la visualizzazione i giocatori sono riportati con il loro ID torneo, che puoi visualizzare con il comando /partecipanti.";
         public static string notEnoughPlayers = "Non posso popolare i gironi perché non ci sono abbastanza giocatori iscritti!";
         public static string notYetPlayedGames = "Non è stata ancora giocata nessuna partita.";
+        public static string gameNotFound = "Non ho trovato tue partite con l'avversario che hai specificato, ricontrolla per favore.";
     }
 }
