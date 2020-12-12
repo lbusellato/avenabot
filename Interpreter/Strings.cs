@@ -19,6 +19,7 @@
         public static string torneoCommand = "/torneo";
         public static string partiteCommand = "/partite";
         public static string miePartiteCommand = "/miepartite";
+        public static string vincitoreCommand = "/vincitore";
 
         public static string startDescr = "";
         public static string helpDescr = "Mostra questa lista";
@@ -34,7 +35,7 @@
         public static string torneoDescr = "Visualizza informazioni sul torneo";
         public static string partiteDescr = "/partite {A/B/C}\nMostra le partite del girone specificato.";
         public static string miePartiteDescr = "Mostra la lista di partite che devi ancora giocare con il colore che dovrai usare.";
-
+        public static string vincitoreDescr = "";
 
         public static string iscrivimiUsage = "Utilizzo: /iscrivimi IDLichess";
         public static string iscrivimiUsage2 = "Usa /iscrivimi IDLichess per riiscriverti";
@@ -103,5 +104,8 @@
         public static string notEnoughPlayers = "Non posso popolare i gironi perché non ci sono abbastanza giocatori iscritti!";
         public static string notYetPlayedGames = "Non è stata ancora giocata nessuna partita.";
         public static string gameNotFound = "Non ho trovato tue partite con l'avversario che hai specificato, ricontrolla per favore.";
+        public static string winner1 = "Complimenti a ";
+        public static string winner2 = "vincitore del ";
+        public static string tournamentName = "Torneo Avenoni Scacchisti 2: Episodio II";
     }
 }

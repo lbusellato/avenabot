@@ -20,7 +20,7 @@ namespace avenabot.Interpreter
 
         public string[] admin = new string[]
         {
-            "lbusellato"
+            "albusellato"
         };
 
         public bool[] adminCommands = new bool[]
@@ -39,6 +39,7 @@ namespace avenabot.Interpreter
             false,
             false,
             false,
+            true,
         };
 
         public string[] commandList = new string[]
@@ -57,6 +58,7 @@ namespace avenabot.Interpreter
             Strings.torneoCommand, //Show tournament info
             Strings.partiteCommand, //Show games list
             Strings.miePartiteCommand, //Show games to play
+            Strings.vincitoreCommand, //Declare winner
         };
 
         public string[] commandDescr = new string[]
@@ -75,6 +77,7 @@ namespace avenabot.Interpreter
             Strings.torneoDescr,
             Strings.partiteDescr,
             Strings.miePartiteDescr,
+            Strings.vincitoreDescr,
         };
 
         public Interpreter() { }
@@ -86,7 +89,8 @@ namespace avenabot.Interpreter
             public double Tot { get; set; }
         }
 
-        private readonly DateTime finalsDate = new DateTime(2020, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
+        private readonly DateTime finalsDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
+        private readonly DateTime endDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to end the tournament
 
         public string Parse(MessageEventArgs e)
         {
@@ -131,6 +135,8 @@ namespace avenabot.Interpreter
                 12 => PartiteCommand(message),
                 // /miepartite
                 13 => MiePartiteCommand(message, sender),
+                // /vincitore
+                14 => VincitoreCommand(sender),
                 _ => NoCommand(),
             };
             gironeADb.Dispose();
@@ -1731,6 +1737,52 @@ namespace avenabot.Interpreter
                     }
                 }
             }
+            return res;
+        }
+
+        private string VincitoreCommand(string sender)
+        {
+            string res = "";
+            string[] subresults;
+            if(!IsAdmin(sender) || DateTime.Now < endDate)
+            {
+                return res;
+            }
+            List<Standing> standings = new List<Standing>();
+
+            foreach (Girone g in gironeFDb.Girone)
+            {
+                Standing stg = new Standing
+                {
+                    ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID
+                };
+                subresults = g.Results.Split(",");
+                stg.Games = new string[subresults.Length];
+                stg.Tot = 0;
+                for (int i = 0; i < subresults.Length; ++i)
+                {
+                    if (subresults[i] == "x")
+                    {
+                        stg.Games[i] = "&#189;";
+                        stg.Tot += 0.5;
+                    }
+                    else
+                    {
+                        if (subresults[i] == "1")
+                        {
+                            stg.Games[i] = subresults[i];
+                            stg.Tot += 1;
+                        }
+                        else if (subresults[i] == "0")
+                        {
+                            stg.Games[i] = subresults[i];
+                        }
+                    }
+                }
+                standings.Add(stg);
+            }
+            standings = standings.OrderByDescending(s => s.Tot).ToList();
+            res = standings.First().ID;
             return res;
         }
 
