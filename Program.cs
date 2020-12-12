@@ -12,10 +12,12 @@ namespace Awesome
     {
         static ITelegramBotClient botClient;
 
+        public static DateTime lastCommand;
         public static Interpreter interpreter = new Interpreter();
 
         static void Main()
         {
+            lastCommand = DateTime.Now.AddMinutes(-5);
             botClient = new TelegramBotClient("1444146870:AAG22lLxZqCxi7s21rXC5Co4Na6hNL6DDkA");
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine(
@@ -33,7 +35,7 @@ namespace Awesome
 
         static async void Bot_OnMessage(object sender, MessageEventArgs e)
         {
-            if (e.Message.Text != null)
+            if (e.Message.Text != null && DateTime.Now > lastCommand.AddMinutes(5))
             {
                 Console.WriteLine($"Received a text message in chat {e.Message.Chat.Id}.");
                 string res = interpreter.Parse(e);
@@ -46,6 +48,11 @@ namespace Awesome
                         true
                     );
                 }
+                lastCommand = DateTime.Now;
+            }
+            else
+            {
+                Console.WriteLine($"Ignored (cooldown) a text message in chat {e.Message.Chat.Id}.");
             }
         }
     }
