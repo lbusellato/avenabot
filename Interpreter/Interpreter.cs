@@ -22,7 +22,7 @@ namespace avenabot.Interpreter
 
         public string[] admin = new string[]
         {
-            "lbusellato"
+            "albusellato"
         };
 
         public bool[] adminCommands = new bool[]
@@ -100,7 +100,7 @@ namespace avenabot.Interpreter
             string message = e.Message.Text;
             string sender = e.Message.From.Username;
             DateTime closingDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to close registering
-            int MaxPlayers = 6;
+            int MaxPlayers = 10;
             int MaxGroups = 2;
             int MaxFinalists = 2;
             string res = (Find(message)) switch
@@ -165,7 +165,11 @@ namespace avenabot.Interpreter
                 {
                     if (IsAdmin(sender))
                     {
-                        res += commandList[i] + "\n" + commandDescr[i] + "\n";
+                        if (commandDescr[i].IndexOf(commandList[i]) == -1)
+                        {
+                            res += commandList[i] + "\n";
+                        }
+                        res += commandDescr[i] + "\n";
                         for (int j = 0; j < 54; ++j)
                         {
                             res += '-';
@@ -175,7 +179,11 @@ namespace avenabot.Interpreter
                 }
                 else
                 {
-                    res += commandList[i] + "\n" + commandDescr[i] + "\n";
+                    if(commandDescr[i].IndexOf(commandList[i]) == -1)
+                    {
+                        res += commandList[i] + "\n";
+                    }
+                    res += commandDescr[i] + "\n";
                     for (int j = 0; j < 54; ++j)
                     {
                         res += '-';
@@ -647,12 +655,6 @@ namespace avenabot.Interpreter
             }
 
             subs = message.Split(' ');
-
-            if(subs.Length > 2)
-            {
-                res += Strings.risultatiUsage;
-                return res;
-            }
 
             if (subs.Length == 1) //All groups
             {
@@ -1569,37 +1571,7 @@ namespace avenabot.Interpreter
                 return res;
             }
 
-            if(subs.Length == 1) // /partite
-            {
-                for (int i = 0; i < 3; ++i)
-                {
-                    res += i switch
-                    {
-                        0 => Strings.partiteHeaderA,
-                        1 => Strings.partiteHeaderB,
-                        _ => Strings.partiteHeaderC,
-                    };
-                    DbSet<Game> dbset = i switch
-                    {
-                        0 => gironeADb.Partite,
-                        1 => gironeBDb.Partite,
-                        _ => gironeCDb.Partite,
-                    };
-                    foreach (Game g in dbset)
-                    {
-                        p1Lichess = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.P1ID).LichessID;
-                        p2Lichess = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.P2ID).LichessID;
-                        link = g.Link;
-                        res += p1Lichess + " vs " + p2Lichess + "\n" + link + "\n";
-                    }
-                    for(int j = 0; j < 50; ++j)
-                    {
-                        res += "-";
-                    }
-                    res += "\n";
-                }
-            }
-            else if(subs.Length == 2 && subs[1].Length == 1) // /partite (A B o C)
+            if(subs.Length == 2 && subs[1].Length == 1) // /partite (A B o C)
             {
                 res += subs[1] switch
                 {

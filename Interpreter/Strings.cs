@@ -23,16 +23,16 @@
         public static string startDescr = "";
         public static string helpDescr = "Mostra questa lista";
         public static string partecipantiDescr = "Mostra la lista di partecipanti attualmente iscritti";
-        public static string iscrivimiDescr = "Iscrive l'ID Lichess specificato al torneo\nUtilizzo: /iscrivimi IDLichess";
+        public static string iscrivimiDescr = "/iscrivimi {IDLichess}\nIscrive il giocatore specificato al torneo.";
         public static string rimuoviDescr = "Rimuove il giocatore specificato\nUtilizzo: /rimuovi IDLichess";
         public static string disiscrivimiDescr = "Disicrive dal torneo";
         public static string aggiungiDescr = "Aggiunge il giocatore specificato\nUtilizzo: /aggiungi IDLichess IDTelegram";
         public static string seedDescr = "Popola il girone\nUtilizzo: /seed";
-        public static string risultatiDescr = "Mostra i risultati delle partite.\nUtilizzo:\n/risultati\nMostra i risultati di entrambi i gironi.\n/risultati (A B o C)\nMostra i risultati del girone specificato.\n/risultati IDLichess\nMostra i risultati del giocatore specificato.";
+        public static string risultatiDescr = "Mostra i risultati delle partite.";
         public static string classificaDescr = "Mostra le classifiche.";
-        public static string inserisciDescr = "Inserisci il risultato di una partita.\nUtilizzo:\n/inserisci 'Avversario'\n Al posto di 'avversario' scrivi l'id Lichess del tuo avversario, mi occuperò io di recuperare il risultato.";
+        public static string inserisciDescr = "/inserisci {IDLichess}\nAl posto di 'avversario' scrivi l'id Lichess del tuo avversario, mi occuperò io di recuperare il risultato.";
         public static string torneoDescr = "Visualizza informazioni sul torneo";
-        public static string partiteDescr = "Mostra la lista, con i link a Lichess, delle partite giocate finora.\nUtilizzo:\n/partite\nMostra tutte le partite di tutti i gironi.\n/partite (A B o C)\nMostra le partite del girone specificato.\n/partite IDLichess\nMostra le partite del giocatore specificato.";
+        public static string partiteDescr = "/partite {A/B/C}\nMostra le partite del girone specificato.";
         public static string miePartiteDescr = "Mostra la lista di partite che devi ancora giocare con il colore che dovrai usare.";
 
 
@@ -43,7 +43,7 @@
         public static string aggiungiUsage = "Utilizzo: /aggiungi IDLichess IDTelegram";
         public static string risultatiUsage = "Il giocatore o il girone specificati non sono validi! Controlla di aver scritto giusto.\nUtilizzo:\n/risultati\nMostra i risultati di entrambi i gironi.\n/risultati IDGirone (A o B)\nMostra i risultati del girone specificato.\n/risultati IDLichess\nMostra i risultati del giocatore specificato.";
         public static string inserisciUsage = "Utilizzo:\n/inserisci 'Avversario'\n Al posto di 'avversario' scrivi l'id Lichess del tuo avversario, mi occuperò io di recuperare il risultato.";
-        public static string partiteUsage = "Utilizzo:\n/partite\nMostra tutte le partite di tutti i gironi.\n/partite (A B o C)\nMostra le partite del girone specificato.\n/partite IDLichess\nMostra le partite del giocatore specificato.";
+        public static string partiteUsage = "Utilizzo:\n/partite (A B o C)\nMostra le partite del girone specificato.";
 
         public static string welcomeMsg = "Ciao! Sono AvenaChessBot e gestirò i Tornei Avenoni Scacchisti.\nUsa /help per visualizzare i comandi disponibili, oppure usa /torneo per visualizzare informazioni sul torneo";
         public static string saywhat = "Non ho capito, usa /help per vedere la lista dei comandi disponibili.";
