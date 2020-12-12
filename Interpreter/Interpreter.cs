@@ -8,8 +8,6 @@ using avenabot.Models.Gironi;
 using System.Collections.Generic;
 using System.Data.Entity;
 
-//TODO: Semplificazione (es. utilizzo campo Girone di partecipante anziché continuare a fare query per trovarlo)
-
 namespace avenabot.Interpreter
 {
     public class Interpreter
@@ -22,7 +20,7 @@ namespace avenabot.Interpreter
 
         public string[] admin = new string[]
         {
-            "albusellato"
+            "lbusellato"
         };
 
         public bool[] adminCommands = new bool[]
@@ -1843,7 +1841,7 @@ namespace avenabot.Interpreter
             int j = 0;
             WebClient client = new WebClient();
 
-            downloadString = client.DownloadString("https://lichess.org/@/mattiatrucco/search?perf=6&players.a=" + player + "&players.b=" + opponent + "&sort.field=d&sort.order=desc");
+            downloadString = client.DownloadString("https://lichess.org/@/" + player + "/search?perf=6&players.a=" + player + "&players.b=" + opponent + "&sort.field=d&sort.order=desc");
 
             i = downloadString.IndexOf("<article");
             j = downloadString.IndexOf("article>");
