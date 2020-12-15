@@ -141,6 +141,10 @@ namespace avenabot.Interpreter
                 14 => VincitoreCommand(sender),
                 _ => NoCommand(),
             };
+            if(res != "")
+            {
+                res = "@" + sender + "\n" + res;
+            }
             gironeADb.Dispose();
             gironeBDb.Dispose();
             gironeCDb.Dispose();
