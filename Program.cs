@@ -1,7 +1,7 @@
-﻿using avenabot.DAL;
-using avenabot.Interpreter;
-using avenabot.Models.Partecipanti;
+﻿using avenabot.Interpreter;
+using avenabot.Log;
 using System;
+using System.IO;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
@@ -11,7 +11,6 @@ namespace Awesome
     class Program
     {
         static ITelegramBotClient botClient;
-
         public static DateTime lastCommand;
         public static Interpreter interpreter = new Interpreter();
 
@@ -23,13 +22,15 @@ namespace Awesome
             Console.WriteLine(
               $"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
             );
-
+            Logger.Log("Starting up...");
             botClient.OnMessage += Bot_OnMessage;
             botClient.StartReceiving();
 
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
 
+            Logger.Log("Shutting down...");
+            Logger.Dispose();
             botClient.StopReceiving();
         }
 
@@ -38,7 +39,8 @@ namespace Awesome
             if (e.Message.Text != null)
             {
                 Console.WriteLine($"Received a text message in chat {e.Message.Chat.Id}.");
-                string res = "";
+                Logger.Log($"Received a text message in chat {e.Message.Chat.Id}: {e.Message.Text}");
+                string res;
                 if(e.Message.Text.ToLower().IndexOf(Strings.invalidMessage) != -1)
                 {
                     res = Strings.errorInvalidMessage;
@@ -62,13 +64,19 @@ namespace Awesome
                             parseMode: ParseMode.Html,
                             true
                         );
+                        Logger.Log($"Responded to command.");
+                    }
+                    else
+                    {
+                        Logger.Log($"Ignored message (not a command).");
                     }
                     lastCommand = DateTime.Now;
                 }
             }
             else
             {
-                Console.WriteLine($"Ignored (cooldown) a text message in chat {e.Message.Chat.Id}.");
+                Console.WriteLine($"Ignored (cooldown) a text message in chat {e.Message.Chat.Id}: {e.Message.Text}");
+                Logger.Log("Ignored message (cooldown)");
             }
         }
     }

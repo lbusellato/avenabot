@@ -7,6 +7,7 @@ using System;
 using avenabot.Models.Gironi;
 using System.Collections.Generic;
 using System.Data.Entity;
+using avenabot.Log;
 
 namespace avenabot.Interpreter
 {
@@ -112,7 +113,7 @@ namespace avenabot.Interpreter
                 // /start
                 0 => StartCommand(),
                 // /help
-                1 => HelpCommand(sender),
+                1 => HelpCommand(),
                 // /partecipanti
                 2 => PartecipantiCommand(),
                 // /iscrivimi
@@ -165,7 +166,7 @@ namespace avenabot.Interpreter
         /// </summary>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private string HelpCommand(string sender)
+        private string HelpCommand()
         {
             //FINAL
             string res = "";
@@ -1720,6 +1721,8 @@ namespace avenabot.Interpreter
             for(int i = 0; i < opponents.Count; ++i)
             {
                 res += opponents.ElementAt(i);
+                res += "(@";
+                res += partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == opponents.ElementAt(i)).TGID + ")";
                 res += ", giochi con il ";
                 if(pGroupID % 2 == 0)
                 {
@@ -1861,6 +1864,7 @@ namespace avenabot.Interpreter
             catch (WebException e)
             {
                 Console.WriteLine("\nIscrizione fallita: ID Lichess non trovato\nEccezione: " + e);
+                Logger.Log("Giocatore non trovato su Lichess, eccezione generata:" + e);
                 return -1;
             }   
         }
@@ -1899,28 +1903,36 @@ namespace avenabot.Interpreter
             int j = 0;
             WebClient client = new WebClient();
 
-            downloadString = client.DownloadString("https://lichess.org/@/" + player + "/search?perf=6&players.a=" + player + "&players.b=" + opponent + "&sort.field=d&sort.order=desc");
-
-            i = downloadString.IndexOf("<article");
-            j = downloadString.IndexOf("article>");
-            if(i == -1)
+            try
             {
+                downloadString = client.DownloadString("https://lichess.org/@/" + player + "/search?perf=6&players.a=" + player + "&players.b=" + opponent + "&sort.field=d&sort.order=desc");
+
+                i = downloadString.IndexOf("<article");
+                j = downloadString.IndexOf("article>");
+                if (i == -1)
+                {
+                    return res;
+                }
+                string substring = downloadString[i..j];
+                string link = substring.Substring(substring.IndexOf("href") + 7, substring.IndexOf("></a>") - substring.IndexOf("href") - 8);
+                int result = substring.IndexOf("<span class=\"loss\">") == -1 ? substring.IndexOf("<span class=\"win\">") == -1 ? -1 : 1 : 0;
+
+                res[1] = "lichess.org/" + link;
+                if (result == -1)
+                {
+                    res[0] = "x";
+                }
+                else
+                {
+                    res[0] = result.ToString();
+                }
                 return res;
             }
-            string substring = downloadString[i..j];
-            string link = substring.Substring(substring.IndexOf("href") + 7, substring.IndexOf("></a>") - substring.IndexOf("href") - 8);
-            int result = substring.IndexOf("<span class=\"loss\">") == -1 ? substring.IndexOf("<span class=\"win\">") == -1 ? -1 : 1 : 0;
-
-            res[1] = "lichess.org/" + link;
-            if (result == -1)
+            catch(WebException e)
             {
-                res[0] = "x";
+                Logger.Log("Giocatore non trovato su Lichess, eccezione generata:" + e);
+                return res;
             }
-            else
-            {
-                res[0] = result.ToString();
-            }
-            return res;
         }
     
         /// <summary>
