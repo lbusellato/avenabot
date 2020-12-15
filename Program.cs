@@ -35,10 +35,18 @@ namespace Awesome
 
         static async void Bot_OnMessage(object sender, MessageEventArgs e)
         {
-            if (e.Message.Text != null && DateTime.Now > lastCommand.AddMinutes(5))
+            if (e.Message.Text != null)
             {
                 Console.WriteLine($"Received a text message in chat {e.Message.Chat.Id}.");
-                string res = interpreter.Parse(e);
+                string res = "";
+                if(e.Message.Text.ToLower().IndexOf("a38") != -1)
+                {
+                    res = "Bravo bravo porcodio ma vai a fare in culo";
+                }
+                else
+                {
+                    res = interpreter.Parse(e, lastCommand);
+                }
                 if (res != "")
                 {
                     await botClient.SendTextMessageAsync(

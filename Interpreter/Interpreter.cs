@@ -91,9 +91,11 @@ namespace avenabot.Interpreter
 
         private readonly DateTime finalsDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
         private readonly DateTime endDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to end the tournament
+        public static DateTime lastCommand;
 
-        public string Parse(MessageEventArgs e)
+        public string Parse(MessageEventArgs e, DateTime LastCommand)
         {
+            lastCommand = LastCommand;
             partecipantiDb = new PartecipantiDbContext();
             gironeADb = new GironeADbContext();
             gironeBDb = new GironeBDbContext();
@@ -102,7 +104,7 @@ namespace avenabot.Interpreter
             string message = e.Message.Text;
             string sender = e.Message.From.Username;
             DateTime closingDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to close registering
-            int MaxPlayers = 10;
+            int MaxPlayers = 8;
             int MaxGroups = 2;
             int MaxFinalists = 2;
             string res = (Find(message)) switch
@@ -650,6 +652,12 @@ namespace avenabot.Interpreter
             string[] subresults;
             string[] subs;
             int maxLen = 0;
+
+            if(DateTime.Now < lastCommand.AddMinutes(5))
+            {
+                return res;
+            }
+
             if (gironeADb.Girone.Count() <= 0 || gironeBDb.Girone.Count() <= 0 || 
                 (MaxGroups == 3 && gironeCDb.Girone.Count() <= 0) ||
                 (DateTime.Now > finalsDate && gironeFDb.Girone.Count() <= 0))
@@ -936,6 +944,11 @@ namespace avenabot.Interpreter
             string[] subresults;
             int dbCheck;
             DbSet<Girone> dbset;
+
+            if (DateTime.Now < lastCommand.AddMinutes(5))
+            {
+                return res;
+            }
 
             if (gironeADb.Girone.Count() <= 0 || gironeBDb.Girone.Count() <= 0 ||
                 (gironeCDb.Girone.Count() <= 0 && MaxGroups == 3) ||
@@ -1561,7 +1574,13 @@ namespace avenabot.Interpreter
             string p1Lichess;
             string p2Lichess;
             string link;
-            if(gironeADb.Partite.Count() <= 0 ||
+
+            if (DateTime.Now < lastCommand.AddMinutes(5))
+            {
+                return res;
+            }
+
+            if (gironeADb.Partite.Count() <= 0 ||
                 gironeBDb.Partite.Count() <= 0 ||
                 gironeCDb.Partite.Count() <= 0)
             {
@@ -1794,7 +1813,6 @@ namespace avenabot.Interpreter
         {
             //FINAL
             string res = "";
-            res += Strings.saywhat;
             return res;
         }
 

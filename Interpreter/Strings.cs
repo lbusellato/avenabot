@@ -24,16 +24,16 @@
         public static string startDescr = "";
         public static string helpDescr = "Mostra questa lista";
         public static string partecipantiDescr = "Mostra la lista di partecipanti attualmente iscritti";
-        public static string iscrivimiDescr = "/iscrivimi {IDLichess}\nIscrive il giocatore specificato al torneo.";
+        public static string iscrivimiDescr = "/iscrivimi IDLichess\nIscrive il giocatore specificato al torneo.";
         public static string rimuoviDescr = "Rimuove il giocatore specificato\nUtilizzo: /rimuovi IDLichess";
         public static string disiscrivimiDescr = "Disicrive dal torneo";
         public static string aggiungiDescr = "Aggiunge il giocatore specificato\nUtilizzo: /aggiungi IDLichess IDTelegram";
         public static string seedDescr = "Popola il girone\nUtilizzo: /seed";
         public static string risultatiDescr = "Mostra i risultati delle partite.";
         public static string classificaDescr = "Mostra le classifiche.";
-        public static string inserisciDescr = "/inserisci {IDLichess}\nAl posto di 'avversario' scrivi l'id Lichess del tuo avversario, mi occuperò io di recuperare il risultato.";
+        public static string inserisciDescr = "/inserisci IDLichess\nAl posto di IDLichess scrivi l'id Lichess del tuo avversario, mi occuperò io di recuperare il risultato.";
         public static string torneoDescr = "Visualizza informazioni sul torneo";
-        public static string partiteDescr = "/partite {A/B/C}\nMostra le partite del girone specificato.";
+        public static string partiteDescr = "/partite A/B/C\nMostra le partite del girone specificato.";
         public static string miePartiteDescr = "Mostra la lista di partite che devi ancora giocare con il colore che dovrai usare.";
         public static string vincitoreDescr = "";
 
