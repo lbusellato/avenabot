@@ -93,6 +93,7 @@ namespace avenabot.Interpreter
         private readonly DateTime finalsDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
         private readonly DateTime endDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to end the tournament
         public static DateTime lastCommand;
+        public int coolDown = 2;
 
         public string Parse(MessageEventArgs e, DateTime LastCommand)
         {
@@ -200,7 +201,7 @@ namespace avenabot.Interpreter
             res += Strings.partecipantiHeader;
             foreach (Partecipante p in partecipantiDb.Partecipanti)
             {
-                res += p.TID + "-" + p.LichessID + " - @" + p.TGID + " - " + p.ELO + " - " + p.Girone + "\n";
+                res += p.TID + " - " + p.LichessID + " - @" + p.TGID + " - " + p.ELO + " - " + p.Girone + "\n";
             }
             return res;
         }
@@ -251,6 +252,8 @@ namespace avenabot.Interpreter
             }
 
             int tid = GetMaxTID() + 1;
+
+            lichessID = GetCorrectLichessID(lichessID);
 
             //Create the player and push him into the db
             Partecipante p = new Partecipante
@@ -521,7 +524,7 @@ namespace avenabot.Interpreter
                 return res;
             }
 
-            if (MaxPlayers % 3 != 0 || MaxPlayers % 2 != 0)
+            if (MaxPlayers % 3 != 0 && MaxPlayers % 2 != 0)
             {
                 res += Strings.internalError + 2;
                 return res;
@@ -642,7 +645,7 @@ namespace avenabot.Interpreter
             string[] subs;
             int maxLen = 0;
 
-            if(DateTime.Now < lastCommand.AddMinutes(5))
+            if (DateTime.Now < lastCommand.AddMinutes(coolDown))
             {
                 return res;
             }
@@ -655,6 +658,7 @@ namespace avenabot.Interpreter
                 return res;
             }
 
+            lastCommand = DateTime.Now;
             subs = message.Split(' ');
 
             if (subs.Length == 1) //All groups
@@ -934,7 +938,7 @@ namespace avenabot.Interpreter
             int dbCheck;
             DbSet<Girone> dbset;
 
-            if (DateTime.Now < lastCommand.AddMinutes(5))
+            if (DateTime.Now < lastCommand.AddMinutes(coolDown))
             {
                 return res;
             }
@@ -946,8 +950,9 @@ namespace avenabot.Interpreter
                 res += Strings.notYetSeededStandings;
                 return res;
             }
+            lastCommand = DateTime.Now;
 
-            if(DateTime.Now > finalsDate)
+            if (DateTime.Now > finalsDate)
             {
                 dbCheck = gironeFDb.Girone.Count();
                 if (dbCheck <= 0)
@@ -1564,7 +1569,7 @@ namespace avenabot.Interpreter
             string p2Lichess;
             string link;
 
-            if (DateTime.Now < lastCommand.AddMinutes(5))
+            if (DateTime.Now < lastCommand.AddMinutes(coolDown))
             {
                 return res;
             }
@@ -1718,11 +1723,13 @@ namespace avenabot.Interpreter
             }
 
             res += "Devi ancora giocare contro:\n";
-            for(int i = 0; i < opponents.Count; ++i)
+            string opponentTG;
+            for (int i = 0; i < opponents.Count; ++i)
             {
                 res += opponents.ElementAt(i);
                 res += "(@";
-                res += partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == opponents.ElementAt(i)).TGID + ")";
+                opponentTG = opponents.ElementAt(i);
+                res += partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == opponentTG).TGID + ")";
                 res += ", giochi con il ";
                 if(pGroupID % 2 == 0)
                 {
@@ -1876,6 +1883,7 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private bool IsAdmin(string username)
         {
+            //FINAL
             bool res = false;
             for(int i = 0; i < admin.Length; ++i)
             {
@@ -1941,6 +1949,7 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private int GetMaxTID()
         {
+            //FINAL
             int max = 0;
             foreach(Partecipante p in partecipantiDb.Partecipanti)
             {
@@ -1973,6 +1982,35 @@ namespace avenabot.Interpreter
                 }
             }
             return max;
+        }
+
+        /// <summary>
+        /// Try and get the provided lichess ID with proper capitalization
+        /// </summary>
+        /// <param name="lichessID"></param>
+        /// <returns></returns>
+        private string GetCorrectLichessID(string lichessID)
+        {
+            string res = lichessID;
+            WebClient client = new WebClient();
+            try
+            {
+                string downloadString = client.DownloadString("https://lichess.org/@/" + lichessID.ToLower());
+                int i = downloadString.IndexOf("<title>") + 7;
+                int j = downloadString.IndexOf(" : Activity ");
+
+                if (i != -1 && j != -1)
+                {
+                    res = downloadString[i..j];
+                }
+                return res;
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine("\nGiocatore non trovato su Lichess, eccezione generata: " + e);
+                Logger.Log("Giocatore non trovato su Lichess, eccezione generata:" + e);
+                return res;
+            }
         }
     }
 }

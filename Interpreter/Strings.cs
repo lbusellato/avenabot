@@ -48,7 +48,7 @@
 
         public static string welcomeMsg = "Ciao! Sono AvenaChessBot e gestirò i Tornei Avenoni Scacchisti.\nUsa /help per visualizzare i comandi disponibili, oppure usa /torneo per visualizzare informazioni sul torneo";
         public static string saywhat = "Non ho capito, usa /help per vedere la lista dei comandi disponibili.";
-        public static string partecipantiHeader = "Elenco partecipanti:\nID Torneo - Lichess - Telegram - ELO - Girone\n";
+        public static string partecipantiHeader = "Elenco partecipanti:\nID - Lichess - Telegram - ELO - Girone\n";
         public static string lichess404 = "L'ID Lichess che hai inserito non sembra esistere, controlla di averlo scritto giusto.";
         public static string errorContact = " Se credi sia un errore contatta @lbusellato";
         public static string registered = "Ti ho iscritto!";
@@ -60,7 +60,7 @@
         public static string player404 = "Il giocatore indicato non sembra essere iscritto!";
         public static string notRegistered = "Non mi sembra che tu sia iscritto!";
         public static string removedAdmin = "Giocatore rimosso!";
-        public static string removed = "Ti ho rimosso!";
+        public static string removed = "Ti ho rimosso! ";
         public static string groupsSeeded = "Gironi popolati.";
         public static string finalGroupSeeded = "Girone finale popolato.";
         public static string groupsAlreadySeeded = "I gironi risultano già popolati!";

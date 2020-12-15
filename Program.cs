@@ -70,7 +70,6 @@ namespace Awesome
                     {
                         Logger.Log($"Ignored message (not a command).");
                     }
-                    lastCommand = DateTime.Now;
                 }
             }
             else
