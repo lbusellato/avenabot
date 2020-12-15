@@ -20,7 +20,7 @@ namespace avenabot.Interpreter
 
         public string[] admin = new string[]
         {
-            "albusellato"
+            "lbusellato"
         };
 
         public bool[] adminCommands = new bool[]
@@ -171,23 +171,7 @@ namespace avenabot.Interpreter
             string res = "";
             for (int i = 1; i < commandList.Length; ++i)
             {
-                if (adminCommands[i])
-                {
-                    if (IsAdmin(sender))
-                    {
-                        if (commandDescr[i].IndexOf(commandList[i]) == -1)
-                        {
-                            res += commandList[i] + "\n";
-                        }
-                        res += commandDescr[i] + "\n";
-                        for (int j = 0; j < 54; ++j)
-                        {
-                            res += '-';
-                        }
-                        res += '\n';
-                    }
-                }
-                else
+                if (!adminCommands[i])
                 {
                     if(commandDescr[i].IndexOf(commandList[i]) == -1)
                     {

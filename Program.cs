@@ -39,24 +39,32 @@ namespace Awesome
             {
                 Console.WriteLine($"Received a text message in chat {e.Message.Chat.Id}.");
                 string res = "";
-                if(e.Message.Text.ToLower().IndexOf("a38") != -1)
+                if(e.Message.Text.ToLower().IndexOf(Strings.invalidMessage) != -1)
                 {
-                    res = "Bravo bravo porcodio ma vai a fare in culo";
-                }
-                else
-                {
-                    res = interpreter.Parse(e, lastCommand);
-                }
-                if (res != "")
-                {
+                    res = Strings.errorInvalidMessage;
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
                         text: res,
                         parseMode: ParseMode.Html,
-                        true
+                        true,
+                        false,
+                        e.Message.MessageId
                     );
                 }
-                lastCommand = DateTime.Now;
+                else
+                {
+                    res = interpreter.Parse(e, lastCommand);
+                    if (res != "")
+                    {
+                        await botClient.SendTextMessageAsync(
+                            chatId: e.Message.Chat,
+                            text: res,
+                            parseMode: ParseMode.Html,
+                            true
+                        );
+                    }
+                    lastCommand = DateTime.Now;
+                }
             }
             else
             {

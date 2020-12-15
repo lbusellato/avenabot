@@ -65,16 +65,15 @@
         public static string finalGroupSeeded = "Girone finale popolato.";
         public static string groupsAlreadySeeded = "I gironi risultano già popolati!";
         public static string finalGroupAlreadySeeded = "Il girone finale risulta già popolato!";
-        public static string torneoInfo = "Il Torneo Avenoni Scacchisti 2: Episodio 2 inizierà il dd/mm/yy." + 
-            "Le iscrizioni, tramite il comando /iscrivimi, saranno aperte fino al dd/mm/yy. I partecipanti" +
-            " saranno divisi in base all'ELO Rapid in tre gironi preliminari all'italiana da 8 giocatori, nei quali" +
-            " ciascuno giocherà una sola partita Rapid 10+5 contro ogni altro avversario nel girone. Dato che i gironi " +
-            "saranno divisi per ELO gli aspiranti partecipanti sono obbligati a giocare almeno 10 partite Rapid" + 
-            " classificate su Lichess prima dell'inizio del torneo. I migliori 3 di ciascun girone parteciperanno ad " +
-            "un girone finale all'italiana, il cui primo classificato sarà il vincitore del torneo. Il torneo è gestito" +
-            " interamente da me, AvenaChessBot, a cui i partecipanti invieranno i risultati delle partite con i quali " + 
+        public static string torneoInfo = "Il Torneo Avenoni Scacchisti 2: Episodio 2 inizierà il dd/mm/yy.\n" + 
+            "Le iscrizioni, tramite il comando /iscrivimi, saranno aperte fino al dd/mm/yy.\nI partecipanti" +
+            " saranno divisi in base all'ELO Rapid in due gironi preliminari all'italiana da 4 giocatori, nei quali" +
+            " ciascuno giocherà una sola partita Rapid 10+5 contro ogni altro avversario nel girone.\n"  + 
+            "I migliori 2 di ciascun girone parteciperanno ad " +
+            "un girone finale all'italiana, il cui primo classificato sarà il vincitore del torneo.\nIl torneo è gestito" +
+            " interamente da me, @AvenaChessBot, a cui i partecipanti invieranno i risultati delle partite con i quali " + 
             "aggiornerò automaticamente classifica e tabellone dei risultati.\nBuona fortuna a tutti!";
-        public static string inserisciInvalidIDs = "Uno o entrambi gli ID Lichess che hai inserito non sembrano corrispondere a giocatori iscritti al torneo, ricontrolla per favore.";
+        public static string inserisciInvalidIDs = "Uno o entrambi gli ID Lichess che hai inserito non sembrano corrispondere a giocatori iscritti al torneo, ricontrolla per favore."; public static string errorInvalidMessage = "Bravo porcodio bravo, ma vai a fare in culo.";
         public static string inserisciInvalidIDs2 = "Tu o il tuo avversarion non risultate iscritti al torneo, ricontrolla per favore.";
         public static string inserisciInvalidResult = "Il risultato immesso non è corretto, i risultati accettati sono 1 (vittoria giocatore 1), 2 (vittoria giocatore 2) e x (pareggio).";
         public static string checkResults = " Usa /risultati per vedere il tabellone dei risultati.";
@@ -88,6 +87,7 @@
         public static string classificaHeader1C = "Classifica Girone C:\nID";
         public static string classificaHeader1F = "Classifica Girone Finale:\nID";
         public static string classificaHeader2 = "G:";
+        public static string invalidMessage = "a38";
         public static string errorNotSeeded = "Errore: i gironi non risultano popolati.";
         public static string internalError = "ERRORE INTERNO, CONTATTA @lbusellato, CODICE ERRORE:";
         public static string inserisciInvalidGroup = "I giocatori che hai immesso non sembrano essere nello stesso girone, prova a ricontrollare.";
