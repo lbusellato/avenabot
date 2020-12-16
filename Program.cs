@@ -38,8 +38,8 @@ namespace Awesome
         {
             if (e.Message.Text != null)
             {
-                Console.WriteLine($"Received a text message in chat {e.Message.Chat.Id}.");
-                Logger.Log($"Received a text message in chat {e.Message.Chat.Id}: {e.Message.Text}");
+                Console.WriteLine($"Received a text message from {e.Message.From.Username}: {e.Message.Text}");
+                Logger.Log($"Received a text message from {e.Message.From.Username}: {e.Message.Text}");
                 string res;
                 if(e.Message.Text.ToLower().IndexOf(Strings.invalidMessage) != -1)
                 {

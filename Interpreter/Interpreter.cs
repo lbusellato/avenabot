@@ -93,7 +93,7 @@ namespace avenabot.Interpreter
         private readonly DateTime finalsDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
         private readonly DateTime endDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to end the tournament
         public static DateTime lastCommand;
-        public int coolDown = 2;
+        public int coolDown = 0;
 
         public string Parse(MessageEventArgs e, DateTime LastCommand)
         {
@@ -223,7 +223,7 @@ namespace avenabot.Interpreter
             int playerCount = GetPlayerCount();
             int elo = -1;
 
-            if (DateTime.Now > closingDate && playerCount >= MaxPlayers)
+            if (DateTime.Now > closingDate && playerCount <= MaxPlayers)
             {
                 res = Strings.closedRegistrations;
                 return res;
@@ -236,6 +236,12 @@ namespace avenabot.Interpreter
             if (lichessID == "") //If no ID was provided
             {
                 res = Strings.iscrivimiUsage;
+                return res;
+            }
+
+            if(sender == null)
+            {
+                res = Strings.usernameNeeded;
                 return res;
             }
 

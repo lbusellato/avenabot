@@ -107,5 +107,6 @@
         public static string winner1 = "Complimenti a ";
         public static string winner2 = "vincitore del ";
         public static string tournamentName = "Torneo Avenoni Scacchisti 2: Episodio II";
+        public static string usernameNeeded = "È necessario avere un username Telegram valido per potersi iscrivere!";
     }
 }
