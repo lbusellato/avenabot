@@ -96,17 +96,19 @@
         public static string partiteHeaderA = "Partite Girone A:\n";
         public static string partiteHeaderB = "Partite Girone B:\n";
         public static string partiteHeaderC = "Partite Girone C:\n";
+        public static string partiteHeaderF = "Partite Girone Finale:\n";
         public static string noGames = "Il giocatore specificato deve ancora giocare una partita.";
         public static string notYetSeededGroups = "I gironi non sono ancora stati generati. ";
         public static string notYetSeededGames = "Le partite non sono ancora state generate. ";
         public static string notYetSeededStandings = "Le classifiche non sono ancora state generate. ";
         public static string resultsDisclaimer = "NB: per migliorare la visualizzazione i giocatori sono riportati con il loro ID torneo, che puoi visualizzare con il comando /partecipanti.";
         public static string notEnoughPlayers = "Non posso popolare i gironi perché non ci sono abbastanza giocatori iscritti!";
-        public static string notYetPlayedGames = "Non è stata ancora giocata nessuna partita.";
-        public static string gameNotFound = "Non ho trovato tue partite con l'avversario che hai specificato, ricontrolla per favore.";
+        public static string notYetPlayedGames = "Non è stata ancora giocata nessuna partita nel girone.";
+        public static string gameNotFound = "Non ho trovato tue partite con l'avversario che hai specificato, se hai appena giocato attendi un paio di minuti che Lichess carichi la partita.";
         public static string winner1 = "Complimenti a ";
         public static string winner2 = "vincitore del ";
         public static string tournamentName = "Torneo Avenoni Scacchisti 2: Episodio II";
         public static string usernameNeeded = "È necessario avere un username Telegram valido per potersi iscrivere!";
+        public static string notValidGroup = "Il girone specificato non esiste!";
     }
 }

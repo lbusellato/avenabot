@@ -136,7 +136,7 @@ namespace avenabot.Interpreter
                 // /torneo
                 11 => TorneoCommand(),
                 // /partite
-                12 => PartiteCommand(message),
+                12 => PartiteCommand(message, MaxGroups),
                 // /miepartite
                 13 => MiePartiteCommand(message, sender),
                 // /vincitore
@@ -223,7 +223,7 @@ namespace avenabot.Interpreter
             int playerCount = GetPlayerCount();
             int elo = -1;
 
-            if (DateTime.Now > closingDate && playerCount <= MaxPlayers)
+            if (DateTime.Now > closingDate || playerCount <= MaxPlayers)
             {
                 res = Strings.closedRegistrations;
                 return res;
@@ -1566,7 +1566,7 @@ namespace avenabot.Interpreter
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        private string PartiteCommand(string message)
+        private string PartiteCommand(string message, int MaxGroups)
         {
             //FINAL
             string res = "";
@@ -1575,37 +1575,50 @@ namespace avenabot.Interpreter
             string p2Lichess;
             string link;
 
+            if (subs.Length != 2)
+            {
+                return res;
+            }
+
             if (DateTime.Now < lastCommand.AddMinutes(coolDown))
             {
                 return res;
             }
 
-            if (gironeADb.Partite.Count() <= 0 ||
-                gironeBDb.Partite.Count() <= 0 ||
-                gironeCDb.Partite.Count() <= 0)
+            if(subs[1].Length == 1) // /partite (A B o C)
             {
-                res += Strings.notYetPlayedGames;
-                return res;
-            }
+                subs[1] = subs[1].ToUpper();
+                int check = subs[1] switch
+                {
+                    "A" => gironeADb.Partite.Count(),
+                    "B" => gironeBDb.Partite.Count(),
+                    "C" => gironeCDb.Partite.Count(),
+                    "F" => gironeFDb.Partite.Count(),
+                    _ => -2
+                };
 
-            if(subs.Length > 2)
-            {
-                res += Strings.partiteUsage;
-                return res;
-            }
-
-            if(subs.Length == 2 && subs[1].Length == 1) // /partite (A B o C)
-            {
+                if(check == -2)
+                {
+                    res += Strings.notValidGroup;
+                    return res;
+                }
+                else if(check <= 0)
+                {
+                    res += Strings.notYetPlayedGames;
+                    return res;
+                }
                 res += subs[1] switch
                 {
                     "A" => Strings.partiteHeaderA,
                     "B" => Strings.partiteHeaderB,
+                    "F" => Strings.partiteHeaderF,
                     _ => Strings.partiteHeaderC,
                 };
                 DbSet<Game> dbset = subs[1] switch
                 {
                     "A" => gironeADb.Partite,
                     "B" => gironeBDb.Partite,
+                    "F" => gironeFDb.Partite,
                     _ => gironeCDb.Partite,
                 };
                 foreach (Game g in dbset)
@@ -1627,25 +1640,46 @@ namespace avenabot.Interpreter
                 }
 
                 playerID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == submittedID).TID;
-                Girone checkA = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == playerID);
-                Girone checkB = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == playerID);
-                Girone checkC = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == playerID);
-                int groupID = (checkA != null) ? 0 : (checkB != null) ? 1 : (checkC != null) ? 2 : -1;
+                int groupID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == submittedID).Girone switch {
+                    "A" => 0,
+                    "B" => 1,
+                    "C" => 2,
+                    "F" => 3,
+                    _ => -1
+                };
 
                 if(groupID == -1)
                 {
                     res += Strings.player404 + Strings.errorContact;
                     return res;
                 }
+
+                int check = groupID switch
+                {
+                    0 => gironeADb.Partite.Count(),
+                    1 => gironeBDb.Partite.Count(),
+                    2 => gironeCDb.Partite.Count(),
+                    3 => gironeFDb.Partite.Count(),
+                    _ => -1
+                };
+
+                if (check <= 0)
+                {
+                    res += Strings.notYetPlayedGames;
+                    return res;
+                }
+
                 res += groupID switch {
                     0 => Strings.partiteHeaderA,
                     1 => Strings.partiteHeaderB,
+                    3 => Strings.partiteHeaderF,
                     _ => Strings.partiteHeaderC,
                 };
                 DbSet<Game> dbset = groupID switch
                 {
                     0 => gironeADb.Partite,
                     1 => gironeBDb.Partite,
+                    3 => gironeFDb.Partite,
                     _ => gironeCDb.Partite,
                 };
                 string prevRes = res;
