@@ -97,6 +97,7 @@
         public static string partiteHeaderB = "Partite Girone B:\n";
         public static string partiteHeaderC = "Partite Girone C:\n";
         public static string partiteHeaderF = "Partite Girone Finale:\n";
+        public static string noGamesToPlay = "Hai giocato tutte le partite che dovevi giocare, attendi che anche gli altri giocatori facciano lo stesso.";
         public static string noGames = "Il giocatore specificato deve ancora giocare una partita.";
         public static string notYetSeededGroups = "I gironi non sono ancora stati generati. ";
         public static string notYetSeededGames = "Le partite non sono ancora state generate. ";

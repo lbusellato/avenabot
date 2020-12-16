@@ -1695,7 +1695,7 @@ namespace avenabot.Interpreter
                 }
                 if (res == prevRes)
                 {
-                    res = Strings.noGames;
+                    res = Strings.noGamesToPlay;
                 }
             }
             return res;
