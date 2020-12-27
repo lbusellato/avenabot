@@ -9,6 +9,8 @@ namespace avenabot.Log
         private static readonly StreamWriter File = new StreamWriter(logDirectory, true);
         internal static void Log(string log)
         {
+            Console.Write(DateTime.Now + ":");
+            Console.WriteLine(log);
             File.Write(DateTime.Now + ":");
             File.WriteLine(log);
         }

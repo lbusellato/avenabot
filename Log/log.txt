@@ -242,3 +242,165 @@
 16/12/2020 16:59:39:Shutting down...
 16/12/2020 16:59:45:Starting up...
 16/12/2020 16:59:45:Shutting down...
+16/12/2020 16:59:47:Starting up...
+16/12/2020 17:26:36:Received a text message from Lil_Plazap in chat -1001437603542: /miepartite
+16/12/2020 17:26:40:Responded to command.
+16/12/2020 17:26:40:Received a text message from Lil_Plazap in chat -1001437603542: /miepartite
+16/12/2020 17:26:40:Responded to command.
+17/12/2020 16:54:23:Received a text message from guido_toresella in chat -1001437603542: /miepartite
+17/12/2020 16:54:24:Responded to command.
+17/12/2020 22:13:56:Received a text message from Alex_Raiola in chat 1014446608: /inserisci aerobindo
+17/12/2020 22:13:57:Responded to command.
+17/12/2020 22:14:49:Received a text message from Alex_Raiola in chat -1001437603542: /inserisci
+17/12/2020 22:14:49:Responded to command.
+17/12/2020 22:15:11:Received a text message from guido_toresella in chat -1001437603542: /inserisci Er_Capitano
+17/12/2020 22:15:12:Responded to command.
+17/12/2020 22:19:21:Received a text message from Lil_Plazap in chat -1001437603542: /miepartite
+17/12/2020 22:19:21:Responded to command.
+17/12/2020 22:19:47:Received a text message from guido_toresella in chat -1001437603542: /inserisci Er_Capitano
+17/12/2020 22:19:48:Responded to command.
+17/12/2020 22:19:56:Received a text message from guido_toresella in chat -1001437603542: /risultati
+17/12/2020 22:19:56:Responded to command.
+17/12/2020 22:20:22:Received a text message from guido_toresella in chat -1001437603542: /partecipanti
+17/12/2020 22:20:22:Responded to command.
+17/12/2020 22:24:27:Received a text message from ruiasolitaria in chat -1001437603542: /miepartite
+17/12/2020 22:24:28:Responded to command.
+17/12/2020 22:24:44:Received a text message from ruiasolitaria in chat -1001437603542: amici io avrei domani sera se vi sta bene
+17/12/2020 22:24:44:Ignored message (not a command).
+17/12/2020 22:25:00:Received a text message from Alex_Raiola in chat -1001437603542: Okie
+17/12/2020 22:25:00:Ignored message (not a command).
+17/12/2020 22:26:39:Received a text message from Parrare in chat -1001437603542: /miepartite
+17/12/2020 22:26:39:Responded to command.
+17/12/2020 22:36:11:Received a text message from Lil_Plazap in chat -1001437603542: /inserisci Er_Capitano
+17/12/2020 22:36:12:Responded to command.
+17/12/2020 22:36:17:Received a text message from Lil_Plazap in chat -1001437603542: /risultati@AvenaChessBot
+17/12/2020 22:36:17:Responded to command.
+17/12/2020 22:49:24:Received a text message from guido_toresella in chat -1001437603542: /partecipanti@AvenaChessBot
+17/12/2020 22:49:25:Responded to command.
+18/12/2020 10:03:29:Received a text message from lbusellato in chat -1001437603542: /partite A
+18/12/2020 10:03:31:Responded to command.
+18/12/2020 14:00:29:Received a text message from Lil_Plazap in chat -1001437603542: @lbusellato ho controllato le partite e mi sa che tra me e @Alex_Raiola ha pescato la partita del torneo vecchio
+18/12/2020 14:00:29:Ignored message (not a command).
+18/12/2020 14:42:59:Shutting down...
+18/12/2020 14:54:43:Starting up...
+18/12/2020 14:54:43:Shutting down...
+18/12/2020 14:57:09:Starting up...
+18/12/2020 14:57:14:Received a text message from lbusellato in chat 1031635402: /inserisci Er_Capitano
+18/12/2020 14:57:17:Responded to command.
+18/12/2020 14:57:19:Received a text message from lbusellato in chat 1031635402: /risultati
+18/12/2020 14:57:19:Responded to command.
+18/12/2020 14:57:28:Shutting down...
+18/12/2020 14:58:07:Starting up...
+18/12/2020 14:58:07:Shutting down...
+18/12/2020 14:58:10:Starting up...
+18/12/2020 18:12:41:Received a text message from Lil_Plazap in chat -1001437603542: /miepartite
+18/12/2020 18:12:43:Responded to command.
+18/12/2020 18:15:46:Received a text message from ruiasolitaria in chat -1001437603542: /miepartite
+18/12/2020 18:15:46:Responded to command.
+18/12/2020 20:17:53:Received a text message from Lil_Plazap in chat -1001437603542: /miepartite
+18/12/2020 20:17:54:Responded to command.
+18/12/2020 20:37:26:Received a text message from Lil_Plazap in chat -1001437603542: /inserisci nemiski
+18/12/2020 20:37:28:Responded to command.
+18/12/2020 20:40:05:Received a text message from ruiasolitaria in chat -1001437603542: /inserisci @stalinbot
+18/12/2020 20:40:05:Responded to command.
+18/12/2020 20:40:18:Received a text message from ruiasolitaria in chat -1001437603542: /inserisci StalinBot
+18/12/2020 20:40:18:Responded to command.
+18/12/2020 20:48:19:Received a text message from Lil_Plazap in chat -1001437603542: /inserisci nemiski
+18/12/2020 20:48:19:Responded to command.
+18/12/2020 20:51:54:Received a text message from Lil_Plazap in chat -1001437603542: /inserisci nemiski
+18/12/2020 20:51:54:Responded to command.
+18/12/2020 20:52:50:Shutting down...
+18/12/2020 20:59:32:Starting up...
+18/12/2020 21:01:23:Shutting down...
+18/12/2020 21:01:27:Starting up...
+18/12/2020 21:10:44:Shutting down...
+18/12/2020 21:11:58:Starting up...
+18/12/2020 21:11:59:Shutting down...
+18/12/2020 21:12:02:Starting up...
+18/12/2020 21:20:55:Shutting down...
+18/12/2020 21:21:00:Starting up...
+18/12/2020 21:21:00:Shutting down...
+18/12/2020 21:21:03:Starting up...
+18/12/2020 21:21:16:Received a text message from lbusellato in chat 1031635402: /partite nemiski
+18/12/2020 21:21:19:Responded to command.
+18/12/2020 21:26:06:Shutting down...
+18/12/2020 21:26:10:Starting up...
+18/12/2020 21:26:11:Shutting down...
+18/12/2020 21:26:13:Starting up...
+18/12/2020 23:00:03:Received a text message from martolina73 in chat 110625705: /start
+18/12/2020 23:00:03:Responded to command.
+19/12/2020 11:30:04:Shutting down...
+19/12/2020 11:30:10:Starting up...
+19/12/2020 11:30:11:Shutting down...
+19/12/2020 11:30:13:Starting up...
+19/12/2020 12:19:11:Received a text message from Urun_Hero in chat -1001437603542: /miepartite
+19/12/2020 12:19:14:Responded to command.
+19/12/2020 12:49:46:Shutting down...
+19/12/2020 22:01:40:Starting up...
+20/12/2020 18:31:14:Shutting down...
+20/12/2020 19:08:29:Starting up...
+20/12/2020 19:33:33:Received a text message from DavideTor in chat -1001437603542: /miepartite
+20/12/2020 19:33:36:Responded to command.
+20/12/2020 19:49:21:Shutting down...
+20/12/2020 19:49:50:Starting up...
+20/12/2020 19:52:40:Shutting down...
+20/12/2020 19:52:43:Starting up...
+20/12/2020 20:05:27:Received a text message from DavideTor in chat -1001437603542: /inserisci Urun_hero
+20/12/2020 20:05:31:Responded to command.
+20/12/2020 20:05:37:Received a text message from DavideTor in chat -1001437603542: /risultati
+20/12/2020 20:05:37:Responded to command.
+20/12/2020 20:10:06:Received a text message from lbusellato in chat 1031635402: /classifica
+20/12/2020 20:10:07:Responded to command.
+22/12/2020 11:04:13:Received a text message from MicheleGava in chat -1001437603542: /miepartite
+22/12/2020 11:04:14:Responded to command.
+23/12/2020 10:05:27:Received a text message from lbusellato in chat 1031635402: /partite tor_c
+23/12/2020 10:05:28:Responded to command.
+23/12/2020 10:09:09:Shutting down...
+23/12/2020 10:09:17:Starting up...
+23/12/2020 10:09:18:Shutting down...
+23/12/2020 10:09:20:Starting up...
+23/12/2020 10:09:36:Received a text message from lbusellato in chat 1031635402: /partite tor_c
+23/12/2020 10:09:38:Responded to command.
+23/12/2020 12:20:42:Received a text message from Parrare in chat -1001437603542: /miepartite
+23/12/2020 12:20:43:Responded to command.
+23/12/2020 17:27:02:Received a text message from Urun_Hero in chat -1001437603542: /partite
+23/12/2020 17:27:02:Ignored message (not a command).
+23/12/2020 17:27:14:Received a text message from Urun_Hero in chat -1001437603542: /miepartite
+23/12/2020 17:27:16:Responded to command.
+24/12/2020 14:32:54:Shutting down...
+24/12/2020 14:37:31:Starting up...
+25/12/2020 19:49:05:Received a text message from MicheleGava in chat -1001437603542: /inserisci gavanator
+25/12/2020 19:49:10:Responded to command.
+25/12/2020 19:49:17:Received a text message from MicheleGava in chat -1001437603542: /risultati
+25/12/2020 19:49:17:Responded to command.
+25/12/2020 19:51:12:Received a text message from MicheleGava in chat -1001437603542: /partecipanti@AvenaChessBot
+25/12/2020 19:51:13:Responded to command.
+25/12/2020 20:17:22:Received a text message from DavideTor in chat -1001437603542: /miepartite
+25/12/2020 20:17:24:Responded to command.
+25/12/2020 20:18:43:Received a text message from MicheleGava in chat -1001437603542: /miepartite
+25/12/2020 20:18:44:Responded to command.
+26/12/2020 22:41:52:Received a text message from Urun_Hero in chat -1001437603542: /miepartite
+26/12/2020 22:41:54:Responded to command.
+26/12/2020 22:42:04:Received a text message from ruiasolitaria in chat -1001437603542: /miepartite
+26/12/2020 22:42:04:Responded to command.
+27/12/2020 00:40:36:Received a text message from Lil_Plazap in chat -1001437603542: /risultati
+27/12/2020 00:40:37:Responded to command.
+27/12/2020 01:11:17:Received a text message from ruiasolitaria in chat -1001437603542: /partecipanti
+27/12/2020 01:11:18:Responded to command.
+27/12/2020 09:27:49:Received a text message from lbusellato in chat 1031635402: /risultati
+27/12/2020 09:27:49:Responded to command.
+27/12/2020 09:29:10:Received a text message from lbusellato in chat 1031635402: /miepartite gavanator
+27/12/2020 09:29:10:Responded to command.
+27/12/2020 09:29:17:Received a text message from lbusellato in chat 1031635402: /miepartite MicheleGava
+27/12/2020 09:29:17:Responded to command.
+27/12/2020 09:29:23:Received a text message from lbusellato in chat 1031635402: /miepartite DavideTor
+27/12/2020 09:29:23:Responded to command.
+27/12/2020 09:29:38:Received a text message from lbusellato in chat 1031635402: /miepartite Parrare
+27/12/2020 09:29:38:Responded to command.
+27/12/2020 09:29:44:Received a text message from lbusellato in chat 1031635402: /miepartite Urun_hero
+27/12/2020 09:29:44:Responded to command.
+27/12/2020 09:33:55:Shutting down...
+27/12/2020 09:41:28:Starting up...
+27/12/2020 09:41:33:Received a text message from lbusellato in chat 1031635402: /miepartite michelegava
+27/12/2020 09:41:35:Responded to command.
+27/12/2020 09:41:43:Shutting down...

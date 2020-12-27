@@ -1251,9 +1251,15 @@ namespace avenabot.Interpreter
             if (subs.Length == 2) // /inserisci OpponentID
             {
                 sub1 = subs[1];
+                sub1.Trim('@');
                 //Check if the players are in the same group first
                 p1 = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID.ToLower() == sender.ToLower());
                 p2 = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == sub1.ToLower());
+                if(p1 == p2)
+                {
+                    res += Strings.inserisciUsage;
+                    return res;
+                }
                 //Check if LichessIDs are valid
                 if (p1 == null || p2 == null)
                 {
@@ -1669,12 +1675,8 @@ namespace avenabot.Interpreter
                     return res;
                 }
 
-                res += groupID switch {
-                    0 => Strings.partiteHeaderA,
-                    1 => Strings.partiteHeaderB,
-                    3 => Strings.partiteHeaderF,
-                    _ => Strings.partiteHeaderC,
-                };
+                string senderLichessID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == playerID).LichessID;
+                res += "Partite di " + senderLichessID + ":\n";
                 DbSet<Game> dbset = groupID switch
                 {
                     0 => gironeADb.Partite,
@@ -1748,6 +1750,7 @@ namespace avenabot.Interpreter
                 3 => gironeFDb.Girone,
                 _ => gironeCDb.Girone,
             };
+            string dummy = null;
             int pGroupID = dbset.SingleOrDefault(g => g.PlayerID == p.TID).GID;
             foreach (Girone g in dbset)
             {
@@ -1759,6 +1762,10 @@ namespace avenabot.Interpreter
                     {
                         opponents.Add(partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID);
                     }
+                    else
+                    {
+                        opponents.Add(dummy);
+                    }
                 }
             }
 
@@ -1766,31 +1773,34 @@ namespace avenabot.Interpreter
             string opponentTG;
             for (int i = 0; i < opponents.Count; ++i)
             {
-                res += opponents.ElementAt(i);
-                res += "(@";
-                opponentTG = opponents.ElementAt(i);
-                res += partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == opponentTG).TGID + ")";
-                res += ", giochi con il ";
-                if(pGroupID % 2 == 0)
+                if (opponents.ElementAt(i) != null)
                 {
-                    if(i % 2 == 0)
+                    res += opponents.ElementAt(i);
+                    res += "(@";
+                    opponentTG = opponents.ElementAt(i);
+                    res += partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == opponentTG).TGID + ")";
+                    res += ", giochi con il ";
+                    if (pGroupID % 2 == 0)
                     {
-                        res += "bianco\n";
+                        if (i % 2 == 0)
+                        {
+                            res += "bianco\n";
+                        }
+                        else
+                        {
+                            res += "nero\n";
+                        }
                     }
                     else
                     {
-                        res += "nero\n";
-                    }
-                }
-                else
-                {
-                    if (i % 2 == 0)
-                    {
-                        res += "nero\n";
-                    }
-                    else
-                    {
-                        res += "bianco\n";
+                        if (i % 2 == 0)
+                        {
+                            res += "nero\n";
+                        }
+                        else
+                        {
+                            res += "bianco\n";
+                        }
                     }
                 }
             }
@@ -1947,21 +1957,50 @@ namespace avenabot.Interpreter
             res[0] = "-1";
             res[1] = "";
             string downloadString;
+            string date;
             int i = 0;
             int j = 0;
+            int yyyy;
+            int dd;
+            int mm;
+            int h;
+            int m;
             WebClient client = new WebClient();
 
             try
             {
-                downloadString = client.DownloadString("https://lichess.org/@/" + player + "/search?perf=6&players.a=" + player + "&players.b=" + opponent + "&sort.field=d&sort.order=desc");
+                //downloadString = client.DownloadString("https://lichess.org/@/" + player + "/search?perf=6&players.a=" + player + "&players.b=" + opponent + "&sort.field=d&sort.order=desc");
+
+                downloadString = client.DownloadString("https://lichess.org/@/" + player + "/all");
 
                 i = downloadString.IndexOf("<article");
                 j = downloadString.IndexOf("article>");
-                if (i == -1)
+                if (i == -1 || j == -1)
                 {
                     return res;
                 }
+
+                /*date = downloadString[(downloadString.IndexOf("datetime") + 10)..(downloadString.IndexOf("datetime") + 26)];
+                Int32.TryParse(date[0..4], out yyyy);
+                Int32.TryParse(date[5..7], out mm);
+                Int32.TryParse(date[8..10], out dd);
+                Int32.TryParse(date[11..13], out h);
+                Int32.TryParse(date[14..16], out m);
+                DateTime d = new DateTime(yyyy, mm, dd, h, m, 0);
+
+                if(d < DateTime.Now.AddMinutes(-60))
+                {
+                    return res;
+                }*/
+
                 string substring = downloadString[i..j];
+
+                int opponentCheck = downloadString.IndexOf(opponent);
+                if (opponentCheck == -1)
+                {
+                    return res;
+                }
+
                 string link = substring.Substring(substring.IndexOf("href") + 7, substring.IndexOf("></a>") - substring.IndexOf("href") - 8);
                 int result = substring.IndexOf("<span class=\"loss\">") == -1 ? substring.IndexOf("<span class=\"win\">") == -1 ? -1 : 1 : 0;
 

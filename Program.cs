@@ -38,7 +38,6 @@ namespace Awesome
         {
             if (e.Message.Text != null)
             {
-                Console.WriteLine($"Received a text message from {e.Message.From.Username} in chat {e.Message.Chat.Id}: {e.Message.Text}");
                 Logger.Log($"Received a text message from {e.Message.From.Username} in chat {e.Message.Chat.Id}: {e.Message.Text}");
                 string res;
                 if(e.Message.Text.ToLower().IndexOf(Strings.invalidMessage) != -1)
@@ -74,7 +73,6 @@ namespace Awesome
             }
             else
             {
-                Console.WriteLine($"Ignored an empty text message from {e.Message.From.Username} in chat {e.Message.Chat.Id}");
                 Logger.Log($"Ignored an empty text message from {e.Message.From.Username} in chat {e.Message.Chat.Id}");
             }
         }
