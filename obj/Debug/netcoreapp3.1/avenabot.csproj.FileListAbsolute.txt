@@ -88,3 +88,4 @@ C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenab
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.GironeBMigrations.GIDField.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.GironeCMigrations.GIDField.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.GironeFMigrations.GIDField.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.ELOvarField.resources

@@ -404,3 +404,42 @@
 27/12/2020 09:41:33:Received a text message from lbusellato in chat 1031635402: /miepartite michelegava
 27/12/2020 09:41:35:Responded to command.
 27/12/2020 09:41:43:Shutting down...
+29/12/2020 18:32:48:Starting up...
+29/12/2020 23:34:29:Received a text message from Parrare in chat -1001437603542: /help@AvenaChessBot
+29/12/2020 23:34:30:Responded to command.
+29/12/2020 23:34:40:Received a text message from Parrare in chat -1001437603542: /miepartite
+29/12/2020 23:34:44:Responded to command.
+29/12/2020 23:48:31:Received a text message from Parrare in chat -1001437603542: /inserisci Betcrax
+29/12/2020 23:48:32:Responded to command.
+29/12/2020 23:48:52:Received a text message from Parrare in chat -1001437603542: /inserisci Urun_Hero
+29/12/2020 23:48:52:Responded to command.
+29/12/2020 23:48:56:Received a text message from Parrare in chat -1001437603542: /risultati@AvenaChessBot
+29/12/2020 23:48:56:Responded to command.
+30/12/2020 13:03:10:Received a text message from Caffa997 in chat 989928419: /start
+30/12/2020 13:03:10:Responded to command.
+30/12/2020 13:03:21:Received a text message from Caffa997 in chat 989928419: /help
+30/12/2020 13:03:21:Responded to command.
+30/12/2020 13:06:29:Received a text message from marcopaone in chat 487109544: /start
+30/12/2020 13:06:29:Responded to command.
+30/12/2020 13:06:34:Received a text message from marcopaone in chat 487109544: /help
+30/12/2020 13:06:34:Responded to command.
+30/12/2020 13:06:38:Received a text message from marcopaone in chat 487109544: /partecipanti
+30/12/2020 13:06:39:Responded to command.
+30/12/2020 13:06:57:Received a text message from marcopaone in chat 487109544: /classifica
+30/12/2020 13:06:57:Responded to command.
+30/12/2020 13:07:43:Received a text message from Caffa997 in chat 989928419: /miepartite
+30/12/2020 13:07:43:Responded to command.
+30/12/2020 13:07:58:Received a text message from Caffa997 in chat 989928419: /classifica
+30/12/2020 13:07:59:Responded to command.
+02/01/2021 10:35:08:Received a text message from lbusellato in chat 1031635402: /risultati
+02/01/2021 10:35:09:Responded to command.
+02/01/2021 10:35:14:Received a text message from lbusellato in chat 1031635402: /CLASSIFICA
+02/01/2021 10:35:14:Ignored message (not a command).
+02/01/2021 10:35:18:Received a text message from lbusellato in chat 1031635402: /classifica
+02/01/2021 10:35:18:Responded to command.
+02/01/2021 10:38:08:Ignored an empty text message from lbusellato in chat -1001437603542
+02/01/2021 10:38:56:Received a text message from lbusellato in chat 1031635402: /partecipanti
+02/01/2021 10:38:56:Responded to command.
+02/01/2021 12:39:43:Shutting down...
+02/01/2021 12:39:53:Starting up...
+02/01/2021 12:39:53:Shutting down...

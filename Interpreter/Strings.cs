@@ -20,6 +20,7 @@
         public static string partiteCommand = "/partite";
         public static string miePartiteCommand = "/miepartite";
         public static string vincitoreCommand = "/vincitore";
+        public static string updateEloCommand = "/updateelo";
 
         public static string startDescr = "";
         public static string helpDescr = "Mostra questa lista";
@@ -36,6 +37,7 @@
         public static string partiteDescr = "/partite A/B/C\nMostra le partite del girone specificato.";
         public static string miePartiteDescr = "Mostra la lista di partite che devi ancora giocare con il colore che dovrai usare.";
         public static string vincitoreDescr = "";
+        public static string updateEloDescr = "";
 
         public static string iscrivimiUsage = "Utilizzo: /iscrivimi IDLichess";
         public static string iscrivimiUsage2 = "Usa /iscrivimi IDLichess per riiscriverti";
@@ -111,5 +113,6 @@
         public static string tournamentName = "Torneo Avenoni Scacchisti 2: Episodio II";
         public static string usernameNeeded = "È necessario avere un username Telegram valido per potersi iscrivere!";
         public static string notValidGroup = "Il girone specificato non esiste!";
+        public static string EloUpdateSuccess = "ELO aggiornati.";
     }
 }

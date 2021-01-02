@@ -2,6 +2,9 @@
 using avenabot.Log;
 using System;
 using System.IO;
+using System.Net.Sockets;
+using System.Net;
+using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
@@ -26,7 +29,7 @@ namespace Awesome
             botClient.OnMessage += Bot_OnMessage;
             botClient.StartReceiving();
 
-            Console.WriteLine("Press any key to exit");
+            Console.WriteLine("Press any key to exit"); 
             Console.ReadKey();
 
             Logger.Log("Shutting down...");

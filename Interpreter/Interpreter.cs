@@ -41,6 +41,7 @@ namespace avenabot.Interpreter
             false,
             false,
             true,
+            true,
         };
 
         public string[] commandList = new string[]
@@ -60,6 +61,7 @@ namespace avenabot.Interpreter
             Strings.partiteCommand, //Show games list
             Strings.miePartiteCommand, //Show games to play
             Strings.vincitoreCommand, //Declare winner
+            Strings.updateEloCommand, //Update Elos in player list, admin only
         };
 
         public string[] commandDescr = new string[]
@@ -79,6 +81,7 @@ namespace avenabot.Interpreter
             Strings.partiteDescr,
             Strings.miePartiteDescr,
             Strings.vincitoreDescr,
+            Strings.updateEloDescr,
         };
 
         public Interpreter() { }
@@ -141,6 +144,8 @@ namespace avenabot.Interpreter
                 13 => MiePartiteCommand(message, sender),
                 // /vincitore
                 14 => VincitoreCommand(sender),
+                // /updateelo
+                15 => UpdateElosCommand(sender),
                 _ => NoCommand(),
             };
             if(res != "")
@@ -197,11 +202,19 @@ namespace avenabot.Interpreter
         private string PartecipantiCommand()
         {
             //FINAL
+            if (partecipantiDb.Partecipanti.Count() > 0)
+            {
+                UpdateElosCommand(admin[0]);
+            }
             string res = "";
             res += Strings.partecipantiHeader;
             foreach (Partecipante p in partecipantiDb.Partecipanti)
             {
-                res += p.TID + " - " + p.LichessID + " - @" + p.TGID + " - " + p.ELO + " - " + p.Girone + "\n";
+                res += p.TID + " - " 
+                    + p.LichessID + " - @" 
+                    + p.TGID + " - " 
+                    + p.ELO + "(" + ((p.ELOvar > 0) ? "+" : (p.ELOvar < 0) ? "-" : "") + p.ELOvar + ")" + " - " 
+                    + p.Girone + "\n";
             }
             return res;
         }
@@ -1850,6 +1863,32 @@ namespace avenabot.Interpreter
             }
             standings = standings.OrderByDescending(s => s.Tot).ToList();
             res = standings.First().ID;
+            return res;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <returns></returns>
+        private string UpdateElosCommand(string sender)
+        {
+            //FINAL
+            string res = "";
+            if(IsAdmin(sender))
+            {
+                foreach(Partecipante p in partecipantiDb.Partecipanti)
+                {
+                    int elo = GetELO(p.LichessID);
+                    int var = elo - p.ELO;
+                    if (var != 0)
+                    {
+                        p.ELO = elo;
+                        p.ELOvar = var;
+                    }
+                }
+                partecipantiDb.SaveChanges();
+            }
             return res;
         }
 
