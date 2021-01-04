@@ -8,6 +8,9 @@ using avenabot.Models.Gironi;
 using System.Collections.Generic;
 using System.Data.Entity;
 using avenabot.Log;
+using CoreHtmlToImage;
+using System.IO;
+using System.Drawing;
 
 namespace avenabot.Interpreter
 {
@@ -97,6 +100,9 @@ namespace avenabot.Interpreter
         private readonly DateTime endDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to end the tournament
         public static DateTime lastCommand;
         public int coolDown = 0;
+        static readonly int MaxPlayers = 8;
+        static readonly int MaxGroups = 2;
+        static readonly int MaxFinalists = 2;
 
         public string Parse(MessageEventArgs e, DateTime LastCommand)
         {
@@ -110,9 +116,6 @@ namespace avenabot.Interpreter
             string sender = e.Message.From.Username;
             //long chatID = e.Message.Chat.Id;
             DateTime closingDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to close registering
-            int MaxPlayers = 8;
-            int MaxGroups = 2;
-            int MaxFinalists = 2;
             string res = (Find(message)) switch
             {
                 // /start
@@ -660,10 +663,8 @@ namespace avenabot.Interpreter
         {
             //FINAL
             string res = "";
-            string results = "";
-            string[] subresults;
+            string html = "";
             string[] subs;
-            int maxLen = 0;
 
             if (DateTime.Now < lastCommand.AddMinutes(coolDown))
             {
@@ -687,31 +688,23 @@ namespace avenabot.Interpreter
                 {
                     for (int j = 0; j < MaxGroups; ++j)
                     {
-                        res += FetchGroupResults(j);
-                        for (int i = 0; i < 60; ++i)
-                        {
-                            res += "-";
-                        }
-                        res += "\n";
+                        html += FetchGroupResults(j);
                     }
                 }
                 else
                 {
-                    res += FetchGroupResults(3);
+                    html = FetchGroupResults(3);
                 }
-                res += "\n" + Strings.resultsDisclaimer + "\n";
             }
             else if (subs.Length == 2)
             {
                 switch(subs[1])
                 {
                     case "A":
-                        res += FetchGroupResults(0);
-                        res += "\n" + Strings.resultsDisclaimer + "\n";
+                        html = FetchGroupResults(0);
                         break;
                     case "B":
-                        res += FetchGroupResults(1);
-                        res += "\n" + Strings.resultsDisclaimer + "\n";
+                        html = FetchGroupResults(1);
                         break;
                     case "C":
                         if (MaxGroups != 3)
@@ -719,8 +712,7 @@ namespace avenabot.Interpreter
                             res += Strings.saywhat;
                             return res;
                         }
-                        res += FetchGroupResults(2);
-                        res += "\n" + Strings.resultsDisclaimer + "\n";
+                        html = FetchGroupResults(2);
                         break;
                     case "F":
                         if (DateTime.Now < finalsDate)
@@ -728,104 +720,21 @@ namespace avenabot.Interpreter
                             res += Strings.saywhat;
                             return res;
                         }
-                        res += FetchGroupResults(3);
-                        res += "\n" + Strings.resultsDisclaimer + "\n";
+                        html = FetchGroupResults(3);
                         break;
                     default:
-                        string submittedID = subs[1];
-                        int? playerID = null;
-                        if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == submittedID) == null)
-                        {
-                            res += Strings.player404;
-                            return res;
-                        }
-                        playerID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID == submittedID).TID;
-                        Girone checkA = gironeADb.Girone.SingleOrDefault(g => g.PlayerID == playerID);
-                        Girone checkB = gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == playerID);
-                        Girone checkC = gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == playerID);
-                        Girone checkF = gironeFDb.Girone.SingleOrDefault(g => g.PlayerID == playerID);
-                        int groupID = (checkA != null) ? 0 : (checkB != null) ? 1 : -1;
-                        if(MaxGroups == 3)
-                        {
-                            groupID = (checkA != null) ? 0 : (checkB != null) ? 1 : (checkC != null) ? 2 : -1;
-                        }
-                        if(DateTime.Now > finalsDate)
-                        {
-                            groupID = (checkA != null) ? 0 : (checkB != null) ? 1 : (checkC != null) ? 2 : (checkF != null) ? 3 : -1;
-                        }
-                        if (groupID == -1)
-                        {
-                            res = Strings.risultatiUsage;
-                            return res;
-                        }
-
-                        string opponent;
-                        //Retrieve the lichess id with proper capitalization
-                        submittedID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == playerID).LichessID;
-                        //Retrieve the player results, split them in an array
-                        results = groupID switch
-                        {
-                            0 => gironeADb.Girone.SingleOrDefault(p => p.PlayerID == playerID).Results,
-                            1 => gironeBDb.Girone.SingleOrDefault(p => p.PlayerID == playerID).Results,
-                            3 => gironeFDb.Girone.SingleOrDefault(p => p.PlayerID == playerID).Results,
-                            _ => gironeCDb.Girone.SingleOrDefault(p => p.PlayerID == playerID).Results,
-                        };
-                        subresults = results.Split(',');
-
-                        res += "<pre>";
-                        res += submittedID + "\n";
-
-                        //Find out the longest opponents name to nicely format the results
-                        maxLen = 0;
-                        DbSet<Girone> dbset = groupID switch
-                        {
-                            0 => gironeADb.Girone,
-                            1 => gironeBDb.Girone,
-                            3 => gironeFDb.Girone,
-                            _ => gironeCDb.Girone
-                        };
-                        foreach (Girone g in dbset)
-                        {
-                            if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID.Length > maxLen)
-                            {
-                                maxLen = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID.Length;
-                            }
-                        }
-
-                        //Format opponents names and results
-                        for (int i = 0; i < subresults.Length; ++i)
-                        {
-                            int opponentID = groupID switch
-                            {
-                                0 => gironeADb.Girone.SingleOrDefault(g1 => g1.GID == i + 1).PlayerID,
-                                1 => gironeBDb.Girone.SingleOrDefault(g1 => g1.GID == i + 1).PlayerID,
-                                3 => gironeFDb.Girone.SingleOrDefault(g1 => g1.GID == i + 1).PlayerID,
-                                _ => gironeCDb.Girone.SingleOrDefault(g1 => g1.GID == i + 1).PlayerID
-                            };
-                            opponent = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == opponentID).LichessID;
-
-                            if (opponent != submittedID)
-                            {
-                                res += "vs " + opponent;
-
-                                for (int j = 0; j < maxLen - opponent.Length + 1; ++j)
-                                {
-                                    res += "&#32";
-                                }
-
-                                res += subresults[i] switch
-                                {
-                                    "x" => " &#189 \n",
-                                    "-1" => " -\n",
-                                    _ => " " + subresults[i] + "\n"
-                                };
-                            }
-                        }
-                        res += "</pre>";
                         break;
                 }
             }
-            return res;
+            if(html == null)
+            {
+                return "";
+            }
+            else
+            {
+                Convert(html, 0);
+                return "gironi";
+            }
         }
 
         /// <summary>
@@ -839,7 +748,15 @@ namespace avenabot.Interpreter
             //FINAL
             string results;
             string[] subresults;
-            string res = "";
+            string html = "<div>";
+            html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\"><tr><b>Risultati girone ";
+            html += Group switch
+            {
+                0 => "A",
+                1 => "B",
+                3 => "finale",
+                _ => "C",
+            };
             int gir = Group switch
             {
                 0 => gironeADb.Girone.Count(),
@@ -849,64 +766,6 @@ namespace avenabot.Interpreter
             };
             if (gir > 0)
             {
-                res += Group switch
-                {
-                    0 => Strings.risultatiHeaderA,
-                    1 => Strings.risultatiHeaderB,
-                    3 => Strings.risultatiHeaderF,
-                    _ => Strings.risultatiHeaderC,
-                };
-                for (int i = 0; i < gir; ++i)
-                {
-                    switch(Group)
-                    {
-                        case 0:
-                            res += gironeADb.Girone.SingleOrDefault(g => g.GID == i + 1).PlayerID;
-                            if (gironeADb.Girone.SingleOrDefault(g => g.GID == i + 1).PlayerID < 10)
-                            {
-                                res += "&#32 ";
-                            }
-                            else
-                            {
-                                res += " ";
-                            }
-                            break;
-                        case 1:
-                            res += gironeBDb.Girone.SingleOrDefault(g => g.GID == i + 1).PlayerID;
-                            if (gironeBDb.Girone.SingleOrDefault(g => g.GID == i + 1).PlayerID < 10)
-                            {
-                                res += "&#32 ";
-                            }
-                            else
-                            {
-                                res += " ";
-                            }
-                            break;
-                        case 3:
-                            res += gironeFDb.Girone.SingleOrDefault(g => g.GID == i + 1).PlayerID;
-                            if (gironeFDb.Girone.SingleOrDefault(g => g.GID == i + 1).PlayerID < 10)
-                            {
-                                res += "&#32 ";
-                            }
-                            else
-                            {
-                                res += " ";
-                            }
-                            break;
-                        default:
-                            res += gironeCDb.Girone.SingleOrDefault(g => g.GID == i + 1).PlayerID;
-                            if (gironeCDb.Girone.SingleOrDefault(g => g.GID == i + 1).PlayerID < 10)
-                            {
-                                res += "&#32 ";
-                            }
-                            else
-                            {
-                                res += " ";
-                            }
-                            break;
-                    };
-                }
-                res += "\n";
                 DbSet<Girone> dbset = Group switch
                 {
                     0 => gironeADb.Girone,
@@ -915,35 +774,69 @@ namespace avenabot.Interpreter
                     _ => gironeCDb.Girone,
                 };
 
+                html += "<tr><td></td>";
+                int maxLen = 0;
+                for (int i = 0; i < gir; ++i)
+                {
+                    int pid = dbset.SingleOrDefault(g => g.GID == i + 1).PlayerID;
+                    string lid = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == pid).LichessID;
+                    if(lid.Length > maxLen)
+                    {
+                        maxLen = lid.Length;
+                    }
+                }
+                for (int i = 0; i < gir; ++i)
+                {
+                    int pid = dbset.SingleOrDefault(g => g.GID == i + 1).PlayerID;
+                    string lid = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == pid).LichessID;
+                    if (!File.Exists(lid + ".png"))
+                    {
+                        File.Delete(lid + ".png");
+                        Convert(lid, -1, lid + ".png", maxLen);
+                        Bitmap bmp = new Bitmap(lid + ".png");
+                        bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                        bmp.Save(lid + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                        bmp.Dispose();
+                    }
+                    html += "<td><img src=\"" + lid + ".png\"></td>";
+                }
+                html += "</tr>";
+                int k = 0;
                 foreach (Girone g in dbset)
                 {
                     results = g.Results;
                     subresults = results.Split(',');
-                    res += g.PlayerID;
-                    if (g.PlayerID < 10)
-                    {
-                        res += "&#32";
-                    }
+                    html += (k % 2 == 0) ?
+                        "<tr bgcolor=\"#e9ede4\">" :
+                        "<tr bgcolor=\"#d7edb4\">";
+                    k++;
+                    html += "<td>" + partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID + "</td>";
                     for (int i = 0; i < subresults.Length; ++i)
                     {
+                        html += "<td align=\"center\">";
                         if (subresults[i] == "x")
                         {
-                            res += " &#189 ";
+                            html += "&#189";
                         }
-                        else if (subresults[i] == "-1")
+                        else if (subresults[i] != "-1")
                         {
-                            res += " - ";
+                            html += subresults[i];
                         }
-                        else
+                        else if(g.GID == i + 1)
                         {
-                            res += " " + subresults[i] + " ";
+                            html += "x";
                         }
+                        html += "</td>";
                     }
-                    res += "\n";
+                    html += "</tr>";
                 }
-                res += "</pre>\n";
+                html += "</table></div>";
             }
-            return res;
+            else
+            {
+                html = null;
+            }
+            return html;
         }
 
         /// <summary>
@@ -954,6 +847,7 @@ namespace avenabot.Interpreter
         {
             //FINAL
             string res = "";
+            string html = "";
             string[] subresults;
             int dbCheck;
             DbSet<Girone> dbset;
@@ -972,125 +866,27 @@ namespace avenabot.Interpreter
             }
             lastCommand = DateTime.Now;
 
-            if (DateTime.Now > finalsDate)
+            html += "<div>";
+            for (int j = 0; j < MaxGroups + 1; ++j)
             {
-                dbCheck = gironeFDb.Girone.Count();
-                if (dbCheck <= 0)
+                if(j == 0 && DateTime.Now < finalsDate )
                 {
-                    res += Strings.errorNotSeeded;
-                    return res;
+                    continue;
                 }
-                dbset = gironeFDb.Girone;
-                //Find out the longest opponents name to nicely format the results
-                int maxLen = 0;
-                foreach (Girone g in dbset)
+                html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\"><tr><b>Classifica girone ";
+                html += j switch
                 {
-                    if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID.Length > maxLen)
-                    {
-                        maxLen = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID.Length;
-                    }
-                }
-
-                List<Standing> standings = new List<Standing>();
-
-                foreach (Girone g in dbset)
-                {
-                    Standing stg = new Standing
-                    {
-                        ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID
-                    };
-                    subresults = g.Results.Split(",");
-                    stg.Games = new string[subresults.Length];
-                    stg.Tot = 0;
-                    for (int i = 0; i < subresults.Length; ++i)
-                    {
-                        if (subresults[i] == "x")
-                        {
-                            stg.Games[i] = "&#189;";
-                            stg.Tot += 0.5;
-                        }
-                        else
-                        {
-                            if (subresults[i] == "1")
-                            {
-                                stg.Games[i] = subresults[i];
-                                stg.Tot += 1;
-                            }
-                            else if (subresults[i] == "0")
-                            {
-                                stg.Games[i] = subresults[i];
-                            }
-                        }
-                    }
-                    standings.Add(stg);
-                }
-                standings = standings.OrderByDescending(s => s.Tot).ToList();
-
-                res += "<pre>" + Strings.classificaHeader1F;
-
-                for (int i = 0; i < maxLen - 4; ++i)
-                {
-                    res += " ";
-                }
-                res += Strings.classificaHeader2;
-                for (int i = 1; i < dbCheck; ++i)
-                {
-                    res += " " + i;
-                }
-                res += " P\n";
-                foreach (Standing s in standings)
-                {
-                    int gamesPlayed = 0;
-                    res += s.ID;
-                    for (int i = 0; i < maxLen - s.ID.Length; ++i)
-                    {
-                        res += " ";
-                    }
-                    res += " ";
-                    string[] test = s.Games;
-                    for (int i = 0; i < s.Games.Length; ++i)
-                    {
-                        if (s.Games[i] != null)
-                        {
-                            res += s.Games[i] + " ";
-                            gamesPlayed++;
-                        }
-                    }
-                    for (int i = 0; i < 2 * (dbCheck - gamesPlayed) - 2; ++i)
-                    {
-                        res += " ";
-                    }
-                    if (s.Tot % 1 != 0)
-                    {
-                        if ((int)s.Tot == 0)
-                        {
-                            res += " &#189 \n";
-                        }
-                        else
-                        {
-                            res += " " + (int)s.Tot + "&#189 \n";
-                        }
-                    }
-                    else
-                    {
-                        res += s.Tot + "\n";
-                    }
-                }
-                res += "</pre>";
-                for (int i = 0; i < 60; ++i)
-                {
-                    res += "-";
-                }
-                res += "\n";
-                return res;
-            }
-
-            for (int j = 0; j < MaxGroups; ++j)
-            {
+                    0 => "finale",
+                    1 => "A",
+                    2 => "B",
+                    _ => "C",
+                };
+                html += ":</b></tr>";
                 dbCheck = j switch
                 {
-                    0 => gironeADb.Girone.Count(),
-                    1 => gironeBDb.Girone.Count(),
+                    0 => gironeFDb.Girone.Count(),
+                    1 => gironeADb.Girone.Count(),
+                    2 => gironeBDb.Girone.Count(),
                     _ => gironeCDb.Girone.Count(),
                 };
                 if (dbCheck <= 0)
@@ -1100,8 +896,9 @@ namespace avenabot.Interpreter
                 }
                 dbset = j switch
                 {
-                    0 => gironeADb.Girone,
-                    1 => gironeBDb.Girone,
+                    0 => gironeFDb.Girone,
+                    1 => gironeADb.Girone,
+                    2 => gironeBDb.Girone,
                     _ => gironeCDb.Girone,
                 };
                 //Find out the longest opponents name to nicely format the results
@@ -1132,54 +929,53 @@ namespace avenabot.Interpreter
                             stg.Games[i] = "&#189;";
                             stg.Tot += 0.5;
                         }
-                        else
+                        else if (subresults[i] == "1")
                         {
-                            if (subresults[i] == "1")
-                            {
-                                stg.Games[i] = subresults[i];
-                                stg.Tot += 1;
-                            }
-                            else if (subresults[i] == "0")
-                            {
-                                stg.Games[i] = subresults[i];
-                            }
+                            stg.Games[i] = subresults[i];
+                            stg.Tot += 1;
+                        }
+                        else if (subresults[i] == "0")
+                        {
+                            stg.Games[i] = subresults[i];
+                        }
+                        else if (subresults[i] == "-1" && i != g.GID - 1)
+                        {
+                            stg.Games[i] = subresults[i];
                         }
                     }
                     standings.Add(stg);
                 }
                 standings = standings.OrderByDescending(s => s.Tot).ToList();
 
-                res += j switch
-                {
-                    0 => "<pre>" + Strings.classificaHeader1A,
-                    1 => "<pre>" + Strings.classificaHeader1B,
-                    _ => "<pre>" + Strings.classificaHeader1C,
-                };
-                for (int i = 0; i < maxLen - 4; ++i)
-                {
-                    res += " ";
-                }
-                res += Strings.classificaHeader2;
+                html += "<th>ID</th>";
                 for (int i = 1; i < MaxPlayers / MaxGroups; ++i)
                 {
-                    res += " " + i;
+                    html += "<th>G" + i + "</th>";
                 }
-                res += " P\n"; 
+
+                int k = 0;
+                html += "<th>PTI</th>";
                 foreach (Standing s in standings)
                 {
                     int gamesPlayed = 0;
                     res += s.ID;
-                    for (int i = 0; i < maxLen - s.ID.Length; ++i)
-                    {
-                        res += " ";
-                    }
-                    res += " ";
+                    html += (k % 2 == 0) ?
+                        "<tr bgcolor=\"#e9ede4\"><td>" + s.ID + "</td>" :
+                        "<tr bgcolor=\"#d7edb4\"><td>" + s.ID + "</td>";
+                    k++;
                     string[] test = s.Games;
                     for (int i = 0; i < s.Games.Length; ++i)
                     {
                         if (s.Games[i] != null)
                         {
-                            res += s.Games[i] + " ";
+                            if (s.Games[i] == "-1")
+                            {
+                                html += "<td> </td>";
+                            }
+                            else
+                            {
+                                html += "<td align=\"center\">" + s.Games[i] + "</td>";
+                            }
                             gamesPlayed++;
                         }
                     }
@@ -1191,26 +987,23 @@ namespace avenabot.Interpreter
                     {
                         if ((int)s.Tot == 0)
                         {
-                            res += " &#189 \n";
+                            html += "<td align=\"center\">&#189</td>";
                         }
                         else
                         {
-                            res += " " + (int)s.Tot + "&#189 \n";
+                            html += "<td align=\"center\">" + (int)s.Tot + "&#189</td>";
                         }
                     }
                     else
                     {
-                        res += s.Tot + "\n";
+                        html += "<td align=\"center\">" + s.Tot + "</td>";
                     }
+                    html += "</tr>";
                 }
-                res += "</pre>";
-                for(int i = 0; i < 60; ++i)
-                {
-                    res += "-";
-                }
-                res += "\n";
             }
-            res += Strings.classificaFooter;
+            html += "</table></div>";
+            Convert(html, 4);
+            res = "classifica";
             return res;
         }
 
@@ -2138,6 +1931,35 @@ namespace avenabot.Interpreter
                 Logger.Log("Giocatore non trovato su Lichess, eccezione generata:" + e);
                 return res;
             }
+        }
+
+        /// <summary>
+        /// Render the provided html
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="n"></param>
+        public static void Convert(string source, int n, string file = "", int width = 0)
+        {
+            var converter = new HtmlConverter();
+            byte[] bytes;
+            if(file == "")
+            {
+                bytes = converter.FromHtmlString(source, 50 * (int)(MaxPlayers / MaxGroups), ImageFormat.Png);
+                file = n switch
+                {
+                    4 => "classifica.png",
+                    _ => "girone.png"
+                };
+            }
+            else
+            {
+                bytes = converter.FromHtmlString(source, (int)(20 * width / 3), ImageFormat.Png);
+            }
+            if (File.Exists(file))
+            {
+                File.Delete(file);
+            }
+            File.WriteAllBytes(file, bytes);
         }
     }
 }

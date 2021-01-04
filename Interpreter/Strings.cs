@@ -81,16 +81,6 @@
         public static string inserisciInvalidResult = "Il risultato immesso non è corretto, i risultati accettati sono 1 (vittoria giocatore 1), 2 (vittoria giocatore 2) e x (pareggio).";
         public static string checkResults = " Usa /risultati per vedere il tabellone dei risultati.";
         public static string insertedResult = "Risultato inserito correttamente.";
-        public static string risultatiHeaderA = "<pre>Risultati girone A:\n&#32&#32 ";
-        public static string risultatiHeaderB = "<pre>Risultati girone B:\n&#32&#32 ";
-        public static string risultatiHeaderC = "<pre>Risultati girone C:\n&#32&#32 ";
-        public static string risultatiHeaderF = "<pre>Risultati girone finale:\n&#32&#32 ";
-        public static string classificaHeader1A = "Classifica Girone A:\nID";
-        public static string classificaHeader1B = "Classifica Girone B:\nID";
-        public static string classificaHeader1C = "Classifica Girone C:\nID";
-        public static string classificaHeader1F = "Classifica Girone Finale:\nID";
-        public static string classificaHeader2 = "G:";
-        public static string classificaFooter = "\nNB: G sta per Game e i numeri che seguono indicano la partita 1 2 ecc., P sta per Punti";
         public static string invalidMessage = "a38";
         public static string errorNotSeeded = "Errore: i gironi non risultano popolati.";
         public static string internalError = "ERRORE INTERNO, CONTATTA @lbusellato, CODICE ERRORE:";

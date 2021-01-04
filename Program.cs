@@ -8,6 +8,7 @@ using avenabot.DAL;
 using avenabot.Models.Chat;
 using CoreHtmlToImage;
 using System.IO;
+using Telegram.Bot.Types.InputFiles;
 
 namespace Awesome
 {
@@ -19,28 +20,6 @@ namespace Awesome
 
         static void Main()
         {
-            var converter = new HtmlConverter();
-            var html = @"<div><table>
-<tbody>
-<tr>
-<td> 1 &nbsp;</td>
-     <td> 1 &nbsp;</td>
-          <td> &nbsp; f </td>
-              </tr>
-              <tr>
-              <td> &nbsp; 5 </td>
-                  <td> 2 &nbsp;</td>
-                       <td> ht &nbsp;</td>
-                            </tr>
-                            <tr>
-                            <td> 4 &nbsp;</td>
-                                 <td> 6 &nbsp;</td>
-                                      <td> 7 &nbsp;</td>
-                                           </tr>
-                                           </tbody>
-                                           </table></div>";
-            var bytes = converter.FromHtmlString(html);
-            File.WriteAllBytes("image.jpg", bytes);
             lastCommand = DateTime.Now.AddMinutes(-5);
             botClient = new TelegramBotClient("1444146870:AAG22lLxZqCxi7s21rXC5Co4Na6hNL6DDkA");
             var me = botClient.GetMeAsync().Result;
@@ -83,12 +62,38 @@ namespace Awesome
                     res = interpreter.Parse(e, lastCommand);
                     if (res != "")
                     {
-                        await botClient.SendTextMessageAsync(
-                            chatId: e.Message.Chat,
-                            text: res,
-                            parseMode: ParseMode.Html,
-                            true
-                        );
+                        string dir = Directory.GetCurrentDirectory();
+                        if (res == "@" + e.Message.From.Username + "\n" + "classifica")
+                        {
+                            var fs = new FileStream(dir + "\\classifica.png", FileMode.Open, FileAccess.Read);
+                            var file = new InputOnlineFile(fs);
+                            await botClient.SendPhotoAsync(
+                                chatId: e.Message.Chat,
+                                photo: file,
+                                caption: "@" + e.Message.From.Username
+                                );
+                            fs.Close();
+                        }
+                        else if (res == "@" + e.Message.From.Username + "\n" + "gironi")
+                        {
+                            var fs = new FileStream(dir + "\\girone.png", FileMode.Open, FileAccess.Read);
+                            var file = new InputOnlineFile(fs);
+                            await botClient.SendPhotoAsync(
+                                chatId: e.Message.Chat,
+                                photo: file,
+                                caption: "@" + e.Message.From.Username
+                                );
+                            fs.Close();
+                        }
+                        else
+                        {
+                            await botClient.SendTextMessageAsync(
+                                chatId: e.Message.Chat,
+                                text: res,
+                                parseMode: ParseMode.Html,
+                                true
+                            );
+                        }
                         Logger.Log($"Responded to command.");
                     }
                     else
