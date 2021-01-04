@@ -1,4 +1,5 @@
-﻿using avenabot.Models.Partecipanti;
+﻿using avenabot.Models.Chat;
+using avenabot.Models.Partecipanti;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -15,6 +16,7 @@ namespace avenabot.DAL
         }
 
         public DbSet<Partecipante> Partecipanti { get; set; }
+        public DbSet<Chat> Chats { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -38,6 +38,7 @@
         public static string miePartiteDescr = "Mostra la lista di partite che devi ancora giocare con il colore che dovrai usare.";
         public static string vincitoreDescr = "";
         public static string updateEloDescr = "";
+        public static string setChatIDDescr = "";
 
         public static string iscrivimiUsage = "Utilizzo: /iscrivimi IDLichess";
         public static string iscrivimiUsage2 = "Usa /iscrivimi IDLichess per riiscriverti";
@@ -89,6 +90,7 @@
         public static string classificaHeader1C = "Classifica Girone C:\nID";
         public static string classificaHeader1F = "Classifica Girone Finale:\nID";
         public static string classificaHeader2 = "G:";
+        public static string classificaFooter = "\nNB: G sta per Game e i numeri che seguono indicano la partita 1 2 ecc., P sta per Punti";
         public static string invalidMessage = "a38";
         public static string errorNotSeeded = "Errore: i gironi non risultano popolati.";
         public static string internalError = "ERRORE INTERNO, CONTATTA @lbusellato, CODICE ERRORE:";

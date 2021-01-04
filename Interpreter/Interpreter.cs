@@ -108,6 +108,7 @@ namespace avenabot.Interpreter
             gironeFDb = new GironeFDbContext();
             string message = e.Message.Text;
             string sender = e.Message.From.Username;
+            long chatID = e.Message.Chat.Id;
             DateTime closingDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to close registering
             int MaxPlayers = 8;
             int MaxGroups = 2;
@@ -139,7 +140,7 @@ namespace avenabot.Interpreter
                 // /torneo
                 11 => TorneoCommand(),
                 // /partite
-                12 => PartiteCommand(message, MaxGroups),
+                12 => PartiteCommand(message),
                 // /miepartite
                 13 => MiePartiteCommand(message, sender),
                 // /vincitore
@@ -1209,6 +1210,7 @@ namespace avenabot.Interpreter
                 }
                 res += "\n";
             }
+            res += Strings.classificaFooter;
             return res;
         }
 
@@ -1585,7 +1587,7 @@ namespace avenabot.Interpreter
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        private string PartiteCommand(string message, int MaxGroups)
+        private string PartiteCommand(string message)
         {
             //FINAL
             string res = "";
@@ -1781,6 +1783,19 @@ namespace avenabot.Interpreter
                     }
                 }
             }
+            bool flag = false;
+            foreach(string s in opponents)
+            {
+                if(s != null)
+                {
+                    flag = true;
+                }
+            }
+            if(!flag)
+            {
+                res += Strings.noGamesToPlay;
+                return res;
+            }
 
             res += "Devi ancora giocare contro:\n";
             string opponentTG;
@@ -1867,7 +1882,7 @@ namespace avenabot.Interpreter
         }
 
         /// <summary>
-        /// 
+        /// Updates the ELOs of each player registered
         /// </summary>
         /// <param name="sender"></param>
         /// <returns></returns>
@@ -1996,14 +2011,8 @@ namespace avenabot.Interpreter
             res[0] = "-1";
             res[1] = "";
             string downloadString;
-            string date;
             int i = 0;
             int j = 0;
-            int yyyy;
-            int dd;
-            int mm;
-            int h;
-            int m;
             WebClient client = new WebClient();
 
             try

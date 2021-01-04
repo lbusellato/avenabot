@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace avenabot.Models.Partecipanti
+﻿namespace avenabot.Models.Partecipanti
 {
     public class Partecipante
     {

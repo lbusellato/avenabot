@@ -1,13 +1,11 @@
 ﻿using avenabot.Interpreter;
 using avenabot.Log;
 using System;
-using System.IO;
-using System.Net.Sockets;
-using System.Net;
-using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
+using avenabot.DAL;
+using avenabot.Models.Chat;
 
 namespace Awesome
 {
@@ -42,6 +40,7 @@ namespace Awesome
             if (e.Message.Text != null)
             {
                 Logger.Log($"Received a text message from {e.Message.From.Username} in chat {e.Message.Chat.Id}: {e.Message.Text}");
+                ManageChatID(e.Message.Chat.Id);
                 string res;
                 if(e.Message.Text.ToLower().IndexOf(Strings.invalidMessage) != -1)
                 {
@@ -77,6 +76,32 @@ namespace Awesome
             else
             {
                 Logger.Log($"Ignored an empty text message from {e.Message.From.Username} in chat {e.Message.Chat.Id}");
+            }
+        }
+
+        static void ManageChatID(long ChatID)
+        {
+            bool flag = true;
+            using (PartecipantiDbContext db = new PartecipantiDbContext())
+            {
+                foreach (Chat c in db.Chats)
+                {
+                    if (c.ChatID == ChatID)
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag)
+                {
+                    Logger.Log($"New chat id: {ChatID}, I'll register it.");
+                    Chat c = new Chat()
+                    {
+                        ChatID = ChatID
+                    };
+                    db.Chats.Add(c);
+                    db.SaveChanges();
+                }
             }
         }
     }
