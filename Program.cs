@@ -6,6 +6,8 @@ using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using avenabot.DAL;
 using avenabot.Models.Chat;
+using CoreHtmlToImage;
+using System.IO;
 
 namespace Awesome
 {
@@ -17,6 +19,28 @@ namespace Awesome
 
         static void Main()
         {
+            var converter = new HtmlConverter();
+            var html = @"<div><table>
+<tbody>
+<tr>
+<td> 1 &nbsp;</td>
+     <td> 1 &nbsp;</td>
+          <td> &nbsp; f </td>
+              </tr>
+              <tr>
+              <td> &nbsp; 5 </td>
+                  <td> 2 &nbsp;</td>
+                       <td> ht &nbsp;</td>
+                            </tr>
+                            <tr>
+                            <td> 4 &nbsp;</td>
+                                 <td> 6 &nbsp;</td>
+                                      <td> 7 &nbsp;</td>
+                                           </tr>
+                                           </tbody>
+                                           </table></div>";
+            var bytes = converter.FromHtmlString(html);
+            File.WriteAllBytes("image.jpg", bytes);
             lastCommand = DateTime.Now.AddMinutes(-5);
             botClient = new TelegramBotClient("1444146870:AAG22lLxZqCxi7s21rXC5Co4Na6hNL6DDkA");
             var me = botClient.GetMeAsync().Result;
@@ -82,26 +106,24 @@ namespace Awesome
         static void ManageChatID(long ChatID)
         {
             bool flag = true;
-            using (PartecipantiDbContext db = new PartecipantiDbContext())
+            using PartecipantiDbContext db = new PartecipantiDbContext();
+            foreach (Chat c in db.Chats)
             {
-                foreach (Chat c in db.Chats)
+                if (c.ChatID == ChatID)
                 {
-                    if (c.ChatID == ChatID)
-                    {
-                        flag = false;
-                        break;
-                    }
+                    flag = false;
+                    break;
                 }
-                if (flag)
+            }
+            if (flag)
+            {
+                Logger.Log($"New chat id: {ChatID}, I'll register it.");
+                Chat c = new Chat()
                 {
-                    Logger.Log($"New chat id: {ChatID}, I'll register it.");
-                    Chat c = new Chat()
-                    {
-                        ChatID = ChatID
-                    };
-                    db.Chats.Add(c);
-                    db.SaveChanges();
-                }
+                    ChatID = ChatID
+                };
+                db.Chats.Add(c);
+                db.SaveChanges();
             }
         }
     }

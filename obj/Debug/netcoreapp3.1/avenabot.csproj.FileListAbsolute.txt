@@ -69,7 +69,6 @@ C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenab
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.csproj.GenerateResource.cache
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.AssemblyInfoInputs.cache
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.AssemblyInfo.cs
-C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.csproj.CoreCompileInputs.cache
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.csproj.CopyComplete
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.dll
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.pdb
@@ -92,3 +91,5 @@ C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenab
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.ChatTable.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.ChatIDType.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.RemoveIsTourneyField.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\bin\Debug\netcoreapp3.1\CoreHtmlToImage.dll
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.csproj.CoreCompileInputs.cache

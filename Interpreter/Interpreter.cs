@@ -108,7 +108,7 @@ namespace avenabot.Interpreter
             gironeFDb = new GironeFDbContext();
             string message = e.Message.Text;
             string sender = e.Message.From.Username;
-            long chatID = e.Message.Chat.Id;
+            //long chatID = e.Message.Chat.Id;
             DateTime closingDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to close registering
             int MaxPlayers = 8;
             int MaxGroups = 2;
