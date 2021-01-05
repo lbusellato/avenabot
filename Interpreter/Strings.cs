@@ -5,6 +5,8 @@
     /// </summary>
     public static class Strings
     {
+        public static string welcomeMsg = "Ciao! Sono AvenaChessBot e gestirò i Tornei Avenoni Scacchisti.\nUsa /help per visualizzare i comandi disponibili, oppure usa /torneo per visualizzare informazioni sul torneo";
+
         public static string startCommand = "/start";
         public static string helpCommand = "/help";
         public static string partecipantiCommand = "/partecipanti";
@@ -42,7 +44,6 @@
         public static string inserisciUsage = "Utilizzo:\n/inserisci 'Avversario'\n Al posto di 'avversario' scrivi l'id Lichess del tuo avversario, mi occuperò io di recuperare il risultato.";
         public static string partiteUsage = "Utilizzo:\n/partite (A B o C)\nMostra le partite del girone specificato.";
 
-        public static string welcomeMsg = "Ciao! Sono AvenaChessBot e gestirò i Tornei Avenoni Scacchisti.\nUsa /help per visualizzare i comandi disponibili, oppure usa /torneo per visualizzare informazioni sul torneo";
         public static string saywhat = "Non ho capito, usa /help per vedere la lista dei comandi disponibili.";
         public static string partecipantiHeader = "Elenco partecipanti:\nID - Lichess - Telegram - ELO - Girone\n";
         public static string lichess404 = "L'ID Lichess che hai inserito non sembra esistere, controlla di averlo scritto giusto.";
@@ -80,10 +81,7 @@
         public static string inserisciInvalidGroup = "I giocatori che hai immesso non sembrano essere nello stesso girone, prova a ricontrollare.";
         public static string alreadyInserted = "Ho già un risultato registrato per questa partita.";
         public static string notSameGroup = "L'avversario che hai immesso non sembra essere nel tuo gruppo, prova a ricontrollare.";
-        public static string partiteHeaderA = "Partite Girone A:\n";
-        public static string partiteHeaderB = "Partite Girone B:\n";
-        public static string partiteHeaderC = "Partite Girone C:\n";
-        public static string partiteHeaderF = "Partite Girone Finale:\n";
+        public static string partiteHeader = "Partite Girone ";
         public static string noGamesToPlay = "Hai giocato tutte le partite che dovevi giocare, attendi che anche gli altri giocatori facciano lo stesso.";
         public static string noGames = "Il giocatore specificato deve ancora giocare una partita.";
         public static string notYetSeededGroups = "I gironi non sono ancora stati generati. ";
@@ -99,5 +97,7 @@
         public static string usernameNeeded = "È necessario avere un username Telegram valido per potersi iscrivere!";
         public static string notValidGroup = "Il girone specificato non esiste!";
         public static string EloUpdateSuccess = "ELO aggiornati.";
+        public static string trueString = "true";
+        public static string falseString = "false";
     }
 }

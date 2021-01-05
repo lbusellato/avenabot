@@ -6,7 +6,6 @@ using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using avenabot.DAL;
 using avenabot.Models.Chat;
-using CoreHtmlToImage;
 using System.IO;
 using Telegram.Bot.Types.InputFiles;
 
@@ -23,14 +22,13 @@ namespace Awesome
             lastCommand = DateTime.Now.AddMinutes(-5);
             botClient = new TelegramBotClient("1444146870:AAG22lLxZqCxi7s21rXC5Co4Na6hNL6DDkA");
             var me = botClient.GetMeAsync().Result;
-            Console.WriteLine(
+            Logger.Log(
               $"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
             );
             Logger.Log("Starting up...");
             botClient.OnMessage += Bot_OnMessage;
             botClient.StartReceiving();
 
-            Console.WriteLine("Press any key to exit"); 
             Console.ReadKey();
 
             Logger.Log("Shutting down...");
