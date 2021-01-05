@@ -34,7 +34,6 @@ namespace avenabot.Interpreter
             false,
             false,
             true,
-            false,
             true,
             true,
             false,
@@ -54,7 +53,6 @@ namespace avenabot.Interpreter
             Strings.partecipantiCommand, //Show the list of users registered
             Strings.iscrivimiCommand, //Register the user in the Partecipanti db
             Strings.rimuoviCommand, //Remove the specified player, admin only
-            Strings.disiscrivimiCommand, //Remove the specified player, only if the tg id is the same as the sender
             Strings.aggiungiCommand, //Register a player, admin only
             Strings.seedCommand, //Seed the group
             Strings.risultatiCommand, //Show group games results
@@ -63,8 +61,6 @@ namespace avenabot.Interpreter
             Strings.torneoCommand, //Show tournament info
             Strings.partiteCommand, //Show games list
             Strings.miePartiteCommand, //Show games to play
-            Strings.vincitoreCommand, //Declare winner
-            Strings.updateEloCommand, //Update Elos in player list, admin only
         };
 
         public string[] commandDescr = new string[]
@@ -74,7 +70,6 @@ namespace avenabot.Interpreter
             Strings.partecipantiDescr,
             Strings.iscrivimiDescr,
             Strings.rimuoviDescr,
-            Strings.disiscrivimiDescr,
             Strings.aggiungiDescr,
             Strings.seedDescr,
             Strings.risultatiDescr,
@@ -83,8 +78,6 @@ namespace avenabot.Interpreter
             Strings.torneoDescr,
             Strings.partiteDescr,
             Strings.miePartiteDescr,
-            Strings.vincitoreDescr,
-            Strings.updateEloDescr,
         };
 
         public Interpreter() { }
@@ -103,6 +96,7 @@ namespace avenabot.Interpreter
         static readonly int MaxPlayers = 8;
         static readonly int MaxGroups = 2;
         static readonly int MaxFinalists = 2;
+        static bool DataChanged = false;
 
         public string Parse(MessageEventArgs e, DateTime LastCommand)
         {
@@ -121,35 +115,29 @@ namespace avenabot.Interpreter
                 // /start
                 0 => StartCommand(),
                 // /help
-                1 => HelpCommand(),
+                1 => HelpCommand(sender),
                 // /partecipanti
                 2 => PartecipantiCommand(),
                 // /iscrivimi
                 3 => IscrivimiCommand(closingDate, MaxPlayers, message, sender),
                 // /rimuovi
                 4 => RimuoviCommand(message, sender),
-                // /disiscrivimi
-                5 => DisiscrivimiCommand(sender),
                 // /aggiungi
-                6 => AggiungiCommand(message, sender),
+                5 => AggiungiCommand(message, sender),
                 // /seed
-                7 => SeedCommand(MaxPlayers, MaxGroups, MaxFinalists),
+                6 => SeedCommand(MaxPlayers, MaxGroups, MaxFinalists),
                 // /risultati
-                8 => RisultatiCommand(message, MaxGroups),
+                7 => RisultatiCommand(message, MaxGroups),
                 // /classifica
-                9 => ClassificaCommand(MaxPlayers, MaxGroups),
+                8 => ClassificaCommand(MaxPlayers, MaxGroups),
                 // /inserisci
-                10 => InserisciCommand(message, sender, MaxGroups),
+                9 => InserisciCommand(message, sender, MaxGroups),
                 // /torneo
-                11 => TorneoCommand(),
+                10 => TorneoCommand(),
                 // /partite
-                12 => PartiteCommand(message),
+                11 => PartiteCommand(message),
                 // /miepartite
-                13 => MiePartiteCommand(message, sender),
-                // /vincitore
-                14 => VincitoreCommand(sender),
-                // /updateelo
-                15 => UpdateElosCommand(sender),
+                12 => MiePartiteCommand(message, sender),
                 _ => NoCommand(),
             };
             if(res != "")
@@ -176,15 +164,14 @@ namespace avenabot.Interpreter
         /// </summary>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private string HelpCommand()
+        private string HelpCommand(string sender)
         {
-            //FINAL
             string res = "";
             for (int i = 1; i < commandList.Length; ++i)
             {
-                if (!adminCommands[i])
+                if (!adminCommands[i] || IsAdmin(sender))
                 {
-                    if(commandDescr[i].IndexOf(commandList[i]) == -1)
+                    if (commandDescr[i].IndexOf(commandList[i]) == -1)
                     {
                         res += commandList[i] + "\n";
                     }
@@ -205,7 +192,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string PartecipantiCommand()
         {
-            //FINAL
             if (partecipantiDb.Partecipanti.Count() > 0)
             {
                 UpdateElosCommand(admin[0]);
@@ -234,7 +220,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string IscrivimiCommand(DateTime closingDate, int MaxPlayers, string message, string sender)
         {
-            //FINAL
             string res = "";
             string lichessID = "";
             int playerCount = GetPlayerCount();
@@ -300,7 +285,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string RimuoviCommand(string message, string sender)
         {
-            //FINAL
             string res = "";
             string lichessID = "";
             int elo = -1;
@@ -348,40 +332,6 @@ namespace avenabot.Interpreter
         }
 
         /// <summary>
-        /// Removes the player from the DB
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <returns></returns>
-        private string DisiscrivimiCommand(string sender)
-        {
-            //FINAL
-            string res = "";
-            //Remove the player if he is in the DB
-            if (partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID == sender) != null)
-            {
-                Partecipante p = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID == sender);
-                int removedTID = p.TID;
-                partecipantiDb.Partecipanti.Attach(p);
-                partecipantiDb.Partecipanti.Remove(p);
-                //Update the TIDs of other players
-                foreach (Partecipante par in partecipantiDb.Partecipanti)
-                {
-                    if (par.TID > removedTID)
-                    {
-                        par.TID -= 1;
-                    }
-                }
-                partecipantiDb.SaveChanges();
-                res = Strings.removed + Strings.iscrivimiUsage2;
-            }
-            else
-            {
-                res = Strings.notRegistered + Strings.iscrivimiUsage + Strings.errorContact;
-            }
-            return res;
-        }
-
-        /// <summary>
         /// Add the player with the specified Lichess ID and Telegram Handle (admin only)
         /// </summary>
         /// <param name="message"></param>
@@ -389,7 +339,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string AggiungiCommand(string message, string sender)
         {
-            //FINAL
             string res = "";
             string lichessID = "";
             string tgID = "";
@@ -447,7 +396,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string SeedCommand(int MaxPlayers, int MaxGroups, int MaxFinalists)
         {
-            //FINAL
             string res = "";
 
             //Seed final group if it's past the date
@@ -661,7 +609,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string RisultatiCommand(string message, int MaxGroups)
         {
-            //FINAL
             string res = "";
             string html = "";
             string[] subs;
@@ -682,6 +629,28 @@ namespace avenabot.Interpreter
             lastCommand = DateTime.Now;
             subs = message.Split(' ');
 
+            if(!DataChanged && 
+                (File.Exists("gironi.png") || File.Exists("gironeA.png") || 
+                File.Exists("gironeB.png") || File.Exists("gironeC.png") || File.Exists("gironeF.png")))
+            {
+                if (subs.Length == 1)
+                {
+                    return "gironi";
+                }
+                else if (subs.Length == 2)
+                {
+                    string validGroups = "ABCF";
+                    if (validGroups.IndexOf(subs[1]) != -1)
+                    {
+                        return "girone" + subs[1];
+                    }
+                    else
+                    {
+                        return Strings.risultatiUsage;
+                    }
+                }
+            }
+
             if (subs.Length == 1) //All groups
             {
                 if (DateTime.Now < finalsDate)
@@ -690,10 +659,12 @@ namespace avenabot.Interpreter
                     {
                         html += FetchGroupResults(j);
                     }
+                    Convert(html, 5);
                 }
                 else
                 {
                     html = FetchGroupResults(3);
+                    Convert(html, 3);
                 }
             }
             else if (subs.Length == 2)
@@ -702,10 +673,14 @@ namespace avenabot.Interpreter
                 {
                     case "A":
                         html = FetchGroupResults(0);
-                        break;
+                        Convert(html, 0);
+                        DataChanged = false;
+                        return "gironeA";
                     case "B":
                         html = FetchGroupResults(1);
-                        break;
+                        Convert(html, 1);
+                        DataChanged = false;
+                        return "gironeB";
                     case "C":
                         if (MaxGroups != 3)
                         {
@@ -713,7 +688,9 @@ namespace avenabot.Interpreter
                             return res;
                         }
                         html = FetchGroupResults(2);
-                        break;
+                        Convert(html, 2);
+                        DataChanged = false;
+                        return "gironeC";
                     case "F":
                         if (DateTime.Now < finalsDate)
                         {
@@ -721,7 +698,9 @@ namespace avenabot.Interpreter
                             return res;
                         }
                         html = FetchGroupResults(3);
-                        break;
+                        Convert(html, 3);
+                        DataChanged = false;
+                        return "gironeF";
                     default:
                         break;
                 }
@@ -730,11 +709,8 @@ namespace avenabot.Interpreter
             {
                 return "";
             }
-            else
-            {
-                Convert(html, 0);
-                return "gironi";
-            }
+            DataChanged = false;
+            return "gironi";
         }
 
         /// <summary>
@@ -745,11 +721,10 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string FetchGroupResults(int Group)
         {
-            //FINAL
             string results;
             string[] subresults;
             string html = "<div>";
-            html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" align=\"center\"><tr><b>Risultati girone ";
+            html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" align=\"center\"><tr><b>Risultati girone ";
             html += Group switch
             {
                 0 => "A",
@@ -789,16 +764,7 @@ namespace avenabot.Interpreter
                 {
                     int pid = dbset.SingleOrDefault(g => g.GID == i + 1).PlayerID;
                     string lid = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == pid).LichessID;
-                    if (!File.Exists(lid + ".png"))
-                    {
-                        File.Delete(lid + ".png");
-                        Convert(lid, -1, lid + ".png", maxLen);
-                        Bitmap bmp = new Bitmap(lid + ".png");
-                        bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                        bmp.Save(lid + ".png", System.Drawing.Imaging.ImageFormat.Png);
-                        bmp.Dispose();
-                    }
-                    html += "<td><img src=\"" + lid + ".png\"></td>";
+                    html += "<td>" + pid + "</td>";
                 }
                 html += "</tr>";
                 int k = 0;
@@ -810,7 +776,7 @@ namespace avenabot.Interpreter
                         "<tr bgcolor=\"#e9ede4\">" :
                         "<tr bgcolor=\"#d7edb4\">";
                     k++;
-                    html += "<td>" + partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID + "</td>";
+                    html += "<td>(" + g.PlayerID + ") " + partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID + "</td>";
                     for (int i = 0; i < subresults.Length; ++i)
                     {
                         html += "<td align=\"center\">";
@@ -845,7 +811,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string ClassificaCommand(int MaxPlayers, int MaxGroups)
         {
-            //FINAL
             string res = "";
             string html = "";
             string[] subresults;
@@ -865,6 +830,11 @@ namespace avenabot.Interpreter
                 return res;
             }
             lastCommand = DateTime.Now;
+
+            if(!DataChanged && File.Exists("classifica.png"))
+            {
+                return "classifica";
+            }
 
             html += "<div>";
             for (int j = 0; j < MaxGroups + 1; ++j)
@@ -1004,6 +974,7 @@ namespace avenabot.Interpreter
             html += "</table></div>";
             Convert(html, 4);
             res = "classifica";
+            DataChanged = false;
             return res;
         }
 
@@ -1014,7 +985,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string InserisciCommand(string message, string sender, int MaxGroups)
         {
-            //FINAL
             string res = "";
             string helper = "";
             string player1LichessID;
@@ -1360,6 +1330,7 @@ namespace avenabot.Interpreter
                 }
                 res += Strings.insertedResult + Strings.checkResults;
             }
+            DataChanged = true;
             return res;
         }
 
@@ -1369,7 +1340,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string TorneoCommand()
         {
-            //FINAL
             string res = "";
             res += Strings.torneoInfo;
             return res;
@@ -1382,7 +1352,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string PartiteCommand(string message)
         {
-            //FINAL
             string res = "";
             string[] subs = message.Split(" ");
             string p1Lichess;
@@ -1518,7 +1487,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string MiePartiteCommand(string message, string sender)
         {
-            //FINAL
             if (IsAdmin(sender)) //Submit whose tg id to use, only if admin and only for testing
             {
                 string[] submessage = message.Split(" ");
@@ -1628,52 +1596,6 @@ namespace avenabot.Interpreter
             return res;
         }
 
-        private string VincitoreCommand(string sender)
-        {
-            string res = "";
-            string[] subresults;
-            if(!IsAdmin(sender) || DateTime.Now < endDate)
-            {
-                return res;
-            }
-            List<Standing> standings = new List<Standing>();
-
-            foreach (Girone g in gironeFDb.Girone)
-            {
-                Standing stg = new Standing
-                {
-                    ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID
-                };
-                subresults = g.Results.Split(",");
-                stg.Games = new string[subresults.Length];
-                stg.Tot = 0;
-                for (int i = 0; i < subresults.Length; ++i)
-                {
-                    if (subresults[i] == "x")
-                    {
-                        stg.Games[i] = "&#189;";
-                        stg.Tot += 0.5;
-                    }
-                    else
-                    {
-                        if (subresults[i] == "1")
-                        {
-                            stg.Games[i] = subresults[i];
-                            stg.Tot += 1;
-                        }
-                        else if (subresults[i] == "0")
-                        {
-                            stg.Games[i] = subresults[i];
-                        }
-                    }
-                }
-                standings.Add(stg);
-            }
-            standings = standings.OrderByDescending(s => s.Tot).ToList();
-            res = standings.First().ID;
-            return res;
-        }
-
         /// <summary>
         /// Updates the ELOs of each player registered
         /// </summary>
@@ -1681,7 +1603,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string UpdateElosCommand(string sender)
         {
-            //FINAL
             string res = "";
             if(IsAdmin(sender))
             {
@@ -1706,7 +1627,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string NoCommand()
         {
-            //FINAL
             string res = "";
             return res;
         }
@@ -1717,7 +1637,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private int GetPlayerCount()
         {
-            //FINAL
             int res = 0;
             foreach (Partecipante p in partecipantiDb.Partecipanti)
             {
@@ -1733,7 +1652,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private int Find(string command)
         {
-            //FINAL
             for(int i = 0; i < commandList.Length; ++i)
             {
                 if (command.IndexOf(commandList[i]) != -1)
@@ -1749,7 +1667,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private int GetELO(string player)
         {
-            //FINAL
             WebClient client = new WebClient();
             try
             {
@@ -1780,7 +1697,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private bool IsAdmin(string username)
         {
-            //FINAL
             bool res = false;
             for(int i = 0; i < admin.Length; ++i)
             {
@@ -1799,7 +1715,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private string[] PullLatestResult(string player, string opponent)
         {
-            //FINAL
             string[] res = new string[2];
             res[0] = "-1";
             res[1] = "";
@@ -1810,8 +1725,6 @@ namespace avenabot.Interpreter
 
             try
             {
-                //downloadString = client.DownloadString("https://lichess.org/@/" + player + "/search?perf=6&players.a=" + player + "&players.b=" + opponent + "&sort.field=d&sort.order=desc");
-
                 downloadString = client.DownloadString("https://lichess.org/@/" + player + "/all");
 
                 i = downloadString.IndexOf("<article");
@@ -1820,19 +1733,6 @@ namespace avenabot.Interpreter
                 {
                     return res;
                 }
-
-                /*date = downloadString[(downloadString.IndexOf("datetime") + 10)..(downloadString.IndexOf("datetime") + 26)];
-                Int32.TryParse(date[0..4], out yyyy);
-                Int32.TryParse(date[5..7], out mm);
-                Int32.TryParse(date[8..10], out dd);
-                Int32.TryParse(date[11..13], out h);
-                Int32.TryParse(date[14..16], out m);
-                DateTime d = new DateTime(yyyy, mm, dd, h, m, 0);
-
-                if(d < DateTime.Now.AddMinutes(-60))
-                {
-                    return res;
-                }*/
 
                 string substring = downloadString[i..j];
 
@@ -1869,7 +1769,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private int GetMaxTID()
         {
-            //FINAL
             int max = 0;
             foreach(Partecipante p in partecipantiDb.Partecipanti)
             {
@@ -1934,10 +1833,12 @@ namespace avenabot.Interpreter
         }
 
         /// <summary>
-        /// Render the provided html
+        /// Render the provided html source, to a specific file and a specific width if needed
         /// </summary>
         /// <param name="source"></param>
         /// <param name="n"></param>
+        /// <param name="file"></param>
+        /// <param name="width"></param>
         public static void Convert(string source, int n, string file = "", int width = 0)
         {
             var converter = new HtmlConverter();
@@ -1947,8 +1848,12 @@ namespace avenabot.Interpreter
                 bytes = converter.FromHtmlString(source, 50 * (int)(MaxPlayers / MaxGroups), ImageFormat.Png);
                 file = n switch
                 {
+                    0 => "gironeA.png",
+                    1 => "gironeB.png",
+                    2 => "gironeC.png",
+                    3 => "gironeF.png",
                     4 => "classifica.png",
-                    _ => "girone.png"
+                    _ => "gironi.png"
                 };
             }
             else

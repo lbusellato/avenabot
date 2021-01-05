@@ -76,7 +76,18 @@ namespace Awesome
                         }
                         else if (res == "@" + e.Message.From.Username + "\n" + "gironi")
                         {
-                            var fs = new FileStream(dir + "\\girone.png", FileMode.Open, FileAccess.Read);
+                            var fs = new FileStream(dir + "\\gironi.png", FileMode.Open, FileAccess.Read);
+                            var file = new InputOnlineFile(fs);
+                            await botClient.SendPhotoAsync(
+                                chatId: e.Message.Chat,
+                                photo: file,
+                                caption: "@" + e.Message.From.Username
+                                );
+                            fs.Close();
+                        }
+                        else if (res.IndexOf("@" + e.Message.From.Username + "\ngirone") != -1)
+                        {
+                            var fs = new FileStream(dir + "\\girone" + res[^1] + ".png", FileMode.Open, FileAccess.Read);
                             var file = new InputOnlineFile(fs);
                             await botClient.SendPhotoAsync(
                                 chatId: e.Message.Chat,

@@ -540,3 +540,67 @@
 04/01/2021 20:03:40:Received a text message from lbusellato in chat 1031635402: /risultati
 04/01/2021 20:03:43:Responded to command.
 04/01/2021 20:03:49:Shutting down...
+04/01/2021 20:07:38:Starting up...
+04/01/2021 20:07:43:Received a text message from lbusellato in chat -1001437603542: /risultati
+04/01/2021 20:07:46:Responded to command.
+04/01/2021 20:08:06:Received a text message from lbusellato in chat 1031635402: /risultati A
+04/01/2021 20:08:07:Responded to command.
+04/01/2021 20:08:11:Received a text message from lbusellato in chat 1031635402: /risultati B
+04/01/2021 20:08:11:Responded to command.
+04/01/2021 21:06:21:Received a text message from Lil_Plazap in chat -1001437603542: Posso provare a dare un suggerimento? @lbusellato
+04/01/2021 21:06:22:Ignored message (not a command).
+04/01/2021 21:10:42:Received a text message from lbusellato in chat 1031635402: /risultati
+04/01/2021 21:10:42:Responded to command.
+04/01/2021 21:10:45:Received a text message from lbusellato in chat 1031635402: /risultati
+04/01/2021 21:10:45:Responded to command.
+04/01/2021 21:10:47:Shutting down...
+04/01/2021 21:10:54:Starting up...
+04/01/2021 21:10:54:Received a text message from lbusellato in chat 1031635402: /risultati
+04/01/2021 21:10:58:Responded to command.
+04/01/2021 21:11:09:Shutting down...
+04/01/2021 21:13:24:Starting up...
+04/01/2021 21:18:05:Received a text message from ruiasolitaria in chat -1001437603542: a me così piace
+04/01/2021 21:18:07:Ignored message (not a command).
+04/01/2021 21:20:09:Received a text message from Lil_Plazap in chat -1001437603542: Carino
+04/01/2021 21:20:09:Ignored message (not a command).
+05/01/2021 11:11:46:Received a text message from lbusellato in chat 1031635402: a38
+05/01/2021 11:11:51:Received a text message from lbusellato in chat 1031635402: wefdeiujna38ufuwehfuwe
+05/01/2021 11:42:48:Shutting down...
+05/01/2021 11:43:04:Starting up...
+05/01/2021 11:43:04:Received a text message from lbusellato in chat 1031635402: /risultati
+05/01/2021 11:43:13:Responded to command.
+05/01/2021 11:43:16:Received a text message from lbusellato in chat 1031635402: /risultati A
+05/01/2021 11:43:18:Responded to command.
+05/01/2021 11:43:24:Shutting down...
+05/01/2021 11:58:38:Starting up...
+05/01/2021 11:58:38:Received a text message from lbusellato in chat 1031635402: /risultati B
+05/01/2021 11:58:42:Responded to command.
+05/01/2021 11:58:45:Received a text message from lbusellato in chat 1031635402: /risultati B
+05/01/2021 11:58:46:Responded to command.
+05/01/2021 11:58:49:Received a text message from lbusellato in chat 1031635402: /risultati B
+05/01/2021 11:58:49:Responded to command.
+05/01/2021 11:58:53:Received a text message from lbusellato in chat 1031635402: /risultati A
+05/01/2021 11:58:54:Responded to command.
+05/01/2021 11:58:57:Received a text message from lbusellato in chat 1031635402: /risultati A
+05/01/2021 11:58:58:Responded to command.
+05/01/2021 11:59:04:Received a text message from lbusellato in chat 1031635402: /risultati
+05/01/2021 11:59:04:Responded to command.
+05/01/2021 11:59:07:Received a text message from lbusellato in chat 1031635402: /risultati
+05/01/2021 11:59:08:Responded to command.
+05/01/2021 11:59:11:Shutting down...
+05/01/2021 12:07:12:Starting up...
+05/01/2021 12:07:12:Received a text message from lbusellato in chat 1031635402: /risultati
+05/01/2021 12:07:16:Responded to command.
+05/01/2021 12:07:21:Received a text message from lbusellato in chat 1031635402: /risultati
+05/01/2021 12:07:21:Responded to command.
+05/01/2021 12:07:30:Shutting down...
+05/01/2021 12:08:59:Starting up...
+05/01/2021 12:08:59:Shutting down...
+05/01/2021 12:10:25:Starting up...
+05/01/2021 12:10:26:Received a text message from lbusellato in chat 1031635402: /help
+05/01/2021 12:10:29:Responded to command.
+05/01/2021 12:10:39:Shutting down...
+05/01/2021 12:11:17:Starting up...
+05/01/2021 12:11:17:Received a text message from lbusellato in chat 1031635402: /help
+05/01/2021 12:11:20:Responded to command.
+05/01/2021 12:11:28:Shutting down...

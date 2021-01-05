@@ -10,7 +10,6 @@
         public static string partecipantiCommand = "/partecipanti";
         public static string iscrivimiCommand = "/iscrivimi";
         public static string rimuoviCommand = "/rimuovi";
-        public static string disiscrivimiCommand = "/disiscrivimi";
         public static string aggiungiCommand = "/aggiungi";
         public static string seedCommand = "/seed";
         public static string risultatiCommand = "/risultati";
@@ -19,15 +18,12 @@
         public static string torneoCommand = "/torneo";
         public static string partiteCommand = "/partite";
         public static string miePartiteCommand = "/miepartite";
-        public static string vincitoreCommand = "/vincitore";
-        public static string updateEloCommand = "/updateelo";
 
         public static string startDescr = "";
         public static string helpDescr = "Mostra questa lista";
         public static string partecipantiDescr = "Mostra la lista di partecipanti attualmente iscritti";
         public static string iscrivimiDescr = "/iscrivimi IDLichess\nIscrive il giocatore specificato al torneo.";
         public static string rimuoviDescr = "Rimuove il giocatore specificato\nUtilizzo: /rimuovi IDLichess";
-        public static string disiscrivimiDescr = "Disicrive dal torneo";
         public static string aggiungiDescr = "Aggiunge il giocatore specificato\nUtilizzo: /aggiungi IDLichess IDTelegram";
         public static string seedDescr = "Popola il girone\nUtilizzo: /seed";
         public static string risultatiDescr = "Mostra i risultati delle partite.";
@@ -36,9 +32,6 @@
         public static string torneoDescr = "Visualizza informazioni sul torneo";
         public static string partiteDescr = "/partite A/B/C\nMostra le partite del girone specificato.";
         public static string miePartiteDescr = "Mostra la lista di partite che devi ancora giocare con il colore che dovrai usare.";
-        public static string vincitoreDescr = "";
-        public static string updateEloDescr = "";
-        public static string setChatIDDescr = "";
 
         public static string iscrivimiUsage = "Utilizzo: /iscrivimi IDLichess";
         public static string iscrivimiUsage2 = "Usa /iscrivimi IDLichess per riiscriverti";
