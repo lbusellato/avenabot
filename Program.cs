@@ -16,11 +16,16 @@ namespace Awesome
         static ITelegramBotClient botClient;
         public static DateTime lastCommand;
         public static Interpreter interpreter = new Interpreter();
-
+        static string token;
         static void Main()
         {
             lastCommand = DateTime.Now.AddMinutes(-5);
-            botClient = new TelegramBotClient("1444146870:AAG22lLxZqCxi7s21rXC5Co4Na6hNL6DDkA");
+            // Read the file and display it line by line.  
+            StreamReader file = new StreamReader("token.txt");
+            token = file.ReadLine();
+
+            file.Close();
+            botClient = new TelegramBotClient(token);
             var me = botClient.GetMeAsync().Result;
             Logger.Log(
               $"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
@@ -86,6 +91,17 @@ namespace Awesome
                         else if (res.IndexOf("@" + e.Message.From.Username + "\ngirone") != -1)
                         {
                             var fs = new FileStream(dir + "\\girone" + res[^1] + ".png", FileMode.Open, FileAccess.Read);
+                            var file = new InputOnlineFile(fs);
+                            await botClient.SendPhotoAsync(
+                                chatId: e.Message.Chat,
+                                photo: file,
+                                caption: "@" + e.Message.From.Username
+                                );
+                            fs.Close();
+                        }
+                        else if (res == "@" + e.Message.From.Username + "\n" + "partecipanti")
+                        {
+                            var fs = new FileStream(dir + "\\partecipanti.png", FileMode.Open, FileAccess.Read);
                             var file = new InputOnlineFile(fs);
                             await botClient.SendPhotoAsync(
                                 chatId: e.Message.Chat,

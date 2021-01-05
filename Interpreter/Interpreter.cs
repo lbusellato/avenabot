@@ -22,11 +22,11 @@ namespace avenabot.Interpreter
         private static GironeCDbContext gironeCDb = new GironeCDbContext();
         private static GironeFDbContext gironeFDb = new GironeFDbContext();
 
-        public static string[] admin = new string[]
+        private static readonly string[] admin = new string[]
         {
             "lbusellato"
         };
-        List<Tuple<CommandMethod, string[]>> commandInit = new List<Tuple<CommandMethod, string[]>>()
+        readonly List<Tuple<CommandMethod, string[]>> commandInit = new List<Tuple<CommandMethod, string[]>>()
         {
             new Tuple<CommandMethod, string[]>(new CommandMethod(StartCommand), 
                 new string[]{ Strings.startCommand, Strings.startDescr, Strings.falseString, }),
@@ -76,7 +76,7 @@ namespace avenabot.Interpreter
         static Command[] commandList;
 
         public Interpreter() {
-            commandList = new Command[commandInit.Count()];
+            commandList = new Command[commandInit.Count];
             int id = commandList.Length;
             for(int i = 0; i < commandList.Length; ++i)
             {
@@ -138,7 +138,7 @@ namespace avenabot.Interpreter
                 //Show the command's name and description only if the sender is admin or it's not an admin only command
                 if (!c.admin || IsAdmin(sender))
                 {
-                    res += c.name + "\n" + c.descr + "\n";
+                    res += c.name + c.descr + "\n";
                     //Add a separator to nicely format the list
                     for (int j = 0; j < 50; ++j)
                     {
@@ -158,23 +158,32 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private static string PartecipantiCommand(string message, string sender)
         {
-            string res = "";
+            //No reason to generate new html if data hasn't changed
+            if(File.Exists("partecipanti.png") && !DataChanged)
+            {
+                return "partecipanti";
+            }
+            string html = "<div><table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" align=\"center\"><tr>" +
+                "<th>ID</th><th>ID Lichess</th><th>ID Telegram</th><th>ELO</th><th>Var.ELO</th><th>Girone</th></tr>";
             //Update the elos
             if (partecipantiDb.Partecipanti.Count() > 0)
             {
-                UpdateElosCommand(admin[0]);
+                UpdateElos();
             }
-            res += Strings.partecipantiHeader;
             //Pull each player's data from the db and nicely format it
             foreach (Partecipante p in partecipantiDb.Partecipanti)
             {
-                res += p.TID + " - " 
-                    + p.LichessID + " - @" 
-                    + p.TGID + " - " 
-                    + p.ELO + "(" + ((p.ELOvar > 0) ? "+" : (p.ELOvar < 0) ? "-" : "") + p.ELOvar + ")" + " - " 
-                    + p.Girone + "\n";
+                html += "<tr align>";
+                html += "<td align=\"center\">" + p.TID + "</td>";
+                html += "<td>" + p.LichessID + "</td>";
+                html += "<td>@" + p.TGID + "</td>";
+                html += "<td align=\"right\">" + p.ELO + "</td>";
+                html += "<td align=\"center\">" + ((p.ELOvar > 0) ? "+" : (p.ELOvar < 0) ? "-" : "") + p.ELOvar + "</td>";
+                html += "<td align=\"center\">" + p.Girone + "</td>";
+                html += "</tr>";
             }
-            return res;
+            Render(html, 0, "partecipanti.png", 60);
+            return "partecipanti";
         }
 
         /// <summary>
@@ -688,8 +697,7 @@ namespace avenabot.Interpreter
             string results;
             string[] subresults;
             //The html code generation is pretty straightforward, we simply make a table inside a div
-            string html = "<div>";
-            html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" align=\"center\"><tr><b>Risultati girone ";
+            string html = "<div><table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" align=\"center\"><tr><b>Risultati girone ";
             html += Group switch
             {
                 0 => "A",
@@ -1276,7 +1284,7 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private static string TorneoCommand(string message, string sender)
         {
-            return Strings.torneoInfo;
+            return Strings.tournamentInfo;
         }
 
         /// <summary>
@@ -1528,26 +1536,21 @@ namespace avenabot.Interpreter
         /// </summary>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string UpdateElosCommand(string sender)
+        private static void UpdateElos()
         {
-            string res = "";
-            if(IsAdmin(sender))
+            foreach(Partecipante p in partecipantiDb.Partecipanti)
             {
-                foreach(Partecipante p in partecipantiDb.Partecipanti)
+                //Simply pull the elo from both the db and Lichess and compare them
+                int elo = GetELO(p.LichessID);
+                int var = elo - p.ELO;
+                if (var != 0)
                 {
-                    //Simply pull the elo from both the db and Lichess and compare them
-                    int elo = GetELO(p.LichessID);
-                    int var = elo - p.ELO;
-                    if (var != 0)
-                    {
-                        p.ELO = elo;
-                        p.ELOvar = var;
-                    }
+                    p.ELO = elo;
+                    p.ELOvar = var;
                 }
-                //Save the changes to the db
-                partecipantiDb.SaveChanges();
             }
-            return res;
+            //Save the changes to the db
+            partecipantiDb.SaveChanges();
         }
 
         /// <summary>

@@ -93,4 +93,3 @@ C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenab
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.RemoveIsTourneyField.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\bin\Debug\netcoreapp3.1\CoreHtmlToImage.dll
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.csproj.CoreCompileInputs.cache
-C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Properties.Resources.resources
