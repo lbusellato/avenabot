@@ -55,8 +55,8 @@
         public static readonly string errorNotSeeded = "Errore: i gironi non risultano popolati.";
         public static readonly string notEnoughPlayers = "Non posso popolare i gironi perché non ci sono abbastanza giocatori iscritti!";
 
-        public static readonly string risultatiCommand = "/risultati A/B";
-        public static readonly string risultatiDescr = "\nMostra i risultati delle partite del girone specificato o di tutti i gironi se non viene specificato un girone";
+        public static readonly string risultatiCommand = "/risultati";
+        public static readonly string risultatiDescr = " A/B\nMostra i risultati delle partite del girone specificato o di tutti i gironi se non viene specificato un girone";
         public static readonly string notYetSeededGroups = "I gironi non sono ancora stati generati. ";
         public static readonly string risultatiUsage = "Utilizzo:\n/risultati\nMostra i risultati di entrambi i gironi.\n/risultati A/B\nMostra i risultati del girone specificato.";
 

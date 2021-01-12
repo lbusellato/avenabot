@@ -100,6 +100,11 @@ namespace avenabot.Interpreter
             string message = e.Message.Text;
             string sender = e.Message.From.Username;
             string command = message.Split(" ")[0];
+            int inlineCheck = command.IndexOf("@");
+            if(inlineCheck != -1)
+            {
+                command = command.Substring(0, inlineCheck);
+            }
             string res = commandList[Find(command)].Execute(message, sender);
             if(res != "")
             {
