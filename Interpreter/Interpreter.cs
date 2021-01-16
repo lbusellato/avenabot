@@ -1,16 +1,17 @@
 ﻿using avenabot.DAL;
-using avenabot.Models.Partecipanti;
 using Telegram.Bot.Args;
 using System.Linq;
 using System.Net;
 using System;
-using avenabot.Models.Gironi;
 using System.Collections.Generic;
 using System.Data.Entity;
 using avenabot.Log;
 using CoreHtmlToImage;
 using System.IO;
 using static avenabot.Interpreter.Command;
+using avenabot.Models.Gironi;
+using avenabot.Models.Partecipanti;
+using avenabot.Models.Eliminatorie;
 
 namespace avenabot.Interpreter
 {
@@ -21,6 +22,7 @@ namespace avenabot.Interpreter
         private static GironeBDbContext gironeBDb = new GironeBDbContext();
         private static GironeCDbContext gironeCDb = new GironeCDbContext();
         private static GironeFDbContext gironeFDb = new GironeFDbContext();
+        private static EliminatorieDbContext eliminatoriaDb = new EliminatorieDbContext();
 
         private static readonly string[] admin = new string[]
         {
@@ -54,6 +56,8 @@ namespace avenabot.Interpreter
                 new string[]{ Strings.partiteCommand, Strings.partiteDescr, Strings.falseString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(MiePartiteCommand), 
                 new string[]{ Strings.miePartiteCommand, Strings.miePartiteDescr, Strings.falseString,}),
+            new Tuple<CommandMethod, string[]>(new CommandMethod(NoCommand),
+                new string[]{ "", "", Strings.falseString,}), //NoCommand ****MUST**** be the last command in this list
         };
 
         public struct Standing
@@ -63,15 +67,18 @@ namespace avenabot.Interpreter
             public double Tot { get; set; }
         }
 
-        private static readonly DateTime finalsDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
+        private static Random rng = new Random();
+        private static readonly DateTime finalsDate = new DateTime(2021, 1, 1, 12, 0, 0); //Change this to select when to switch to the final group
         private static readonly DateTime endDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to end the tournament group
         private static readonly DateTime closingDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to close registering
         private static DateTime lastCommand;
         public static int coolDown = 0;
+        static readonly bool GroupFinals = false; //True for a final group final, false for a knockout final
+        static readonly int BestOf = 3; //n° of games for knockout rounds
+        static readonly int FinalBestOf = 5; //n° of games for final knockout round
         static readonly int MaxPlayers = 8;
         static readonly int MaxGroups = 2;
         static readonly int MaxFinalists = 2;
-        static bool DataChanged = false;
 
         static Command[] commandList;
 
@@ -100,16 +107,12 @@ namespace avenabot.Interpreter
             string message = e.Message.Text;
             string sender = e.Message.From.Username;
             string command = message.Split(" ")[0];
-            int inlineCheck = command.IndexOf("@");
+            int inlineCheck = command.IndexOf("@"); //Trim the @ part if the command was sent like this: /command@AvenaChessBot
             if(inlineCheck != -1)
             {
                 command = command.Substring(0, inlineCheck);
             }
             string res = commandList[Find(command)].Execute(message, sender);
-            if(res != "")
-            {
-                res = "@" + sender + "\n" + res;
-            }
             gironeADb.Dispose();
             gironeBDb.Dispose();
             gironeCDb.Dispose();
@@ -140,6 +143,10 @@ namespace avenabot.Interpreter
             string res = "";
             foreach (Command c in commandList.Skip(1))
             {
+                if(c.name == "")
+                {
+                    continue;
+                }
                 //Show the command's name and description only if the sender is admin or it's not an admin only command
                 if (!c.admin || IsAdmin(sender))
                 {
@@ -163,11 +170,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private static string PartecipantiCommand(string message, string sender)
         {
-            //No reason to generate new html if data hasn't changed
-            if(File.Exists("partecipanti.png") && !DataChanged)
-            {
-                return "partecipanti";
-            }
             string html = "<div><table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" align=\"center\"><tr>" +
                 "<th>ID</th><th>ID Lichess</th><th>ID Telegram</th><th>ELO</th><th>Var.ELO</th><th>Girone</th></tr>";
             //Update the elos
@@ -384,195 +386,427 @@ namespace avenabot.Interpreter
         {
             string res = "";
             //Seed the final group if it's past the date
-            if (DateTime.Now > finalsDate)
+            if (GroupFinals)
             {
-                //Check if the group was already seeded
-                int checkF = gironeFDb.Girone.Count();
-                if (checkF > 0)
+                if (DateTime.Now > finalsDate)
                 {
-                    res += Strings.finalGroupAlreadySeeded;
-                    return res;
-                }
-                //Pull the results from the preliminary groups
-                List<Standing> standings;
-                List<Girone> finalPlayers = new List<Girone>();
-                string[] subresults;
-                for (int j = 0; j < MaxGroups; ++j)
-                {
-                    //Pull the list of players
-                    DbSet<Girone> dbset = j switch
+                    //Check if the group was already seeded
+                    int checkF = gironeFDb.Girone.Count();
+                    if (checkF > 0)
                     {
-                        0 => gironeADb.Girone,
-                        1 => gironeBDb.Girone,
-                        _ => gironeCDb.Girone,
-                    };
-                    standings = new List<Standing>();
-                    //Calculate the total points for each player
-                    foreach (Girone g in dbset)
-                    {
-                        Standing stg = new Standing
-                        {
-                            ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID
-                        };
-                        subresults = g.Results.Split(",");
-                        stg.Games = new string[subresults.Length];
-                        stg.Tot = 0;
-                        for (int i = 0; i < subresults.Length; ++i)
-                        {
-                            if (subresults[i] == "x")
-                            {
-                                stg.Games[i] = "&#189;";
-                                stg.Tot += 0.5;
-                            }
-                            else
-                            {
-                                if (subresults[i] == "1")
-                                {
-                                    stg.Games[i] = subresults[i];
-                                    stg.Tot += 1;
-                                }
-                                else if (subresults[i] == "0")
-                                {
-                                    stg.Games[i] = subresults[i];
-                                }
-                            }
-                        }
-                        standings.Add(stg);
+                        res += Strings.finalGroupAlreadySeeded;
+                        return res;
                     }
-                    //Sort the list by the total score and pull only the top players
-                    standings = standings.OrderByDescending(s => s.Tot).ToList();
-                    int id;
-                    int cnt = 0;
-                    foreach (Standing s in standings)
+                    //Pull the results from the preliminary groups
+                    List<Standing> standings;
+                    List<Girone> finalPlayers = new List<Girone>();
+                    string[] subresults;
+                    for (int j = 0; j < MaxGroups; ++j)
                     {
-                        if (cnt < MaxFinalists)
+                        //Pull the list of players
+                        DbSet<Girone> dbset = j switch
                         {
-                            cnt++;
-                            id = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == s.ID.ToLower()).TID;
-                            Girone g = j switch {
-                                0 => gironeADb.Girone.SingleOrDefault(g => g.PlayerID == id),
-                                1 => gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == id),
-                                _ => gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == id),
+                            0 => gironeADb.Girone,
+                            1 => gironeBDb.Girone,
+                            _ => gironeCDb.Girone,
+                        };
+                        standings = new List<Standing>();
+                        //Calculate the total points for each player
+                        foreach (Girone g in dbset)
+                        {
+                            Standing stg = new Standing
+                            {
+                                ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID
                             };
-                            finalPlayers.Add(g);
+                            subresults = g.Results.Split(",");
+                            stg.Games = new string[subresults.Length];
+                            stg.Tot = 0;
+                            for (int i = 0; i < subresults.Length; ++i)
+                            {
+                                if (subresults[i] == "x")
+                                {
+                                    stg.Games[i] = "&#189;";
+                                    stg.Tot += 0.5;
+                                }
+                                else
+                                {
+                                    if (subresults[i] == "1")
+                                    {
+                                        stg.Games[i] = subresults[i];
+                                        stg.Tot += 1;
+                                    }
+                                    else if (subresults[i] == "0")
+                                    {
+                                        stg.Games[i] = subresults[i];
+                                    }
+                                }
+                            }
+                            standings.Add(stg);
                         }
-                    }
-                }
-                //Generate the results string
-                string resultsDummy = "";
-                for (int j = 0; j < finalPlayers.Count; ++j)
-                {
-                    resultsDummy += "-1";
-                    if (j != finalPlayers.Count - 1)
-                    {
-                        resultsDummy += ",";
-                    }
-                }
-                //Push the finalists list to the db
-                int gid = 1;
-                foreach (Girone g in finalPlayers)
-                {
-                    partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).Girone = "F";
-                    partecipantiDb.SaveChanges();
-                    g.GID = gid;
-                    gid++;
-                    g.Results = resultsDummy;
-                    gironeFDb.Girone.Add(g);
-                    gironeFDb.SaveChanges();
-                }
-                res += Strings.finalGroupSeeded;
-                return res;
-            }
-            //Check if the DBs are empty
-            if (gironeADb.Girone.Count() > 0)
-            {
-                res += Strings.groupsAlreadySeeded;
-                return res;
-            }
-            //Check if the player list has enough elements
-            if(GetPlayerCount() < MaxPlayers)
-            {
-                res += Strings.notEnoughPlayers;
-                return res;
-            }
-            //Pull the list of players and sort it by ELO
-            List<Partecipante> players = new List<Partecipante>();
-            foreach (Partecipante p in partecipantiDb.Partecipanti)
-            {
-                if(players.Count < MaxPlayers)
-                {
-                    players.Add(p);
-                }
-            }
-            players = players.OrderBy(p1 => p1.ELO).ToList();
-
-            //Divide evenly the player list
-            for (int i = 0; i < MaxGroups; ++i)
-            {
-                List<Partecipante> groupPlayers = new List<Partecipante>();
-                while (groupPlayers.Count < MaxPlayers / MaxGroups)
-                {
-                    groupPlayers.Add(players.ElementAt(0));
-                    players.RemoveAt(0);
-                }
-
-                //Push the list to the db and update the players record with the group id
-                foreach (Partecipante p in groupPlayers)
-                {
-                    //Assign a group to each player
-                    Partecipante pUpdateGroup = partecipantiDb.Partecipanti.SingleOrDefault(p1 => p1.TID == p.TID);
-                    if (pUpdateGroup != null)
-                    {
-                        pUpdateGroup.Girone = i switch
+                        //Sort the list by the total score and pull only the top players
+                        standings = standings.OrderByDescending(s => s.Tot).ToList();
+                        int id;
+                        int cnt = 0;
+                        foreach (Standing s in standings)
                         {
-                            0 => "A",
-                            1 => "B",
-                            _ => "C",
-                        };
-                        partecipantiDb.SaveChanges();
+                            if (cnt < MaxFinalists)
+                            {
+                                cnt++;
+                                id = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == s.ID.ToLower()).TID;
+                                Girone g = j switch
+                                {
+                                    0 => gironeADb.Girone.SingleOrDefault(g => g.PlayerID == id),
+                                    1 => gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == id),
+                                    _ => gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == id),
+                                };
+                                finalPlayers.Add(g);
+                            }
+                        }
                     }
                     //Generate the results string
                     string resultsDummy = "";
-                    for (int j = 0; j < groupPlayers.Count; ++j)
+                    for (int j = 0; j < finalPlayers.Count; ++j)
                     {
                         resultsDummy += "-1";
-                        if (j != groupPlayers.Count - 1)
+                        if (j != finalPlayers.Count - 1)
                         {
                             resultsDummy += ",";
                         }
                     }
-                    int gid;
-                    Girone g = new Girone
+                    //Push the finalists list to the db
+                    int gid = 1;
+                    foreach (Girone g in finalPlayers)
                     {
-                        PlayerID = p.TID,
-                        Results = resultsDummy
-                    };
-                    //Push each player to the correct db
-                    switch (i)
+                        partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).Girone = "F";
+                        partecipantiDb.SaveChanges();
+                        g.GID = gid;
+                        gid++;
+                        g.Results = resultsDummy;
+                        gironeFDb.Girone.Add(g);
+                        gironeFDb.SaveChanges();
+                    }
+                    res += Strings.finalGroupSeeded;
+                    return res;
+                }
+                //Check if the DBs are empty
+                if (gironeADb.Girone.Count() > 0)
+                {
+                    res += Strings.groupsAlreadySeeded;
+                    return res;
+                }
+                //Check if the player list has enough elements
+                if (GetPlayerCount() < MaxPlayers)
+                {
+                    res += Strings.notEnoughPlayers;
+                    return res;
+                }
+                //Pull the list of players and sort it by ELO
+                List<Partecipante> players = new List<Partecipante>();
+                foreach (Partecipante p in partecipantiDb.Partecipanti)
+                {
+                    if (players.Count < MaxPlayers)
                     {
-                        case 0:
-                            gid = GetMaxGID("A") + 1;
-                            g.GID = gid;
-                            gironeADb.Girone.Add(g);
-                            break;
-                        case 1:
-                            gid = GetMaxGID("B") + 1;
-                            g.GID = gid;
-                            gironeBDb.Girone.Add(g);
-                            break;
-                        default:
-                            gid = GetMaxGID("C") + 1;
-                            g.GID = gid;
-                            gironeCDb.Girone.Add(g);
-                            break;
+                        players.Add(p);
                     }
                 }
-                //Save the changes to the dbs
-                gironeADb.SaveChanges();
-                gironeBDb.SaveChanges();
-                gironeCDb.SaveChanges();
+                players = players.OrderBy(p1 => p1.ELO).ToList();
+
+                //Divide evenly the player list
+                for (int i = 0; i < MaxGroups; ++i)
+                {
+                    List<Partecipante> groupPlayers = new List<Partecipante>();
+                    while (groupPlayers.Count < MaxPlayers / MaxGroups)
+                    {
+                        groupPlayers.Add(players.ElementAt(0));
+                        players.RemoveAt(0);
+                    }
+
+                    //Push the list to the db and update the players record with the group id
+                    foreach (Partecipante p in groupPlayers)
+                    {
+                        //Assign a group to each player
+                        Partecipante pUpdateGroup = partecipantiDb.Partecipanti.SingleOrDefault(p1 => p1.TID == p.TID);
+                        if (pUpdateGroup != null)
+                        {
+                            pUpdateGroup.Girone = i switch
+                            {
+                                0 => "A",
+                                1 => "B",
+                                _ => "C",
+                            };
+                            partecipantiDb.SaveChanges();
+                        }
+                        //Generate the results string
+                        string resultsDummy = "";
+                        for (int j = 0; j < groupPlayers.Count; ++j)
+                        {
+                            resultsDummy += "-1";
+                            if (j != groupPlayers.Count - 1)
+                            {
+                                resultsDummy += ",";
+                            }
+                        }
+                        int gid;
+                        Girone g = new Girone
+                        {
+                            PlayerID = p.TID,
+                            Results = resultsDummy
+                        };
+                        //Push each player to the correct db
+                        switch (i)
+                        {
+                            case 0:
+                                gid = GetMaxGID("A") + 1;
+                                g.GID = gid;
+                                gironeADb.Girone.Add(g);
+                                break;
+                            case 1:
+                                gid = GetMaxGID("B") + 1;
+                                g.GID = gid;
+                                gironeBDb.Girone.Add(g);
+                                break;
+                            default:
+                                gid = GetMaxGID("C") + 1;
+                                g.GID = gid;
+                                gironeCDb.Girone.Add(g);
+                                break;
+                        }
+                    }
+                    //Save the changes to the dbs
+                    gironeADb.SaveChanges();
+                    gironeBDb.SaveChanges();
+                    gironeCDb.SaveChanges();
+                }
+                res += Strings.groupsSeeded;
             }
-            res += Strings.groupsSeeded;
+            else
+            {
+                if (DateTime.Now > finalsDate)
+                {
+                    //Pull the results from the preliminary groups
+                    List<Standing> standings;
+                    List<Girone> finalPlayers = new List<Girone>();
+                    string[] subresults;
+                    for (int j = 0; j < MaxGroups; ++j)
+                    {
+                        //Pull the list of players
+                        DbSet<Girone> dbset = j switch
+                        {
+                            0 => gironeADb.Girone,
+                            1 => gironeBDb.Girone,
+                            _ => gironeCDb.Girone,
+                        };
+                        standings = new List<Standing>();
+                        //Calculate the total points for each player
+                        foreach (Girone g in dbset)
+                        {
+                            Standing stg = new Standing
+                            {
+                                ID = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TID == g.PlayerID).LichessID
+                            };
+                            subresults = g.Results.Split(",");
+                            stg.Games = new string[subresults.Length];
+                            stg.Tot = 0;
+                            for (int i = 0; i < subresults.Length; ++i)
+                            {
+                                if (subresults[i] == "x")
+                                {
+                                    stg.Games[i] = "&#189;";
+                                    stg.Tot += 0.5;
+                                }
+                                else
+                                {
+                                    if (subresults[i] == "1")
+                                    {
+                                        stg.Games[i] = subresults[i];
+                                        stg.Tot += 1;
+                                    }
+                                    else if (subresults[i] == "0")
+                                    {
+                                        stg.Games[i] = subresults[i];
+                                    }
+                                }
+                            }
+                            standings.Add(stg);
+                        }
+                        //Sort the list by the total score and pull only the top players
+                        standings = standings.OrderByDescending(s => s.Tot).ToList();
+                        int id;
+                        int cnt = 0;
+                        foreach (Standing s in standings)
+                        {
+                            if (cnt < MaxFinalists / 2)
+                            {
+                                cnt++;
+                                id = partecipantiDb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == s.ID.ToLower()).TID;
+                                Girone g = j switch
+                                {
+                                    0 => gironeADb.Girone.SingleOrDefault(g => g.PlayerID == id),
+                                    1 => gironeBDb.Girone.SingleOrDefault(g => g.PlayerID == id),
+                                    _ => gironeCDb.Girone.SingleOrDefault(g => g.PlayerID == id),
+                                };
+                                finalPlayers.Add(g);
+                            }
+                        }
+                    }
+                    List<int> eids = new List<int>();
+                    string resultsDummy = "";
+                    int k = 0;
+                    switch (MaxFinalists)
+                    {
+                        case 2:
+                            DbSet<Finale> finale = eliminatoriaDb.Finale;
+                            if (finale.Count() > 0)
+                            {
+                                res += Strings.knockGroupAlreadySeeded;
+                                return res;
+                            }
+                            //Generate the results string
+                            resultsDummy = "";
+                            for (int j = 0; j < FinalBestOf; ++j)
+                            {
+                                resultsDummy += "-1";
+                                if (j != FinalBestOf - 1)
+                                {
+                                    resultsDummy += ",";
+                                }
+                            }
+                            for (int i = 0; i < MaxFinalists; ++i)
+                            {
+                                eids.Add(i);
+                            }
+                            k = 0;
+                            //Push the players into the db
+                            foreach (Girone g in finalPlayers)
+                            {
+                                Finale f = new Finale
+                                {
+                                    PlayerID = g.PlayerID,
+                                    Results = resultsDummy,
+                                    OpponentEID = 0,
+                                    EID = eids.ElementAt(k),
+                                };
+                                k++;
+                                finale.Add(f);
+                            }
+                            eliminatoriaDb.SaveChanges();
+                            //Randomly assign an opponent to each player
+                            foreach (Finale f in finale)
+                            {
+                                int eid = eids.ElementAt(rng.Next(eids.Count()));
+                                while(f.EID == eid)
+                                {
+                                    eid = eids.ElementAt(rng.Next(eids.Count()));
+                                }
+                                f.OpponentEID = eid;
+                                eids.Remove(eid);
+                            }
+                            eliminatoriaDb.SaveChanges();
+                            break;
+                        case 4:
+                            DbSet<Semifinali> semifinali = eliminatoriaDb.Semifinali;
+                            if (semifinali.Count() > 0)
+                            {
+                                res += Strings.knockGroupAlreadySeeded;
+                                return res;
+                            }
+                            //Generate the results string
+                            resultsDummy = "";
+                            for (int j = 0; j < BestOf; ++j)
+                            {
+                                resultsDummy += "-1";
+                                if (j != BestOf - 1)
+                                {
+                                    resultsDummy += ",";
+                                }
+                            }
+                            for (int i = 0; i < MaxFinalists; ++i)
+                            {
+                                eids.Add(i);
+                            }
+                            k = 0;
+                            //Push the players into the db
+                            foreach (Girone g in finalPlayers)
+                            {
+                                Semifinali s = new Semifinali
+                                {
+                                    PlayerID = g.PlayerID,
+                                    Results = resultsDummy,
+                                    OpponentEID = 0,
+                                    EID = eids.ElementAt(k),
+                                };
+                                k++;
+                                semifinali.Add(s);
+                            }
+                            eliminatoriaDb.SaveChanges();
+                            //Randomly assign an opponent to each player
+                            foreach (Semifinali s in semifinali)
+                            {
+                                int eid = eids.ElementAt(rng.Next(eids.Count()));
+                                while (s.EID == eid)
+                                {
+                                    eid = eids.ElementAt(rng.Next(eids.Count()));
+                                }
+                                s.OpponentEID = eid;
+                                eids.Remove(eid);
+                            }
+                            eliminatoriaDb.SaveChanges();
+                            break;
+                        case 8:
+                            DbSet<Quarti> quarti = eliminatoriaDb.Quarti;
+                            if (quarti.Count() > 0)
+                            {
+                                res += Strings.knockGroupAlreadySeeded;
+                                return res;
+                            }
+                            //Generate the results string
+                            resultsDummy = "";
+                            for (int j = 0; j < BestOf; ++j)
+                            {
+                                resultsDummy += "-1";
+                                if (j != BestOf - 1)
+                                {
+                                    resultsDummy += ",";
+                                }
+                            }
+                            for (int i = 0; i < MaxFinalists; ++i)
+                            {
+                                eids.Add(i);
+                            }
+                            k = 0;
+                            //Push the players into the db
+                            foreach (Girone g in finalPlayers)
+                            {
+                                Quarti q = new Quarti
+                                {
+                                    PlayerID = g.PlayerID,
+                                    Results = resultsDummy,
+                                    OpponentEID = 0,
+                                    EID = eids.ElementAt(k),
+                                };
+                                k++;
+                                quarti.Add(q);
+                            }
+                            eliminatoriaDb.SaveChanges();
+                            //Randomly assign an opponent to each player
+                            foreach (Quarti q in quarti)
+                            {
+                                int eid = eids.ElementAt(rng.Next(eids.Count()));
+                                while (q.EID == eid)
+                                {
+                                    eid = eids.ElementAt(rng.Next(eids.Count()));
+                                }
+                                q.OpponentEID = eid;
+                                eids.Remove(eid);
+                            }
+                            eliminatoriaDb.SaveChanges();
+                            break;
+                        default:
+                            return ""; 
+                    }
+                    res += Strings.knockoutsSeeded;
+                }
+            }
             return res;
         }
 
@@ -593,7 +827,11 @@ namespace avenabot.Interpreter
                 return res;
             }
             //Check if the dbs are populated
-            if (gironeADb.Girone.Count() <= 0 || (DateTime.Now > finalsDate && gironeFDb.Girone.Count() <= 0))
+            if (gironeADb.Girone.Count() <= 0 || 
+                (DateTime.Now > finalsDate && gironeFDb.Girone.Count() <= 0) ||
+                (DateTime.Now > finalsDate && eliminatoriaDb.Finale.Count() <= 0 && MaxFinalists == 2) ||
+                (DateTime.Now > finalsDate && eliminatoriaDb.Semifinali.Count() <= 0 && MaxFinalists == 4) ||
+                (DateTime.Now > finalsDate && eliminatoriaDb.Quarti.Count() <= 0 && MaxFinalists == 8))
             {
                 res += Strings.notYetSeededGroups;
                 return res;
@@ -601,94 +839,74 @@ namespace avenabot.Interpreter
             lastCommand = DateTime.Now;
 
             subs = message.Split(' ');
-            //If the data to display is the same as the last time the command was called there's no need to
-            //generate a new picture for it
-            if (!DataChanged && 
-                (File.Exists("gironi.png") || 
-                File.Exists("gironeA.png") || 
-                File.Exists("gironeB.png") || 
-                File.Exists("gironeC.png") || 
-                File.Exists("gironeF.png")))
+            if (GroupFinals)
             {
-                if (subs.Length == 1)
+                if (subs.Length == 1) //All groups
                 {
-                    return "gironi";
-                }
-                else if (subs.Length == 2)
-                {
-                    string validGroups = "ABCF";
-                    if (validGroups.IndexOf(subs[1]) != -1)
+                    if (DateTime.Now < finalsDate)
                     {
-                        return "girone" + subs[1];
+                        for (int j = 0; j < MaxGroups; ++j)
+                        {
+                            html += FetchGroupResults(j);
+                        }
+                        Render(html, 5);
                     }
                     else
                     {
-                        return Strings.risultatiUsage;
-                    }
-                }
-            }
-
-            if (subs.Length == 1) //All groups
-            {
-                if (DateTime.Now < finalsDate)
-                {
-                    for (int j = 0; j < MaxGroups; ++j)
-                    {
-                        html += FetchGroupResults(j);
-                    }
-                    Render(html, 5);
-                }
-                else
-                {
-                    html = FetchGroupResults(3);
-                    Render(html, 3);
-                }
-                DataChanged = false;
-                return "gironi";
-            }
-            else if (subs.Length == 2) //Single group
-            {
-                switch (subs[1].ToUpper())
-                {
-                    case "A":
-                        html = FetchGroupResults(0);
-                        Render(html, 0);
-                        DataChanged = false;
-                        return "gironeA";
-                    case "B":
-                        html = FetchGroupResults(1);
-                        Render(html, 1);
-                        DataChanged = false;
-                        return "gironeB";
-                    case "C":
-                        if (MaxGroups != 3)
-                        {
-                            res += Strings.saywhat;
-                            return res;
-                        }
-                        html = FetchGroupResults(2);
-                        Render(html, 2);
-                        DataChanged = false;
-                        return "gironeC";
-                    case "F":
-                        if (DateTime.Now < finalsDate)
-                        {
-                            res += Strings.saywhat;
-                            return res;
-                        }
                         html = FetchGroupResults(3);
                         Render(html, 3);
-                        DataChanged = false;
-                        return "gironeF";
-                    default:
-                        res = Strings.risultatiUsage;
-                        return res;
+                    }
+                    partecipantiDb.SaveChanges();
+                    return "mostragironi";
+                }
+                else if (subs.Length == 2) //Single group
+                {
+                    switch (subs[1].ToUpper())
+                    {
+                        case "A":
+                            html = FetchGroupResults(0);
+                            Render(html, 0);
+                            partecipantiDb.SaveChanges();
+                            return "mostragironeA";
+                        case "B":
+                            html = FetchGroupResults(1);
+                            Render(html, 1);
+                            partecipantiDb.SaveChanges();
+                            return "mostragironeB";
+                        case "C":
+                            if (MaxGroups != 3)
+                            {
+                                res += Strings.saywhat;
+                                return res;
+                            }
+                            html = FetchGroupResults(2);
+                            Render(html, 2);
+                            partecipantiDb.SaveChanges();
+                            return "mostragironeC";
+                        case "F":
+                            if (DateTime.Now < finalsDate)
+                            {
+                                res += Strings.saywhat;
+                                return res;
+                            }
+                            html = FetchGroupResults(3);
+                            Render(html, 3);
+                            partecipantiDb.SaveChanges();
+                            return "mostragironeF";
+                        default:
+                            res = Strings.risultatiUsage;
+                            return res;
+                    }
+                }
+                else //Wrong usage
+                {
+                    res = Strings.risultatiUsage;
+                    return res;
                 }
             }
-            else //Wrong usage
+            else
             {
-                res = Strings.risultatiUsage;
-                return res;
+                return "";
             }
         }
 
@@ -793,11 +1011,7 @@ namespace avenabot.Interpreter
                 return res;
             }
             lastCommand = DateTime.Now;
-            //No need to generate new html if the data didn't change
-            if(!DataChanged && File.Exists("classifica.png"))
-            {
-                return "classifica";
-            }
+
             //Pretty straightforward html table generation
             html += "<div>";
             for (int j = 0; j < MaxGroups + 1; ++j)
@@ -877,9 +1091,11 @@ namespace avenabot.Interpreter
                 }
 
                 int k = 0;
+                int cnt;
                 html += "<th>PTI</th>";
                 foreach (Standing s in standings)
                 {
+                    cnt = 0;
                     res += s.ID;
                     html += (k % 2 == 0) ?
                         "<tr bgcolor=\"#e9ede4\"><td>" + s.ID + "</td>" :
@@ -891,13 +1107,18 @@ namespace avenabot.Interpreter
                         {
                             if (s.Games[i] == "-1")
                             {
-                                html += "<td> </td>";
+                                cnt++;
+                                continue;
                             }
                             else
                             {
                                 html += "<td align=\"center\">" + s.Games[i] + "</td>";
                             }
                         }
+                    }
+                    for(int i = 0; i < cnt; ++i)
+                    {
+                        html += "<td> </td>";
                     }
                     if (s.Tot % 1 != 0)
                     {
@@ -916,11 +1137,14 @@ namespace avenabot.Interpreter
                     }
                     html += "</tr>";
                 }
+                if(DateTime.Now > finalsDate)
+                {
+                    break;
+                }
             }
             html += "</table></div>";
             Render(html, 4);
-            res = "classifica";
-            DataChanged = false;
+            res = "mostraclassifica";
             return res;
         }
 
@@ -953,20 +1177,10 @@ namespace avenabot.Interpreter
             subs = message.Split(" ");
             //Check if the db is populated 
             int dbCheckA = gironeADb.Girone.Count();
-            int dbCheckB = gironeBDb.Girone.Count();
-            if (dbCheckA <= 0 && dbCheckB <= 0)
+            if (dbCheckA <= 0)
             {
                 res += Strings.errorNotSeeded;
                 return res;
-            }
-            if(MaxGroups == 3)
-            {
-                int dbCheckC = gironeCDb.Girone.Count();
-                if (dbCheckC <= 0)
-                {
-                    res += Strings.errorNotSeeded;
-                    return res;
-                }
             }
             if (subs.Length != 4 && subs.Length != 2)
             {
@@ -984,6 +1198,11 @@ namespace avenabot.Interpreter
                 {
                     res += Strings.inserisciUsage;
                     return res;
+                }
+                //Check if a Telegram ID was sent instead of a Lichess ID
+                if(p2 == null)
+                {
+                    p2 = partecipantiDb.Partecipanti.SingleOrDefault(p => p.TGID.ToLower() == sub1.ToLower());
                 }
                 //Check if LichessIDs are valid
                 if (p1 == null || p2 == null)
@@ -1277,7 +1496,6 @@ namespace avenabot.Interpreter
                 }
                 res += Strings.insertedResult + Strings.checkResults;
             }
-            DataChanged = true;
             return res;
         }
 
@@ -1562,9 +1780,9 @@ namespace avenabot.Interpreter
         /// Responds to anything other than a known command
         /// </summary>
         /// <returns></returns>
-        private static string NoCommand()
+        private static string NoCommand(string message, string sender)
         {
-            return "";
+            return (message.ToLower().IndexOf(Strings.invalidMessage) != -1) ?  Strings.errorInvalidMessage : "";
         }
 
         /// <summary>
@@ -1588,7 +1806,7 @@ namespace avenabot.Interpreter
                 if (commandList[i].name == command)
                     return i;
             }
-            return -1;
+            return commandList.Length - 1;
         }
 
         /// <summary>

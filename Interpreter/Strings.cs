@@ -49,9 +49,11 @@
         public static readonly string seedCommand = "/seed";
         public static readonly string seedDescr = "\nPopola i gironi";
         public static readonly string groupsSeeded = "Gironi popolati.";
+        public static readonly string knockoutsSeeded = "Eliminatorie popolate.";
         public static readonly string finalGroupSeeded = "Girone finale popolato.";
         public static readonly string groupsAlreadySeeded = "I gironi risultano già popolati!";
         public static readonly string finalGroupAlreadySeeded = "Il girone finale risulta già popolato!";
+        public static readonly string knockGroupAlreadySeeded = "Le eliminatorie risultano già popolate!";
         public static readonly string errorNotSeeded = "Errore: i gironi non risultano popolati.";
         public static readonly string notEnoughPlayers = "Non posso popolare i gironi perché non ci sono abbastanza giocatori iscritti!";
 
