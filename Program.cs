@@ -94,6 +94,16 @@ namespace Awesome
                         );
                     fs.Close();
                 }
+                else if (res == "bracket")
+                {
+                    var fs = new FileStream(dir + "\\bracket.png", FileMode.Open, FileAccess.Read);
+                    var file = new InputOnlineFile(fs);
+                    await botClient.SendPhotoAsync(
+                        chatId: e.Message.Chat,
+                        photo: file
+                        );
+                    fs.Close();
+                }
                 else
                 {
                     await botClient.SendTextMessageAsync(

@@ -19,6 +19,7 @@ namespace avenabot.DAL
         public DbSet<Quarti> Quarti { get; set; }
         public DbSet<Semifinali> Semifinali { get; set; }
         public DbSet<Finale> Finale { get; set; }
+        public DbSet<Consolazione> Consolazione { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

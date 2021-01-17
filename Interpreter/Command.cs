@@ -9,14 +9,16 @@
         public string name;
         public string descr;
         public bool admin;
+        public bool enabled;
 
-        public Command(CommandMethod C, int cmdID, string cmdName, string cmdDescr, bool adminOnly = false)
+        public Command(CommandMethod C, int cmdID, string cmdName, string cmdDescr, bool adminOnly = false, bool isEnabled = true)
         {
             ID = cmdID;
             cmd = C;
             name = cmdName;
             descr = cmdDescr;
             admin = adminOnly;
+            enabled = isEnabled;
         }
 
         public string Execute(string message, string sender)
