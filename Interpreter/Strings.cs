@@ -95,7 +95,7 @@
         public static readonly string noGames = "Il giocatore specificato deve ancora giocare una partita.";
 
 		public static readonly string tabelloneCommand = "/tabellone";
-		public static readonly string tabelloneDescr = " Visualizza il tabellone relativo alla fase ad eliminazione diretta.";
+		public static readonly string tabelloneDescr = "\nVisualizza il tabellone relativo alla fase ad eliminazione diretta.";
 
         public static readonly string player404 = "Il giocatore indicato non sembra essere iscritto!";
         public static readonly string lichess404 = "L'ID Lichess che hai inserito non sembra esistere, controlla di averlo scritto giusto.";
@@ -103,6 +103,7 @@
         public static readonly string notRegistered = "Non mi sembra che tu sia iscritto!";
         public static readonly string checkPartecipanti = " Usa /partecipanti per vedere la lista degli iscritti.";
         public static readonly string checkResults = " Usa /risultati per vedere il tabellone dei risultati.";
+        public static readonly string checkTab = " Usa /tabellone per vedere il tabellone dei risultati.";
         public static readonly string trueString = "true";
         public static readonly string falseString = "false";
 		public static readonly string empty = "";
@@ -209,6 +210,7 @@
 		public static string bracketHTMLF2res = "</td>" +
 			"					<td width = \"10px\" style=\"border: thin solid black;text-align:center\">";
 		public static string bracketHTMLQ5 = "</td>" +
+			"				<td width = \"20px\" style=\"border: 2px solid red;border-bottom:0;border-left:0\">&nbsp;</td>" +
 			"				</tr>" +
 			"				<tr>" +
 			"					<td width = \"150px\" style=\"border: thin solid black;border-bottom:0;border-right:0\">";
@@ -218,6 +220,8 @@
 		public static string bracketHTMLQ6 =
 			"					</td>" +
 			"					<td colspan = \"4\" > &nbsp;</td>" +
+			"					<td width = \"20px\" style=\"border-right: 2px solid red;\">&nbsp;</td>" +
+			"					<td colspan = \"3\" > &nbsp;</td>" +
 			"					<td width = \"20px\" style=\"border-right: 2px solid red;\">&nbsp;</td>" +
 			"				</tr>" +
 			"				<tr>" +
@@ -230,6 +234,10 @@
 			"					<td width = \"20px\" style=\"border: 2px solid red;border-bottom:0;border-left:0\">&nbsp;</td>" +
 			"					<td colspan = \"3\" > &nbsp;</td>" +
 			"					<td width = \"20px\" style=\"border-right: 2px solid red;\">&nbsp;</td>" +
+			"					<td colspan =\"1\" > &nbsp;</td>" +
+			"					<td width = \"160px\" style=\"text-align:center\"><b>CAMPIONE</b></td>" +
+			"					<td colspan = \"1\" > &nbsp;</td>" +
+			"					<td width = \"20px\" style=\"border-right: 2px solid red;\">&nbsp;</td>" +
 			"				</tr>" +
 			"				<tr>" +
 			"					<td colspan = \"2\" > &nbsp;</td>" +
@@ -239,9 +247,12 @@
 		public static string bracketHTMLS3res =
 			"					</td>" +
 			"					<td width = \"10px\" style=\"border: thin solid black;text-align:center;border-bottom:0\">";
-		public static string bracketHTMLS4 =
-			"					</td>" +
+		public static string bracketHTMLChamp ="</td>" +
 			"					<td style = \"border: 2px solid red;border-top:0;border-left:0\"> &nbsp;</td>" +
+			"					<td colspan = \"1\" > &nbsp;</td>" +
+			"					<td rowspan = \"2\" colspan=\"2\" width = \"150px\" style=\"text-align:center;border: thin solid black;\">";
+		public static string bracketHTMLS4 = "</td>" +	
+			"					<td width = \"20px\" style=\"border: 2px solid red;border-left:0;border-top:0\">&nbsp;</td>" +
 			"				</tr>" +
 			"				<tr>" +
 			"					<td colspan = \"2\" > &nbsp;</td>" +

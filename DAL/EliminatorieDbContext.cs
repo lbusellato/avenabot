@@ -15,11 +15,11 @@ namespace avenabot.DAL
             //Database.SetInitializer(new MigrateDatabaseToLatestVersion<GironeADbContext, avenabot.Migrations.GironeAMigrations.Configuration>());
         }
 
-        public DbSet<Ottavi> Ottavi { get; set; }
         public DbSet<Quarti> Quarti { get; set; }
         public DbSet<Semifinali> Semifinali { get; set; }
         public DbSet<Finale> Finale { get; set; }
         public DbSet<Consolazione> Consolazione { get; set; }
+        public DbSet<Campione> Campione { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
