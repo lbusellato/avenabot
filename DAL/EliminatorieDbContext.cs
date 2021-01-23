@@ -20,7 +20,7 @@ namespace avenabot.DAL
         public DbSet<Finale> Finale { get; set; }
         public DbSet<Consolazione> Consolazione { get; set; }
         public DbSet<Campione> Campione { get; set; }
-
+        public DbSet<Game> Games { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();

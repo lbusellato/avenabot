@@ -878,3 +878,29 @@
 18/01/2021 13:15:41:Received a text message from lbusellato in chat 1031635402: /tabellone
 18/01/2021 13:15:46:Responded to command.
 18/01/2021 13:15:51:Shutting down...
+18/01/2021 13:37:39:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+18/01/2021 13:37:39:Starting up...
+18/01/2021 13:37:39:Shutting down...
+18/01/2021 15:59:28:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+18/01/2021 15:59:28:Starting up...
+18/01/2021 15:59:28:Received a text message from Urun_Hero in chat -1001437603542: Ma quando ho perso io ? XD
+18/01/2021 15:59:31:Ignored message (not a command).
+18/01/2021 15:59:31:Received a text message from lbusellato in chat -1001437603542: Nulla dudo, è solo un test per il sistema di gestione di ipotetiche eliminatorie, l'unica partita valida su quel tabellone è la finale
+18/01/2021 15:59:31:Ignored message (not a command).
+18/01/2021 15:59:31:Received a text message from Urun_Hero in chat -1001437603542: Bene bene
+18/01/2021 15:59:31:Ignored message (not a command).
+18/01/2021 15:59:31:Received a text message from lbusellato in chat 1031635402: /partecipanti
+18/01/2021 15:59:34:Responded to command.
+18/01/2021 18:05:14:Received a text message from Parrare in chat -1001437603542: /miepartite
+18/01/2021 18:05:15:Responded to command.
+18/01/2021 18:06:30:Received a text message from Urun_Hero in chat -1001437603542: /miepartite
+18/01/2021 18:06:30:Responded to command.
+18/01/2021 18:27:00:Shutting down...
+18/01/2021 19:24:52:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+18/01/2021 19:24:52:Starting up...
+19/01/2021 19:53:06:Received a text message from lbusellato in chat 1031635402: /partite
+19/01/2021 19:53:09:Responded to command.
+23/01/2021 10:04:47:Shutting down...
+23/01/2021 10:11:18:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+23/01/2021 10:11:18:Starting up...
+23/01/2021 10:11:20:Shutting down...

@@ -93,6 +93,9 @@
         public static readonly string miePartiteDescr = "\nMostra la lista di partite che devi ancora giocare con il colore che dovrai usare";
         public static readonly string noGamesToPlay = "Hai giocato tutte le partite che dovevi giocare, attendi che anche gli altri giocatori facciano lo stesso.";
         public static readonly string noGames = "Il giocatore specificato deve ancora giocare una partita.";
+        public static readonly string opponentBracket = "Giochi contro ";
+		public static readonly string opponentColor = ", la prima partita la giochi col ";
+		public static readonly string opponentClosing = ", dopodiché i colori si alternano ad ogni partita.";
 
 		public static readonly string tabelloneCommand = "/tabellone";
 		public static readonly string tabelloneDescr = "\nVisualizza il tabellone relativo alla fase ad eliminazione diretta.";
