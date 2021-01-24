@@ -51,76 +51,76 @@ namespace Awesome
                 res = interpreter.Parse(e, lastCommand);
                 if (res != "")
                 {
-                string dir = Directory.GetCurrentDirectory();
-                if (res == "mostraclassifica")
-                {
-                    var fs = new FileStream(dir + "\\classifica.png", FileMode.Open, FileAccess.Read);
-                    var file = new InputOnlineFile(fs);
-                    await botClient.SendPhotoAsync(
-                        chatId: e.Message.Chat,
-                        photo: file,
-                        caption: "@" + e.Message.From.Username
+                    string dir = Directory.GetCurrentDirectory();
+                    if (res == "mostraclassifica")
+                    {
+                        var fs = new FileStream(dir + "\\classifica.png", FileMode.Open, FileAccess.Read);
+                        var file = new InputOnlineFile(fs);
+                        await botClient.SendPhotoAsync(
+                            chatId: e.Message.Chat,
+                            photo: file,
+                            caption: "@" + e.Message.From.Username
+                            );
+                        fs.Close();
+                    }
+                    else if (res == "mostragironi")
+                    {
+                        var fs = new FileStream(dir + "\\gironi.png", FileMode.Open, FileAccess.Read);
+                        var file = new InputOnlineFile(fs);
+                        await botClient.SendPhotoAsync(
+                            chatId: e.Message.Chat,
+                            photo: file,
+                            caption: "@" + e.Message.From.Username
+                            );
+                        fs.Close();
+                    }
+                    else if (res.IndexOf("mostragirone") != -1)
+                    {
+                        var fs = new FileStream(dir + "\\girone" + res[^1] + ".png", FileMode.Open, FileAccess.Read);
+                        var file = new InputOnlineFile(fs);
+                        await botClient.SendPhotoAsync(
+                            chatId: e.Message.Chat,
+                            photo: file
+                            );
+                        fs.Close();
+                    }
+                    else if (res == "partecipanti")
+                    {
+                        var fs = new FileStream(dir + "\\partecipanti.png", FileMode.Open, FileAccess.Read);
+                        var file = new InputOnlineFile(fs);
+                        await botClient.SendPhotoAsync(
+                            chatId: e.Message.Chat,
+                            photo: file
+                            );
+                        fs.Close();
+                    }
+                    else if (res == "bracket")
+                    {
+                        var fs = new FileStream(dir + "\\bracket.png", FileMode.Open, FileAccess.Read);
+                        var file = new InputOnlineFile(fs);
+                        await botClient.SendPhotoAsync(
+                            chatId: e.Message.Chat,
+                            photo: file
+                            );
+                        fs.Close();
+                    }
+                    else
+                    {
+                        await botClient.SendTextMessageAsync(
+                            chatId: e.Message.Chat,
+                            text: res,
+                            parseMode: ParseMode.Html,
+                            true,
+                            false,
+                            e.Message.MessageId
                         );
-                    fs.Close();
-                }
-                else if (res == "mostragironi")
-                {
-                    var fs = new FileStream(dir + "\\gironi.png", FileMode.Open, FileAccess.Read);
-                    var file = new InputOnlineFile(fs);
-                    await botClient.SendPhotoAsync(
-                        chatId: e.Message.Chat,
-                        photo: file,
-                        caption: "@" + e.Message.From.Username
-                        );
-                    fs.Close();
-                }
-                else if (res.IndexOf("mostragirone") != -1)
-                {
-                    var fs = new FileStream(dir + "\\girone" + res[^1] + ".png", FileMode.Open, FileAccess.Read);
-                    var file = new InputOnlineFile(fs);
-                    await botClient.SendPhotoAsync(
-                        chatId: e.Message.Chat,
-                        photo: file
-                        );
-                    fs.Close();
-                }
-                else if (res == "partecipanti")
-                {
-                    var fs = new FileStream(dir + "\\partecipanti.png", FileMode.Open, FileAccess.Read);
-                    var file = new InputOnlineFile(fs);
-                    await botClient.SendPhotoAsync(
-                        chatId: e.Message.Chat,
-                        photo: file
-                        );
-                    fs.Close();
-                }
-                else if (res == "bracket")
-                {
-                    var fs = new FileStream(dir + "\\bracket.png", FileMode.Open, FileAccess.Read);
-                    var file = new InputOnlineFile(fs);
-                    await botClient.SendPhotoAsync(
-                        chatId: e.Message.Chat,
-                        photo: file
-                        );
-                    fs.Close();
+                    }
+                    Logger.Log($"Responded to command.");
                 }
                 else
                 {
-                    await botClient.SendTextMessageAsync(
-                        chatId: e.Message.Chat,
-                        text: res,
-                        parseMode: ParseMode.Html,
-                        true,
-                        false,
-                        e.Message.MessageId
-                    );
+                    Logger.Log($"Ignored message (not a command).");
                 }
-                Logger.Log($"Responded to command.");
-            }
-            else
-            {
-                Logger.Log($"Ignored message (not a command).");
-            }
             }
             else
             {

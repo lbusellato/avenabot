@@ -7,15 +7,6 @@
     {
         public static readonly string welcomeMsg = "Ciao! Sono AvenaChessBot e gestirò i Tornei Avenoni Scacchisti.\nUsa /help per visualizzare i comandi disponibili, oppure usa /torneo per visualizzare informazioni sul torneo";
 
-        public static readonly string tournamentInfo = "Il Torneo Avenoni Scacchisti 2: Episodio II inizierà il dd/mm/yy.\n" +
-            "Le iscrizioni, tramite il comando /iscrivimi, saranno aperte fino al dd/mm/yy.\nI partecipanti" +
-            " saranno divisi in base all'ELO Rapid in due gironi preliminari all'italiana da 4 giocatori, nei quali" +
-            " ciascuno giocherà una sola partita Rapid 10+5 contro ogni altro avversario nel girone.\n" +
-            "I migliori 2 di ciascun girone parteciperanno ad " +
-            "un girone finale all'italiana, il cui primo classificato sarà il vincitore del torneo.\nIl torneo è gestito" +
-            " interamente da me, @AvenaChessBot, a cui i partecipanti invieranno i risultati delle partite con i quali " +
-            "aggiornerò automaticamente classifica e tabellone dei risultati.\nBuona fortuna a tutti!";
-
         public static readonly string saywhat = "Non ho capito, usa /help per vedere la lista dei comandi disponibili.";
 
         public static readonly string startCommand = "/start";
@@ -82,8 +73,17 @@
 
         public static readonly string torneoCommand = "/torneo";
         public static readonly string torneoDescr = "\nVisualizza informazioni sul torneo";
+		public static readonly string tournamentInfo = "Il Torneo Avenoni Scacchisti 3: La Vendetta di Pi, inizierà il (TBD).\n" +
+			"Le iscrizioni, tramite il comando /iscrivimi, saranno aperte fino al (TBD) o fino all'esaurimento dei 16 posti disponibili.\nI partecipanti" +
+			" saranno divisi in base all'ELO Rapid in due gironi preliminari all'italiana da 4 giocatori, nei quali" +
+			" ciascuno giocherà una sola partita Rapid 10+5 contro ogni altro avversario nel girone.\n" +
+			"L'ELO utilizzato per la suddivisione nei gironi è un ELO specifico per i tornei tra Avenoni, ai nuovi giocatori viene assegnato un ELO pari a 1500.\n" +
+			"I migliori 3 di ciascun girone parteciperanno ad " +
+			"un girone finale all'italiana, il cui primo classificato sarà il vincitore del torneo.\nIl torneo è gestito" +
+			" interamente da me, @AvenaChessBot, a cui i partecipanti invieranno i risultati delle partite con i quali " +
+			"aggiornerò automaticamente classifica e tabellone dei risultati.\nBuona fortuna a tutti!";
 
-        public static readonly string partiteCommand = "/partite";
+		public static readonly string partiteCommand = "/partite";
         public static readonly string partiteDescr = " A/B\nMostra la lista di link alle partite giocate finora nel girone specificato";
         public static readonly string partiteUsage = "Utilizzo:\n/partite A/B\nMostra le partite del girone specificato.";
         public static readonly string partiteHeader = "Partite Girone ";

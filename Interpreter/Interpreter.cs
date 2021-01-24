@@ -26,35 +26,35 @@ namespace avenabot.Interpreter
         readonly List<Tuple<CommandMethod, string[]>> commandInit = new List<Tuple<CommandMethod, string[]>>()
         {
             new Tuple<CommandMethod, string[]>(new CommandMethod(StartCommand), 
-                new string[]{ Strings.startCommand, Strings.startDescr, Strings.falseString, }),
+                new string[]{ Strings.startCommand, Strings.startDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(HelpCommand),
-                new string[]{ Strings.helpCommand, Strings.helpDescr, Strings.falseString,}),
+                new string[]{ Strings.helpCommand, Strings.helpDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(PartecipantiCommand), 
-                new string[]{ Strings.partecipantiCommand, Strings.partecipantiDescr, Strings.falseString,}),
+                new string[]{ Strings.partecipantiCommand, Strings.partecipantiDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(IscrivimiCommand), 
-                new string[]{ Strings.iscrivimiCommand, Strings.iscrivimiDescr, Strings.falseString,}),
+                new string[]{ Strings.iscrivimiCommand, Strings.iscrivimiDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(RimuoviCommand), 
-                new string[]{ Strings.rimuoviCommand, Strings.rimuoviDescr, Strings.trueString,}),
+                new string[]{ Strings.rimuoviCommand, Strings.rimuoviDescr, Strings.trueString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(AggiungiCommand), 
-                new string[]{ Strings.aggiungiCommand, Strings.aggiungiDescr, Strings.trueString,}),
+                new string[]{ Strings.aggiungiCommand, Strings.aggiungiDescr, Strings.trueString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(SeedCommand), 
-                new string[]{ Strings.seedCommand, Strings.seedDescr, Strings.trueString,}),
+                new string[]{ Strings.seedCommand, Strings.seedDescr, Strings.trueString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(RisultatiCommand), 
-                new string[]{ Strings.risultatiCommand, Strings.risultatiDescr, Strings.falseString,}),
+                new string[]{ Strings.risultatiCommand, Strings.risultatiDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(ClassificaCommand), 
-                new string[]{ Strings.classificaCommand, Strings.classificaDescr, Strings.falseString,}),
+                new string[]{ Strings.classificaCommand, Strings.classificaDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(InserisciCommand), 
-                new string[]{ Strings.inserisciCommand, Strings.inserisciDescr, Strings.falseString,}),
+                new string[]{ Strings.inserisciCommand, Strings.inserisciDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(TorneoCommand), 
-                new string[]{ Strings.torneoCommand, Strings.torneoDescr, Strings.falseString,}),
+                new string[]{ Strings.torneoCommand, Strings.torneoDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(PartiteCommand), 
-                new string[]{ Strings.partiteCommand, Strings.partiteDescr, Strings.falseString,}),
+                new string[]{ Strings.partiteCommand, Strings.partiteDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(MiePartiteCommand), 
-                new string[]{ Strings.miePartiteCommand, Strings.miePartiteDescr, Strings.falseString,}),
+                new string[]{ Strings.miePartiteCommand, Strings.miePartiteDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(TabelloneCommand),
                 new string[]{ Strings.tabelloneCommand, Strings.tabelloneDescr, Strings.falseString, Strings.falseString}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(NoCommand),
-                new string[]{ "", "", Strings.falseString,}), //NoCommand ****MUST**** be the last command in this list
+                new string[]{ "", "", Strings.falseString, Strings.trueString,}), //NoCommand ****MUST**** be the last command in this list
         };
 
         public struct Standing
@@ -65,14 +65,14 @@ namespace avenabot.Interpreter
         }
 
         private static readonly Random rng = new Random();
-        private static readonly DateTime finalsDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
-        private static readonly DateTime endDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to end the tournament group
-        private static readonly DateTime closingDate = new DateTime(2021, 12, 1, 12, 0, 0); //Change this to select when to close registering
+        private static readonly DateTime finalsDate = new DateTime(2022, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
+        private static readonly DateTime endDate = new DateTime(2022, 12, 1, 12, 0, 0); //Change this to select when to end the tournament group
+        private static readonly DateTime closingDate = new DateTime(2022, 12, 1, 12, 0, 0); //Change this to select when to close registering
         private static DateTime lastCommand;
         public static int coolDown = 0;
         static readonly bool GroupFinals = true; //True for a final group final, false for a knockout final
         static readonly int BestOf = 5; //n° of games for knockout rounds
-        static readonly int MaxPlayers = 8;
+        static readonly int MaxPlayers = 14;
         static readonly int MaxGroups = 2;
         static readonly int MaxFinalists = 8;
 
@@ -88,12 +88,18 @@ namespace avenabot.Interpreter
                     i, 
                     commandInit[i].Item2[0], 
                     commandInit[i].Item2[1], 
-                    Convert.ToBoolean(commandInit[i].Item2[2]));
+                    Convert.ToBoolean(commandInit[i].Item2[2]),
+                    Convert.ToBoolean(commandInit[i].Item2[3]));
             }
         }
 
         public string Parse(MessageEventArgs e, DateTime LastCommand)
         {
+            bool crash = false; //Turn true to skip all messages sent to the bot in case of a crash
+            if(crash)
+            {
+                return "";
+            }
             lastCommand = LastCommand;
             string message = e.Message.Text;
             string sender = e.Message.From.Username;
@@ -134,7 +140,7 @@ namespace avenabot.Interpreter
                     continue;
                 }
                 //Show the command's name and description only if the sender is admin or it's not an admin only command
-                if (c.enabled && !c.admin || IsAdmin(sender))
+                if (c.enabled && (!c.admin || IsAdmin(sender)))
                 {
                     res += c.name + c.descr + "\n";
                     //Add a separator to nicely format the list
@@ -158,7 +164,7 @@ namespace avenabot.Interpreter
         {
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             string html = "<div><table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" align=\"center\"><tr>" +
-                "<th>ID</th><th>ID Lichess</th><th>ID Telegram</th><th>ELO</th><th>Var.ELO</th><th>Girone</th></tr>";
+                "<th>ID</th><th>ID Lichess</th><th>ID Telegram</th><th>ELO</th><th>Girone</th></tr>";
             //Pull each player's data from the db and nicely format it
             foreach (Partecipante p in pdb.Partecipanti)
             {
@@ -189,8 +195,7 @@ namespace avenabot.Interpreter
             string[] subs;
             int playerCount = GetPlayerCount();
             int elo = -1;
-
-            if (DateTime.Now > closingDate || playerCount <= MaxPlayers)
+            if (DateTime.Now > closingDate || playerCount == MaxPlayers)
             {
                 res = Strings.closedRegistrations;
                 return res;
@@ -522,17 +527,18 @@ namespace avenabot.Interpreter
                                 gid = GetMaxGID("A") + 1;
                                 g.GID = gid;
                                 adb.Girone.Add(g);
+                                //Save the changes to the db
+                                adb.SaveChanges();
                                 break;
                             default:
                                 gid = GetMaxGID("B") + 1;
                                 g.GID = gid;
                                 bdb.Girone.Add(g);
+                                //Save the changes to the db
+                                bdb.SaveChanges();
                                 break;
                         }
                     }
-                    //Save the changes to the dbs
-                    adb.SaveChanges();
-                    bdb.SaveChanges();
                 }
                 res += Strings.groupsSeeded;
             }
@@ -1088,6 +1094,7 @@ namespace avenabot.Interpreter
         private static string InserisciCommand(string message, string sender)
         {
             using EliminatorieDbContext edb = new EliminatorieDbContext();
+            using MembriDbContext mdb = new MembriDbContext();
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
             using GironeBDbContext bdb = new GironeBDbContext();
@@ -1271,6 +1278,17 @@ namespace avenabot.Interpreter
                             fdb.SaveChanges();
                             break;
                     }
+                    int p1ELO = p1.ELO;
+                    int p2ELO = p2.ELO;
+                    UpdateElo(ref p1ELO, ref p2ELO, (helper == "1") ? 0f : (helper == "0") ? 1.0f : 0.5f);
+                    p1.ELO = p1ELO;
+                    p2.ELO = p2ELO;
+                    pdb.SaveChanges();
+                    Membro m1 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == p1.LichessID.ToLower());
+                    Membro m2 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == p2.LichessID.ToLower());
+                    m1.ELO = p1ELO;
+                    m2.ELO = p2ELO;
+                    mdb.SaveChanges();
                     res += Strings.insertedResult + Strings.checkResults;
                 }
                 else
@@ -1461,6 +1479,17 @@ namespace avenabot.Interpreter
                     }
                     edb.SaveChanges();
                     ManageBracket(player1ID, player2ID);
+                    int p1ELO = p1.ELO;
+                    int p2ELO = p2.ELO;
+                    UpdateElo(ref p1ELO, ref p2ELO, (helper == "1") ? 0f : (helper == "0") ? 1.0f : 0.5f);
+                    p1.ELO = p1ELO;
+                    p2.ELO = p2ELO;
+                    pdb.SaveChanges();
+                    Membro m1 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == player1LichessID.ToLower());
+                    Membro m2 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == player2LichessID.ToLower());
+                    m1.ELO = p1ELO;
+                    m2.ELO = p2ELO;
+                    mdb.SaveChanges();
                     res += Strings.insertedResult + Strings.checkTab;
                     return res;
                 }
@@ -1610,6 +1639,17 @@ namespace avenabot.Interpreter
                             fdb.SaveChanges();
                             break;
                     }
+                    int p1ELO = p1.ELO;
+                    int p2ELO = p2.ELO;
+                    UpdateElo(ref p1ELO, ref p2ELO, (helper == "1") ? 0f : (helper == "0") ? 1.0f : 0.5f);
+                    p1.ELO = p1ELO;
+                    p2.ELO = p2ELO;
+                    pdb.SaveChanges();
+                    Membro m1 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == player1LichessID.ToLower());
+                    Membro m2 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == player2LichessID.ToLower());
+                    m1.ELO = p1ELO;
+                    m2.ELO = p2ELO;
+                    mdb.SaveChanges();
                     res += Strings.insertedResult + Strings.checkResults;
                 }
                 else
@@ -1798,10 +1838,39 @@ namespace avenabot.Interpreter
                     }
                     edb.SaveChanges();
                     ManageBracket(player1ID, player2ID);
+                    int p1ELO = p1.ELO;
+                    int p2ELO = p2.ELO;
+                    UpdateElo(ref p1ELO, ref p2ELO, (helper == "1") ? 0f : (helper == "0") ? 1.0f : 0.5f);
+                    p1.ELO = p1ELO;
+                    p2.ELO = p2ELO;
+                    pdb.SaveChanges();
+                    Membro m1 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == player1LichessID.ToLower());
+                    Membro m2 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == player2LichessID.ToLower());
+                    m1.ELO = p1ELO;
+                    m2.ELO = p2ELO;
+                    mdb.SaveChanges();
                     res += Strings.insertedResult + Strings.checkTab;
                 }
             }
             return res;
+        }
+
+        /// <summary>
+        /// Update the players ELO ratings
+        /// </summary>
+        /// <param name="p1ELO"></param>
+        /// <param name="p2ELO"></param>
+        /// <param name="outcome"></param>
+        private static void UpdateElo(ref int p1ELO, ref int p2ELO, float outcome)
+        {
+
+            double expectationToWin =  1 / (1 + Math.Pow(10, (p2ELO - p1ELO) / 400.0));
+            int eloK = 32;
+
+            int delta = (int)(eloK * (outcome - expectationToWin));
+
+            p1ELO += delta;
+            p2ELO -= delta;
         }
 
         /// <summary>
@@ -3227,6 +3296,7 @@ namespace avenabot.Interpreter
                 File.Delete(file);
             }
             File.WriteAllBytes(file, bytes);
+
         }
     }
 }
