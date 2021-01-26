@@ -17,6 +17,9 @@ using static avenabot.Interpreter.Command;
 
 namespace avenabot.Interpreter
 {
+    //TODO: Semplificazione
+    //TODO: Migliorare efficienza generazione immagini classifica/risultati
+    //TODO: Recupero partite da db Lichess rapid se l'ultima giocata trovata non corrisponde
     public class Interpreter
     {
         private static readonly string[] admin = new string[]
@@ -33,10 +36,6 @@ namespace avenabot.Interpreter
                 new string[]{ Strings.partecipantiCommand, Strings.partecipantiDescr, Strings.falseString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(IscrivimiCommand), 
                 new string[]{ Strings.iscrivimiCommand, Strings.iscrivimiDescr, Strings.falseString, Strings.trueString,}),
-            new Tuple<CommandMethod, string[]>(new CommandMethod(RimuoviCommand), 
-                new string[]{ Strings.rimuoviCommand, Strings.rimuoviDescr, Strings.trueString, Strings.trueString,}),
-            new Tuple<CommandMethod, string[]>(new CommandMethod(AggiungiCommand), 
-                new string[]{ Strings.aggiungiCommand, Strings.aggiungiDescr, Strings.trueString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(SeedCommand), 
                 new string[]{ Strings.seedCommand, Strings.seedDescr, Strings.trueString, Strings.trueString,}),
             new Tuple<CommandMethod, string[]>(new CommandMethod(RisultatiCommand), 
@@ -72,7 +71,7 @@ namespace avenabot.Interpreter
         public static int coolDown = 0;
         static readonly bool GroupFinals = true; //True for a final group final, false for a knockout final
         static readonly int BestOf = 5; //n° of games for knockout rounds
-        static readonly int MaxPlayers = 14;
+        static readonly int MaxPlayers = 20;
         static readonly int MaxGroups = 2;
         static readonly int MaxFinalists = 8;
 
@@ -163,8 +162,13 @@ namespace avenabot.Interpreter
         private static string PartecipantiCommand(string message, string sender)
         {
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
+            using GironeADbContext adb = new GironeADbContext();
             string html = "<div><table border=\"1\" cellspacing=\"0\" cellpadding=\"4\" align=\"center\"><tr>" +
-                "<th>ID</th><th>ID Lichess</th><th>ID Telegram</th><th>ELO</th><th>Girone</th></tr>";
+                "<th>ID</th><th>ID Lichess</th><th>ID Telegram</th><th>ELO</th>";
+            if (adb.Girone.Count() > 0)
+            {
+                html += "<th>Girone</th></tr>";
+            }
             //Pull each player's data from the db and nicely format it
             foreach (Partecipante p in pdb.Partecipanti)
             {
@@ -173,7 +177,10 @@ namespace avenabot.Interpreter
                 html += "<td>" + p.LichessID + "</td>";
                 html += "<td>@" + p.TGID + "</td>";
                 html += "<td align=\"right\">" + p.ELO + "</td>";
-                html += "<td align=\"center\">" + p.Girone + "</td>";
+                if (adb.Girone.Count() > 0)
+                {
+                    html += "<td align=\"center\">" + p.Girone + "</td>";
+                }
                 html += "</tr>";
             }
             Render(html, 0, "partecipanti.png", 60);
@@ -242,106 +249,6 @@ namespace avenabot.Interpreter
         }
 
         /// <summary>
-        /// Removes the player with the corresponding Lichess ID, if he exists in the DB (admin only)
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="sender"></param>
-        /// <returns></returns>
-        private static string RimuoviCommand(string message, string sender)
-        {
-            using PartecipantiDbContext pdb = new PartecipantiDbContext();
-            string res = "";
-            string lichessID = "";
-            string[] subs;
-            if (IsAdmin(sender))
-            {
-                subs = message.Split(" ");
-                if (subs.Length < 2) //If no ID was provided
-                {
-                    res = Strings.rimuoviUsage;
-                    return res;
-                }
-                //Get the Lichess ID
-                lichessID = subs[1];
-
-                //Remove the player from the DB, if he exists
-                if (pdb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == lichessID.ToLower()) == null)
-                {
-                    res = Strings.player404 + Strings.checkPartecipanti + Strings.errorContact;
-                    return res;
-                }
-                
-                //Find and remove the player from the db
-                Partecipante p = pdb.Partecipanti.SingleOrDefault(p => p.LichessID.ToLower() == lichessID.ToLower());
-                int removedTID = p.TID;
-                pdb.Partecipanti.Attach(p);
-                pdb.Partecipanti.Remove(p);
-
-                //Update the TIDs of other players
-                foreach (Partecipante par in pdb.Partecipanti)
-                {
-                    if (par.TID > removedTID)
-                    {
-                        par.TID -= 1;
-                    }
-                }
-                pdb.SaveChanges();
-                res = Strings.removedAdmin + Strings.checkPartecipanti;
-            }
-            return res;
-        }
-
-        /// <summary>
-        /// Add the player with the specified Lichess ID and Telegram Handle (admin only)
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="sender"></param>
-        /// <returns></returns>
-        private static string AggiungiCommand(string message, string sender)
-        {
-            using PartecipantiDbContext pdb = new PartecipantiDbContext();
-            string res = "";
-            string lichessID = "";
-            string tgID = "";
-            string[] subs;
-            int elo = -1;
-            if (IsAdmin(sender))
-            {
-                subs = message.Split(' ');
-                if (subs.Length != 3) //If the number of arguments is not the correct one
-                {
-                    res = Strings.aggiungiUsage;
-                    return res;
-                }
-
-                //Get the Lichess ID
-                lichessID = subs[1];
-                //Get the Telegram ID
-                tgID = subs[2];
-                //Check if the player is already in the DB
-                if (pdb.Partecipanti.SingleOrDefault(p => p.TGID == tgID) != null) 
-                {
-                    res = Strings.registeredAdminError + Strings.checkPartecipanti + Strings.errorContact;
-                    return res;
-                }
-
-                int tid = GetMaxTID() + 1; //Get a valid tournament ID
-                //Push the new player to the db
-                Partecipante p = new Partecipante
-                {
-                    LichessID = lichessID,
-                    TGID = tgID,
-                    ELO = elo,
-                    TID = tid
-                };
-                pdb.Partecipanti.Add(p);
-                pdb.SaveChanges();
-                res = Strings.registeredAdmin + Strings.checkPartecipanti;
-            }
-            return res;
-        }
-
-        /// <summary>
         /// Populates the groups using ELO as a parameter
         /// </summary>
         /// <param name="message"></param>
@@ -355,9 +262,9 @@ namespace avenabot.Interpreter
             using GironeBDbContext bdb = new GironeBDbContext();
             using GironeFDbContext fdb = new GironeFDbContext();
             string res = "";
-            //Seed the final group if it's past the date
             if (GroupFinals)
             {
+                //Seed the final group if it's past the date
                 if (DateTime.Now > finalsDate)
                 {
                     //Check if the group was already seeded
@@ -499,8 +406,7 @@ namespace avenabot.Interpreter
                             pUpdateGroup.Girone = i switch
                             {
                                 0 => "A",
-                                1 => "B",
-                                _ => "C",
+                                _ => "B",
                             };
                             pdb.SaveChanges();
                         }
@@ -767,7 +673,6 @@ namespace avenabot.Interpreter
         /// <returns></returns>
         private static string RisultatiCommand(string message, string sender)
         {
-            using EliminatorieDbContext edb = new EliminatorieDbContext();
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
             using GironeBDbContext bdb = new GironeBDbContext();
@@ -782,10 +687,7 @@ namespace avenabot.Interpreter
             }
             //Check if the dbs are populated
             if (adb.Girone.Count() <= 0 || 
-                (DateTime.Now > finalsDate && fdb.Girone.Count() <= 0) ||
-                (DateTime.Now > finalsDate && edb.Finale.Count() <= 0 && MaxFinalists == 2) ||
-                (DateTime.Now > finalsDate && edb.Semifinali.Count() <= 0 && MaxFinalists == 4) ||
-                (DateTime.Now > finalsDate && edb.Quarti.Count() <= 0 && MaxFinalists == 8))
+                (GroupFinals && DateTime.Now > finalsDate && fdb.Girone.Count() <= 0))
             {
                 res += Strings.notYetSeededGroups;
                 return res;
@@ -793,6 +695,32 @@ namespace avenabot.Interpreter
             lastCommand = DateTime.Now;
 
             subs = message.Split(' ');
+
+            if (pdb.Values.SingleOrDefault(v => v.ID == 1).DataChanged == 0)
+            {
+                if (subs.Length == 1)
+                {
+                    return "mostragironi";
+                }
+                else if(subs.Length == 2)
+                {
+                    switch (subs[1].ToUpper())
+                    {
+                        case "A":
+                            return "mostragironeA";
+                        case "B":
+                            return "mostragironeB";
+                        case "F":
+                            return "mostragironeF";
+                        default:
+                            res = Strings.risultatiUsage;
+                            return res;
+                    }
+                }
+            }
+
+            pdb.Values.SingleOrDefault(v => v.ID == 1).DataChanged = 0;
+            pdb.SaveChanges();
             if (subs.Length == 1) //All groups
             {
                 if (DateTime.Now < finalsDate)
@@ -847,6 +775,7 @@ namespace avenabot.Interpreter
                 return res;
             }
         }
+
         /// <summary>
         /// Blanket method to fetch the specified group results
         /// </summary>
@@ -942,6 +871,12 @@ namespace avenabot.Interpreter
             string html = "";
             string[] subresults;
             int dbCheck;
+
+            if(pdb.Values.SingleOrDefault(v => v.ID == 1).DataChanged == 0)
+            {
+                return "mostraclassifica";
+            }
+
             DbSet<Girone> dbset;
             //Check if the cooldown has passed
             if (DateTime.Now < lastCommand.AddMinutes(coolDown))
@@ -1082,6 +1017,8 @@ namespace avenabot.Interpreter
             html += "</table></div>";
             Render(html, 4);
             res = "mostraclassifica";
+            pdb.Values.SingleOrDefault(v => v.ID == 1).DataChanged = 0;
+            pdb.SaveChanges();
             return res;
         }
 
@@ -1118,6 +1055,8 @@ namespace avenabot.Interpreter
             int bracketID;
             string sub1;
             string sub2;
+            pdb.Values.SingleOrDefault(v => v.ID == 1).DataChanged = 1;
+            pdb.SaveChanges();
             subs = message.Split(" ");
             //Check if the db is populated 
             int dbCheckA = adb.Girone.Count();

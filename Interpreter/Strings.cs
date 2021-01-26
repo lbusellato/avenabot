@@ -24,7 +24,7 @@
         public static readonly string registeredError = "Risulti già iscritto!";
         public static readonly string registered = "Ti ho iscritto!";
         public static readonly string closedRegistrations = "Spiacente, le iscrizioni sono chiuse!";
-        public static readonly string usernameNeeded = "È necessario avere un username Telegram valido per potersi iscrivere!";
+        public static readonly string usernameNeeded = "È necessario avere un username Telegram per potersi iscrivere!";
 
         public static readonly string rimuoviCommand = "/rimuovi";
         public static readonly string rimuoviDescr = " IDLichess\nRimuove il giocatore specificato dal torneo";
@@ -73,12 +73,12 @@
 
         public static readonly string torneoCommand = "/torneo";
         public static readonly string torneoDescr = "\nVisualizza informazioni sul torneo";
-		public static readonly string tournamentInfo = "Il Torneo Avenoni Scacchisti 3: La Vendetta di Pi, inizierà il (TBD).\n" +
-			"Le iscrizioni, tramite il comando /iscrivimi, saranno aperte fino al (TBD) o fino all'esaurimento dei 16 posti disponibili.\nI partecipanti" +
-			" saranno divisi in base all'ELO Rapid in due gironi preliminari all'italiana da 4 giocatori, nei quali" +
+		public static readonly string tournamentInfo = "Il Torneo Avenoni Scacchisti 3: Tokyo Drift, inizierà il 1° Febbraio.\n" +
+			"Le iscrizioni, tramite il comando /iscrivimi, saranno aperte fino all'esaurimento dei 20 posti disponibili.\nI partecipanti" +
+			" saranno divisi in base all'ELO Rapid in due gironi preliminari all'italiana da 10 giocatori, nei quali" +
 			" ciascuno giocherà una sola partita Rapid 10+5 contro ogni altro avversario nel girone.\n" +
 			"L'ELO utilizzato per la suddivisione nei gironi è un ELO specifico per i tornei tra Avenoni, ai nuovi giocatori viene assegnato un ELO pari a 1500.\n" +
-			"I migliori 3 di ciascun girone parteciperanno ad " +
+			"I migliori 4 di ciascun girone parteciperanno ad " +
 			"un girone finale all'italiana, il cui primo classificato sarà il vincitore del torneo.\nIl torneo è gestito" +
 			" interamente da me, @AvenaChessBot, a cui i partecipanti invieranno i risultati delle partite con i quali " +
 			"aggiornerò automaticamente classifica e tabellone dei risultati.\nBuona fortuna a tutti!";

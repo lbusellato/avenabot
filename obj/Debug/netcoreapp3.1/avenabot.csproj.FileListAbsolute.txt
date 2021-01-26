@@ -106,3 +106,4 @@ C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenab
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.MembriMigrations.TGIDField.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.MembriMigrations.RemoveTGIDField.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.RemoveELOVarField.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.ValuesTable.resources
