@@ -1150,3 +1150,126 @@
 26/01/2021 14:40:18:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
 26/01/2021 14:40:18:Starting up...
 26/01/2021 14:40:19:Shutting down...
+27/01/2021 19:36:09:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+27/01/2021 19:36:09:Starting up...
+27/01/2021 19:38:54:Received a text message from lbusellato in chat 1031635402: /risultati
+27/01/2021 19:38:59:Responded to command.
+27/01/2021 19:40:16:Received a text message from lbusellato in chat 1031635402: /risultati
+27/01/2021 19:40:17:Responded to command.
+27/01/2021 19:41:09:Shutting down...
+27/01/2021 19:41:18:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+27/01/2021 19:41:18:Starting up...
+27/01/2021 19:41:22:Received a text message from lbusellato in chat 1031635402: /risultati
+27/01/2021 19:42:01:Responded to command.
+27/01/2021 19:42:14:Shutting down...
+27/01/2021 19:42:18:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+27/01/2021 19:42:18:Starting up...
+27/01/2021 19:42:25:Received a text message from lbusellato in chat 1031635402: /risultati
+27/01/2021 19:42:29:Responded to command.
+27/01/2021 19:42:35:Received a text message from lbusellato in chat -1001340633642: /risultati
+27/01/2021 19:42:36:Responded to command.
+27/01/2021 19:43:48:Received a text message from lbusellato in chat 1031635402: /classifica
+27/01/2021 19:43:50:Responded to command.
+27/01/2021 19:44:04:Received a text message from lbusellato in chat -1001340633642: /classifica
+27/01/2021 19:44:05:Responded to command.
+27/01/2021 19:44:14:Received a text message from lbusellato in chat -1001340633642: /partite A
+27/01/2021 19:44:14:Responded to command.
+28/01/2021 01:42:22:Received a text message from Caffa997 in chat 989928419: /risultati
+28/01/2021 01:42:26:Responded to command.
+28/01/2021 09:25:44:Received a text message from lbusellato in chat 1031635402: /risultati
+28/01/2021 09:25:46:Responded to command.
+28/01/2021 12:42:11:Received a text message from Caffa997 in chat 989928419: /risultati
+28/01/2021 12:42:14:Responded to command.
+28/01/2021 13:36:37:Shutting down...
+28/01/2021 13:36:40:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+28/01/2021 13:36:40:Starting up...
+28/01/2021 14:18:27:Received a text message from AllHailTheBitcher in chat -1001340633642: /miepartite
+28/01/2021 14:18:32:Responded to command.
+28/01/2021 14:20:53:Received a text message from guido_toresella in chat -1001340633642: /miepartite
+28/01/2021 14:20:54:Responded to command.
+28/01/2021 14:29:16:Received a text message from AllHailTheBitcher in chat -1001340633642: Tu usi il nero
+28/01/2021 14:29:16:Ignored message (not a command).
+28/01/2021 14:48:57:Shutting down...
+28/01/2021 14:49:31:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+28/01/2021 14:49:31:Starting up...
+28/01/2021 15:00:05:Received a text message from JacopoGennari98 in chat -1001340633642: /inserisci OroRossoWedge
+28/01/2021 15:00:09:Responded to command.
+28/01/2021 15:00:17:Received a text message from lbusellato in chat 1031635402: /partite B
+28/01/2021 15:00:17:Responded to command.
+28/01/2021 15:00:18:Received a text message from JacopoGennari98 in chat -1001340633642: /risultati
+28/01/2021 15:00:25:Responded to command.
+28/01/2021 15:00:34:Received a text message from lbusellato in chat -1001340633642: /classifica
+28/01/2021 15:00:36:Responded to command.
+28/01/2021 15:00:49:Shutting down...
+28/01/2021 15:00:51:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+28/01/2021 15:00:51:Starting up...
+28/01/2021 15:03:15:Shutting down...
+28/01/2021 15:05:46:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+28/01/2021 15:05:46:Starting up...
+28/01/2021 15:05:47:Shutting down...
+28/01/2021 15:05:50:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+28/01/2021 15:05:50:Starting up...
+28/01/2021 15:05:52:Received a text message from lbusellato in chat 1031635402: /risultati
+28/01/2021 15:05:56:Responded to command.
+28/01/2021 15:06:02:Received a text message from lbusellato in chat 1031635402: /classifica
+28/01/2021 15:06:03:Responded to command.
+28/01/2021 15:56:50:Received a text message from Caffa997 in chat 989928419: /risultati
+28/01/2021 15:56:53:Responded to command.
+28/01/2021 16:18:37:Received a text message from Indigo30 in chat -1001340633642: /partite
+28/01/2021 16:18:38:Ignored message (not a command).
+28/01/2021 16:18:42:Received a text message from Indigo30 in chat -1001340633642: /partite
+28/01/2021 16:18:42:Ignored message (not a command).
+28/01/2021 17:17:56:Received a text message from Indigo30 in chat -1001340633642: /inserisci mrark
+28/01/2021 17:17:58:Responded to command.
+28/01/2021 17:18:02:Received a text message from Indigo30 in chat -1001340633642: /risultati@AvenaChessBot
+28/01/2021 17:18:04:Responded to command.
+28/01/2021 23:04:23:Received a text message from Caffa997 in chat 989928419: /risultati
+28/01/2021 23:04:27:Responded to command.
+29/01/2021 01:28:44:Received a text message from Come_andiamo in chat -1001340633642: /help@AvenaChessBot
+29/01/2021 01:28:45:Responded to command.
+29/01/2021 01:28:48:Received a text message from Come_andiamo in chat -1001340633642: /miepartite@AvenaChessBot
+29/01/2021 01:28:48:Responded to command.
+29/01/2021 10:40:26:Received a text message from Indigo30 in chat -1001340633642: /miepartite
+29/01/2021 10:40:28:Responded to command.
+29/01/2021 11:25:12:Received a text message from Caffa997 in chat 989928419: /risultati
+29/01/2021 11:25:16:Responded to command.
+29/01/2021 14:36:12:Received a text message from Indigo30 in chat -1001340633642: /inserisci spurtiglione
+29/01/2021 14:36:14:Responded to command.
+29/01/2021 17:05:29:Received a text message from Caffa997 in chat 989928419: /risultati
+29/01/2021 17:05:35:Responded to command.
+29/01/2021 18:04:57:Received a text message from polimante in chat -1001340633642: /help
+29/01/2021 18:04:58:Responded to command.
+29/01/2021 18:05:13:Received a text message from polimante in chat -1001340633642: /partecipanti
+29/01/2021 18:05:38:Received a text message from polimante in chat -1001340633642: /miepartite
+29/01/2021 18:05:38:Responded to command.
+29/01/2021 18:05:54:Responded to command.
+29/01/2021 18:06:00:Received a text message from polimante in chat -1001340633642: Qualcuno tra 15 min?
+29/01/2021 18:06:00:Ignored message (not a command).
+29/01/2021 18:47:10:Received a text message from polimante in chat -1001340633642: /inserisci uebomber22
+29/01/2021 18:47:11:Responded to command.
+29/01/2021 18:47:27:Received a text message from polimante in chat -1001340633642: /inserisci mrark
+29/01/2021 18:47:28:Responded to command.
+29/01/2021 18:47:33:Received a text message from polimante in chat -1001340633642: /risultati@AvenaChessBot
+29/01/2021 18:47:35:Responded to command.
+29/01/2021 19:11:11:Received a text message from lbusellato in chat 1031635402: /partite b
+29/01/2021 19:11:12:Responded to command.
+30/01/2021 00:08:38:Received a text message from polimante in chat -1001340633642: /miepartite
+30/01/2021 00:08:41:Responded to command.
+30/01/2021 02:02:27:Received a text message from Caffa997 in chat 989928419: /risultati
+30/01/2021 02:02:30:Responded to command.
+30/01/2021 02:03:25:Received a text message from Caffa997 in chat 989928419: /classifica
+30/01/2021 02:03:27:Responded to command.
+30/01/2021 09:30:43:Received a text message from lbusellato in chat 1031635402: /partite b
+30/01/2021 09:30:44:Responded to command.
+30/01/2021 09:30:49:Received a text message from lbusellato in chat 1031635402: /partite a
+30/01/2021 09:30:49:Responded to command.
+30/01/2021 09:30:56:Received a text message from lbusellato in chat 1031635402: /risultati
+30/01/2021 09:30:57:Responded to command.
+30/01/2021 09:31:14:Received a tex01/02/2021 15:08:03:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+01/02/2021 15:08:03:Starting up...
+01/02/2021 15:08:05:Shutting down...
+02/02/2021 15:24:00:Hello, World! I am user 1444146870 and my name is AvenaChessBot.
+02/02/2021 15:24:00:Starting up...
+02/02/2021 15:24:10:Received a text message from lbusellato in chat 1031635402: /partecipanti
+02/02/2021 15:24:14:Responded to command.
+02/02/2021 15:24:20:Shutting down...

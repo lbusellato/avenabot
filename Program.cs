@@ -52,55 +52,14 @@ namespace Awesome
                 if (res != "")
                 {
                     string dir = Directory.GetCurrentDirectory();
-                    if (res == "mostraclassifica")
+                    if (res.IndexOf(".png") != -1)
                     {
-                        var fs = new FileStream(dir + "\\classifica.png", FileMode.Open, FileAccess.Read);
+                        var fs = new FileStream(dir + "\\" + res, FileMode.Open, FileAccess.Read);
                         var file = new InputOnlineFile(fs);
                         await botClient.SendPhotoAsync(
                             chatId: e.Message.Chat,
                             photo: file,
                             caption: "@" + e.Message.From.Username
-                            );
-                        fs.Close();
-                    }
-                    else if (res == "mostragironi")
-                    {
-                        var fs = new FileStream(dir + "\\gironi.png", FileMode.Open, FileAccess.Read);
-                        var file = new InputOnlineFile(fs);
-                        await botClient.SendPhotoAsync(
-                            chatId: e.Message.Chat,
-                            photo: file,
-                            caption: "@" + e.Message.From.Username
-                            );
-                        fs.Close();
-                    }
-                    else if (res.IndexOf("mostragirone") != -1)
-                    {
-                        var fs = new FileStream(dir + "\\girone" + res[^1] + ".png", FileMode.Open, FileAccess.Read);
-                        var file = new InputOnlineFile(fs);
-                        await botClient.SendPhotoAsync(
-                            chatId: e.Message.Chat,
-                            photo: file
-                            );
-                        fs.Close();
-                    }
-                    else if (res == "partecipanti")
-                    {
-                        var fs = new FileStream(dir + "\\partecipanti.png", FileMode.Open, FileAccess.Read);
-                        var file = new InputOnlineFile(fs);
-                        await botClient.SendPhotoAsync(
-                            chatId: e.Message.Chat,
-                            photo: file
-                            );
-                        fs.Close();
-                    }
-                    else if (res == "bracket")
-                    {
-                        var fs = new FileStream(dir + "\\bracket.png", FileMode.Open, FileAccess.Read);
-                        var file = new InputOnlineFile(fs);
-                        await botClient.SendPhotoAsync(
-                            chatId: e.Message.Chat,
-                            photo: file
                             );
                         fs.Close();
                     }
