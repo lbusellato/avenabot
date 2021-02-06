@@ -5,9 +5,9 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using avenabot.DAL;
-using avenabot.Models.Chat;
 using System.IO;
 using Telegram.Bot.Types.InputFiles;
+using System.Linq;
 
 namespace Awesome
 {
@@ -43,12 +43,18 @@ namespace Awesome
 
         static async void Bot_OnMessage(object sender, MessageEventArgs e)
         {
+            using MembriDbContext mdb = new MembriDbContext();
+            if(mdb.Membri.SingleOrDefault(m => m.TGID == e.Message.From.Username) == null)
+            {
+                mdb.Membri.Add(new avenabot.Models.Membri.Membro { TGID = e.Message.From.Username, ELO = 1500 });
+                mdb.SaveChanges();
+            }
             if (e.Message.Text != null)
             {
                 Logger.Log($"Received a text message from {e.Message.From.Username} in chat {e.Message.Chat.Id}: {e.Message.Text}");
                 ManageChatID(e.Message.Chat.Id);
                 string res;
-                res = interpreter.Parse(e, lastCommand);
+                res = interpreter.Parse(e);
                 if (res != "")
                 {
                     string dir = Directory.GetCurrentDirectory();
@@ -58,8 +64,7 @@ namespace Awesome
                         var file = new InputOnlineFile(fs);
                         await botClient.SendPhotoAsync(
                             chatId: e.Message.Chat,
-                            photo: file,
-                            caption: "@" + e.Message.From.Username
+                            photo: file
                             );
                         fs.Close();
                     }
@@ -91,7 +96,7 @@ namespace Awesome
         {
             bool flag = true;
             using PartecipantiDbContext db = new PartecipantiDbContext();
-            foreach (Chat c in db.Chats)
+            foreach (avenabot.Models.Chat.Chat c in db.Chats)
             {
                 if (c.ChatID == ChatID)
                 {
@@ -102,7 +107,7 @@ namespace Awesome
             if (flag)
             {
                 Logger.Log($"New chat id: {ChatID}, I'll register it.");
-                Chat c = new Chat()
+                avenabot.Models.Chat.Chat c = new avenabot.Models.Chat.Chat()
                 {
                     ChatID = ChatID
                 };

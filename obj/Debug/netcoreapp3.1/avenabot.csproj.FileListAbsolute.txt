@@ -96,3 +96,10 @@ C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenab
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.MembriMigrations.RemoveTGIDField.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.RemoveELOVarField.resources
 C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.ValuesTable.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.NameValueFields.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.RemoveValueTable.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.BotGameField.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.RemoveBracketField.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.PartecipantiMigrations.RemoveBracketField1.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.MembriMigrations.BotGameField.resources
+C:\Users\loren\Documents\GitHub\avenabot\avenabot\obj\Debug\netcoreapp3.1\avenabot.Migrations.MembriMigrations.TGIDField1.resources

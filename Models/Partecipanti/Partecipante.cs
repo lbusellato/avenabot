@@ -8,6 +8,5 @@
         public string TGID { get; set; }
         public int ELO { get; set; }
         public string Girone { get; set; }
-        public string Bracket { get; set; }
     }
 }

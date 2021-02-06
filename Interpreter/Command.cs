@@ -1,8 +1,10 @@
-﻿namespace avenabot.Interpreter
+﻿using Telegram.Bot.Args;
+
+namespace avenabot.Interpreter
 {
     public class Command
     {
-        public delegate string CommandMethod(string message, string sender);
+        public delegate string CommandMethod(MessageEventArgs e);
 
         public CommandMethod cmd;
         public int ID;
@@ -21,9 +23,9 @@
             enabled = isEnabled;
         }
 
-        public string Execute(string message, string sender)
+        public string Execute(MessageEventArgs e)
         {
-            return cmd(message, sender);
+            return cmd(e);
         }
     }
 }

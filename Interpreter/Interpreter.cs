@@ -10,7 +10,6 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using Telegram.Bot.Args;
 using static avenabot.Interpreter.Command;
 
@@ -64,9 +63,6 @@ namespace avenabot.Interpreter
         private static readonly DateTime finalsDate = new DateTime(2022, 12, 1, 12, 0, 0); //Change this to select when to switch to the final group
         private static readonly DateTime endDate = new DateTime(2022, 12, 1, 12, 0, 0); //Change this to select when to end the tournament group
         private static readonly DateTime closingDate = new DateTime(2022, 12, 1, 12, 0, 0); //Change this to select when to close registering
-        private static DateTime lastCommand;
-        public static int coolDown = 0;
-        static readonly int BestOf = 5; //n° of games for knockout rounds
         static readonly int MaxPlayers = 20;
         static readonly int MaxGroups = 2;
         static readonly int MaxFinalists = 8;
@@ -88,23 +84,21 @@ namespace avenabot.Interpreter
             }
         }
 
-        public string Parse(MessageEventArgs e, DateTime LastCommand)
+        public string Parse(MessageEventArgs e)
         {
             bool crash = false; //Turn true to skip all messages sent to the bot in case of a crash
             if(crash)
             {
                 return "";
             }
-            lastCommand = LastCommand;
             string message = e.Message.Text;
-            string sender = e.Message.From.Username;
             string command = message.Split(" ")[0];
             int inlineCheck = command.IndexOf("@"); //Trim the @ part if the command was sent like this: /command@AvenaChessBot
             if(inlineCheck != -1)
             {
                 command = command.Substring(0, inlineCheck);
             }
-            string res = commandList[Find(command)].Execute(message, sender);
+            string res = commandList[Find(command)].Execute(e);
             return res;
         }
 
@@ -114,7 +108,7 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string StartCommand(string message, string sender)
+        private static string StartCommand(MessageEventArgs e)
         {
             return Strings.welcomeMsg; //Show the welcome message
         }
@@ -125,8 +119,9 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string HelpCommand(string message, string sender)
+        private static string HelpCommand(MessageEventArgs e)
         {
+            string sender = e.Message.From.Username;
             string res = "";
             foreach (Command c in commandList.Skip(1))
             {
@@ -155,7 +150,7 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string PartecipantiCommand(string message, string sender)
+        private static string PartecipantiCommand(MessageEventArgs e)
         {
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
@@ -190,8 +185,10 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string IscrivimiCommand(string message, string sender)
+        private static string IscrivimiCommand(MessageEventArgs e)
         {
+            string message = e.Message.Text;
+            string sender = e.Message.From.Username;
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             string res = "";
             string lichessID = "";
@@ -250,7 +247,7 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string SeedCommand(string message, string sender)
+        private static string SeedCommand(MessageEventArgs e)
         {
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
@@ -449,8 +446,9 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string RisultatiCommand(string message, string sender)
+        private static string RisultatiCommand(MessageEventArgs e)
         {
+            string message = e.Message.Text;
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
             using GironeBDbContext bdb = new GironeBDbContext();
@@ -458,18 +456,13 @@ namespace avenabot.Interpreter
             string res = "";
             string html = "";
             string[] subs;
-            //Avoid spamming the results picture
-            if (DateTime.Now < lastCommand.AddMinutes(coolDown))
-            {
-                return res;
-            }
+
             //Check if the dbs are populated
             if (adb.Girone.Count() <= 0)
             {
                 res += Strings.notYetSeededGroups;
                 return res;
             }
-            lastCommand = DateTime.Now;
 
             subs = message.Split(' ');
             if (subs.Length == 1) //All groups
@@ -608,7 +601,7 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string ClassificaCommand(string message, string sender)
+        private static string ClassificaCommand(MessageEventArgs e)
         {
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
@@ -619,18 +612,12 @@ namespace avenabot.Interpreter
             string[] subresults;
             int dbCheck;
             DbSet<Girone> dbset;
-            //Check if the cooldown has passed
-            if (DateTime.Now < lastCommand.AddMinutes(coolDown))
-            {
-                return res;
-            }
             //Check if the dbs are empty
             if (adb.Girone.Count() <= 0 ||  (fdb.Girone.Count() <= 0 && DateTime.Now > finalsDate))
             {
                 res += Strings.notYetSeededStandings;
                 return res;
             }
-            lastCommand = DateTime.Now;
 
             //Pretty straightforward html table generation
             html += "<div>";
@@ -767,8 +754,10 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string InserisciCommand(string message, string sender)
+        private static string InserisciCommand(MessageEventArgs e)
         {
+            string message = e.Message.Text;
+            string sender = e.Message.From.Username;
             using MembriDbContext mdb = new MembriDbContext();
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
@@ -956,6 +945,11 @@ namespace avenabot.Interpreter
                 p1.ELO = p1ELO;
                 p2.ELO = p2ELO;
                 pdb.SaveChanges();
+                Membro m1 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == p1.LichessID.ToLower());
+                Membro m2 = mdb.Membri.SingleOrDefault(m => m.LichessID.ToLower() == p2.LichessID.ToLower());
+                m1.ELO = p1ELO;
+                m2.ELO = p2ELO;
+                mdb.SaveChanges();
                 res += Strings.insertedResult + Strings.checkResults;
             }
             else if(IsAdmin(sender))
@@ -1141,7 +1135,7 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string TorneoCommand(string message, string sender)
+        private static string TorneoCommand(MessageEventArgs e)
         {
             return Strings.tournamentInfo;
         }
@@ -1152,8 +1146,10 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string PartiteCommand(string message, string sender)
+        private static string PartiteCommand(MessageEventArgs e)
         {
+            string message = e.Message.Text;
+            string sender = e.Message.From.Username;
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
             using GironeBDbContext bdb = new GironeBDbContext();
@@ -1163,11 +1159,6 @@ namespace avenabot.Interpreter
             string p1Lichess;
             string p2Lichess;
             string link;
-            //Check if the cooldown has passed
-            if (DateTime.Now < lastCommand.AddMinutes(coolDown))
-            {
-                return "";
-            }
             if(subs[1].Length == 1) // /partite (A B o C)
             {
                 subs[1] = subs[1].ToUpper();
@@ -1274,8 +1265,10 @@ namespace avenabot.Interpreter
         /// <param name="message"></param>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private static string MiePartiteCommand(string message, string sender)
+        private static string MiePartiteCommand(MessageEventArgs e)
         {
+            string message = e.Message.Text;
+            string sender = e.Message.From.Username;
             using PartecipantiDbContext pdb = new PartecipantiDbContext();
             using GironeADbContext adb = new GironeADbContext();
             using GironeBDbContext bdb = new GironeBDbContext();
@@ -1393,8 +1386,9 @@ namespace avenabot.Interpreter
         /// Responds to anything other than a known command
         /// </summary>
         /// <returns></returns>
-        private static string NoCommand(string message, string sender)
+        private static string NoCommand(MessageEventArgs e)
         {
+            string message = e.Message.Text;
             return (message.ToLower().IndexOf(Strings.invalidMessage) != -1) ?  Strings.errorInvalidMessage : "";
         }
 
@@ -1509,6 +1503,11 @@ namespace avenabot.Interpreter
                         break;
                     }
                 }
+                if(opponentCheck == -1)
+                {
+                    return res;
+                }
+
                 string link = substring.Substring(substring.IndexOf("href") + 7, substring.IndexOf("></a>") - substring.IndexOf("href") - 8);
                 int result = substring.IndexOf("<span class=\"loss\">") == -1 ? substring.IndexOf("<span class=\"win\">") == -1 ? -1 : 1 : 0;
 
@@ -1609,25 +1608,32 @@ namespace avenabot.Interpreter
         /// <param name="width"></param>
         public static void Render(string source, int n = -1, string file = "", int width = 50)
         {
-            var converter = new HtmlConverter();
-            byte[] bytes;
-            if(file == "")
+            try
             {
-                bytes = converter.FromHtmlString(source, width * (int)(MaxPlayers / MaxGroups), ImageFormat.Png);
-                file = n switch
+                var converter = new HtmlConverter();
+                byte[] bytes;
+                if (file == "")
                 {
-                    0 => "gironeA.png",
-                    1 => "gironeB.png",
-                    3 => "gironeF.png",
-                    4 => "classifica.png",
-                    _ => "gironi.png"
-                };
+                    bytes = converter.FromHtmlString(source, width * (int)(MaxPlayers / MaxGroups), ImageFormat.Png);
+                    file = n switch
+                    {
+                        0 => "gironeA.png",
+                        1 => "gironeB.png",
+                        3 => "gironeF.png",
+                        4 => "classifica.png",
+                        _ => "gironi.png"
+                    };
+                }
+                else
+                {
+                    bytes = converter.FromHtmlString(source, (int)(20 * width / 3), ImageFormat.Png);
+                }
+                File.WriteAllBytes(file, bytes);
             }
-            else
+            catch (IOException e)
             {
-                bytes = converter.FromHtmlString(source, (int)(20 * width / 3), ImageFormat.Png);
+                Logger.Log(e.Message);
             }
-            File.WriteAllBytes(file, bytes);
         }
     }
 }
